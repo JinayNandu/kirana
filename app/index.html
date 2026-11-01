@@ -47,6 +47,10 @@
      loses the contrast a scanner needs, so this pair is a token that
      does not vary -- which is the honest way to say 'not themed'
      rather than hardcoding white and arguing with the checker. */
+  /* The header band. The same green in BOTH themes on purpose: a shop
+     sign does not change colour at dusk, and this is the one surface
+     carrying the shop's identity. Only the text on it is themed. */
+  --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
   --qr-paper:#FFFFFF; --qr-ink:#111111;
   /* Pack shots are photographs on their own white backdrop, so the
      tile behind one is paper in BOTH themes -- the same deliberate
@@ -82,6 +86,7 @@
 
     --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
     --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+    --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
 
     --sh-card:0 1px 3px rgba(0,0,0,.4);
     --sh-lift:0 2px 10px rgba(0,0,0,.5);
@@ -108,6 +113,7 @@
 
     --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
     --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+    --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
 
     --sh-card:0 1px 3px rgba(0,0,0,.4);
     --sh-lift:0 2px 10px rgba(0,0,0,.5);
@@ -139,9 +145,14 @@ a{color:var(--leaf-ink)}
 }
 
 /* --- header ------------------------------------------------------- */
+/* A filled band, not another white strip. The header was the same
+   colour as every card under it, so the app opened on three shades of
+   off-white and read as a document rather than a shop. One deep green
+   band across the top is the whole difference between "a web page"
+   and "an app", and it costs one declaration. */
 #hdr{
   position:sticky; top:0; z-index:10;
-  background:var(--card); border-bottom:1px solid var(--edge);
+  background:var(--brand); color:var(--on-brand);
   padding-top:env(safe-area-inset-top,0px);
 }
 #hdr .hrow{
@@ -151,18 +162,25 @@ a{color:var(--leaf-ink)}
 }
 .brand{font-weight:700; font-size:18px; letter-spacing:-.01em; flex:1; min-width:0;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.brand small{display:block; font-weight:400; font-size:11px; color:var(--ink-dim);
+.brand small{display:block; font-weight:400; font-size:11px; color:var(--on-brand-dim);
   letter-spacing:.04em; text-transform:uppercase; line-height:1.2}
 
-/* The role rule: a screenshot is identifiable at a glance. */
+/* The role rule sits UNDER the band now, so it reads as the band's own
+   edge rather than a stripe floating on white. */
 #rolerule{height:3px; background:var(--leaf)}
 body[data-role="shop"]   #rolerule{background:var(--spice)}
 
 #backbtn{
   width:40px; height:40px; margin-left:calc(var(--s2) * -1);
-  display:grid; place-items:center; border-radius:var(--r2); color:var(--ink-soft);
+  display:grid; place-items:center; border-radius:var(--r2); color:var(--on-brand);
 }
-#backbtn:active{background:var(--sunk)}
+#backbtn:active{background:var(--leaf-ink)}
+
+/* The role switch has to sit on green now, so it carries its own
+   translucent well instead of --sunk, which was built for paper. */
+#hdr .seg{background:var(--brand-well)}
+#hdr .seg button{color:var(--on-brand-dim)}
+#hdr .seg button[aria-pressed="true"]{background:var(--on-brand); color:var(--brand)}
 
 /* --- segmented controls ------------------------------------------- */
 .seg{
@@ -272,18 +290,30 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
   stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
 /* --- search ---------------------------------------------------------- */
+/* Fully rounded and a little taller. A search box is the first thing
+   a hand goes to on a grocery app, and a square 44px field looked
+   like one more form input among six. */
 .searchbar{position:relative; margin:var(--s4) 0}
-.searchbar svg{position:absolute; left:12px; top:50%; margin-top:-12px; color:var(--ink-dim)}
-.searchbar .field{padding-left:42px}
+.searchbar svg{position:absolute; left:14px; top:50%; margin-top:-12px; color:var(--ink-dim)}
+.searchbar .field{
+  padding-left:44px; border-radius:999px; min-height:50px;
+  background:var(--card); box-shadow:var(--sh-card);
+}
 
 /* --- next-run banner ------------------------------------------------- */
 /* The whole competitive argument, in three lines. */
+/* This carries the whole competitive argument, so it stops looking
+   like one more bordered box: a wash that fades across the card, a
+   thick accent edge down the left, and no outline fighting it. */
 .banner{
-  background:var(--leaf-wash); border:1px solid var(--edge); border-radius:var(--r2);
-  padding:var(--s3); margin:var(--s4) 0;
+  position:relative; overflow:hidden;
+  background:linear-gradient(110deg, var(--leaf-wash) 0%, var(--card) 85%);
+  border:1px solid var(--edge); border-left:4px solid var(--leaf);
+  border-radius:var(--r2); padding:var(--s3) var(--s3) var(--s3) var(--s4);
+  margin:var(--s4) 0;
 }
 .bhead{display:flex; align-items:center; gap:var(--s2); margin:0 0 var(--s1);
-  font-weight:600; color:var(--leaf-ink)}
+  font-weight:700; font-size:15px; color:var(--leaf-ink)}
 .bhead svg{flex:none; width:20px; height:20px}
 .bline{margin:var(--s1) 0 0; font-size:14px}
 
@@ -494,13 +524,7 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
   display:grid; grid-template-columns:28px auto 1fr auto; gap:var(--s3);
   align-items:center; padding:var(--s3) 0; border-bottom:1px solid var(--edge); cursor:pointer;
 }
-.pick .tick{
-  width:26px; height:26px; border-radius:var(--r1); border:1.5px solid var(--edge-2);
-  display:grid; place-items:center; color:transparent;
-}
-.pick .pkrow.on .tick{background:var(--leaf); border-color:var(--leaf); color:var(--on-leaf)}
 .pick .pkrow.on .pname{text-decoration:line-through; color:var(--ink-dim)}
-.pick .tick svg{width:16px; height:16px; stroke-width:2.6}
 
 /* --- load list ------------------------------------------------------- */
 .load .ldrow{

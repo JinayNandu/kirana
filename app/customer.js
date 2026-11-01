@@ -265,17 +265,47 @@ registerScreen('cat', async () => {
 registerScreen('find', async () => {
   const c = t();
   const box = $('s-find');
-  const list = await catalog.search(S.q, getLang());
+
+  // The input is mounted ONCE and never replaced again.
+  //
+  // It used to sit inside the markup that `repaint()` rebuilds, and
+  // every keystroke therefore destroyed the element being typed into
+  // and put a fresh one in its place. The browser cannot keep focus on
+  // a node that no longer exists, so the caret vanished and the phone
+  // keyboard dropped -- you could enter two characters, then had to
+  // tap the box again for the next two. Only the RESULTS redraw now.
   mount(box,
     '<div class="searchbar">' + icon('search')
-      + '<input id="q2" class="field" type="search" value="' + esc(S.q) + '">'
-      + '</div>'
-    + (list.length
-        ? sub(f(c.nItems, { n: list.length })) + await productList(list)
-        : empty(f(c.noResults, { s: S.q }), c.noResultsSub)));
-  wireSteppers(box);
-  const q2 = $('q2');
-  q2.oninput = () => { S.q = q2.value.trim(); if (S.q.length >= 2) repaint(); };
+      + '<input id="q2" class="field" type="search" autocomplete="off"'
+      + ' value="' + esc(S.q) + '"></div>'
+    + '<div id="fres"></div>');
+
+  const q2 = $('q2'), res = $('fres');
+
+  const draw = async () => {
+    const list = await catalog.search(S.q, getLang());
+    res.innerHTML = list.length
+      ? sub(f(c.nItems, { n: list.length })) + await productList(list)
+      : empty(f(c.noResults, { s: S.q }), c.noResultsSub);
+    wireSteppers(res);
+  };
+  await draw();
+
+  // Carry on where the previous screen left off: focus the box and put
+  // the caret after what was already typed, so the next letter simply
+  // continues the word instead of landing nowhere.
+  q2.focus();
+  try { q2.setSelectionRange(q2.value.length, q2.value.length); } catch {}
+
+  // A short debounce, because searching on every keystroke over a
+  // hundred products rebuilds the list faster than anyone can read it.
+  let timer = null;
+  q2.oninput = () => {
+    S.q = q2.value.trim();
+    clearTimeout(timer);
+    timer = setTimeout(draw, 160);
+  };
+  onLeave(() => clearTimeout(timer));
 });
 
 // ---------------------------------------------------------------------

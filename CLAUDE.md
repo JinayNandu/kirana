@@ -253,6 +253,37 @@ somebody already makes, so *"sent out at 5:02"* is an observation and
 not a guess. A customer-facing live map is **Phase 2 and needs a
 server.**
 
+### The search box kept losing the keyboard
+
+Typing two characters moved the caret out of the field and dismissed
+the phone keyboard, so a search had to be entered two letters at a tap.
+
+The cause was `repaint()` wired to `oninput`. The input lived INSIDE
+the markup that repaint rebuilds, so every keystroke destroyed the
+element being typed into and put a fresh one in its place -- and a
+browser cannot hold focus on a node that no longer exists.
+
+The input is now mounted once and never replaced; only the results
+redraw, into their own container. Typing is debounced 160ms, and the
+field takes focus with the caret after whatever was typed on the
+previous screen, so a word begun in the shop header simply continues.
+**An input must never sit inside the region its own handler repaints.**
+
+### Packing is one tap
+
+Every line of a picking list carried a tick, and the packed button
+stayed disabled until all of them were ticked -- so a four-item order
+took five taps, and a shopkeeper holding the bag had to tell the app
+what he could already see. The list is what to put in the bag, not a
+form to fill in. The ticks are gone and the button is always live.
+
+An order also gets **Mark delivered** while it is packed, because the
+shopkeeper who walks it round the corner himself never passes through
+"out for delivery" and should not have to tap his way there. It steps
+the order through `out` on the way rather than jumping, since
+`ORDER_NEXT` is right that a thing must leave before it arrives -- and
+the customer's track screen reads that history.
+
 ### The board answers "how much, and what do I pack"
 
 That is the question the shop opens the Store view with, and the board
@@ -582,6 +613,30 @@ rule names a colour — `tokens.pl` enforces both halves of that.
   button on every screen sits under it.
 - The picking list is a **card list, never a `<table>`** — it is the one
   screen genuinely used on a phone while standing at a shelf.
+
+### The header is a filled band
+
+The header used to be `--card`, so the app opened on three shades of
+off-white and read as a document rather than a shop. One deep green
+band across the top is most of the difference between "a web page" and
+"an app", and it costs one declaration.
+
+`--brand` is **the same green in both themes**, like `--qr-paper` and
+`--shot-paper` and for the same reason: a shop sign does not change
+colour at dusk, and this is the one surface carrying the shop's
+identity. Only the text on it is themed, through `--on-brand` (8.50 on
+the band) and `--on-brand-dim` (4.91, which 11px uppercase needs).
+The role switch sits in `--brand-well`, because `--sunk` was built for
+paper and vanishes on green.
+
+`tokens.pl` caught the first attempt at that well, written as a literal
+`rgba(0,0,0,.22)`. That is the check doing exactly its job.
+
+The next-run banner carries the whole competitive argument, so it
+stopped looking like one more bordered box: a wash that fades across
+the card and a thick `--leaf` edge down the left. The search field is
+fully rounded and 50px tall, because it is the first thing a hand goes
+to and a square 44px input looked like one more form field among six.
 
 **Categories get a glyph, not a colour.** Ten category colours would be
 ten token pairs × two palettes plus an `-ink` each plus twenty new

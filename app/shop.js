@@ -24,7 +24,7 @@ import {
 } from './domain.js';
 import { pname } from './customer.js';
 
-const S = { runId: null, orderId: null, picked: {} };
+const S = { runId: null, orderId: null };
 
 const lbl = (r) => t()[r.label] || r.label;
 const stName = (s) => t()['st' + s[0].toUpperCase() + s.slice(1)] || s;
@@ -233,7 +233,6 @@ registerScreen('run', async () => {
       const li = e.target.closest('[data-order]');
       if (!li) return;
       S.orderId = li.dataset.order;
-      S.picked = {};
       show('pick');
     };
   };
@@ -255,8 +254,14 @@ registerScreen('pick', async () => {
   const draw = async () => {
     const o = await orders.byId(S.orderId);
     if (!o){ show('run', false); return; }
-    const done = o.lines.filter((l) => S.picked[l.pid]).length;
     const ll = o.customer.ll;
+
+    // The one step this order can take next, named for the doing of it.
+    const next = {
+      placed: ['packed', c.markPacked, ''],
+      packed: ['out',    c.dispatch,   'sky'],
+      out:    ['delivered', c.markDelivered, ''],
+    }[o.status];
 
     mount(box, h1(f(c.pickTitle, { s: o.code }))
       + '<div class="card">'
@@ -268,10 +273,14 @@ registerScreen('pick', async () => {
             + 'https://www.google.com/maps/search/?api=1&query='
             + esc(ll[0] + ',' + ll[1]) + '">' + esc(c.openMaps) + '</a>' : '') + '</p>'
       + '</div>'
-      + '<p class="sub">' + esc(f(c.pickedN, { n: done, d: o.lines.length })) + '</p>'
+      // A list to read off a shelf, not a form to fill in. Every line
+      // used to carry a tick and the packed button stayed disabled
+      // until all of them were ticked -- so a four-item order took
+      // five taps, and the shopkeeper who already had the bag in his
+      // hand had to tell the app what he could see. One tap now.
+      + '<p class="sub">' + esc(f(c.nItemsShort, { n: o.lines.length })) + '</p>'
       + '<ul class="plist pick">' + o.lines.map((l) =>
-          '<li class="pkrow' + (S.picked[l.pid] ? ' on' : '') + '" data-pick="' + esc(l.pid) + '">'
-          + '<span class="tick">' + icon('check') + '</span>'
+          '<li class="pkrow">'
           + '<span class="mono lq">' + esc(String(l.qty)) + '</span>'
           + '<span class="pbody"><span class="pname">' + esc(l.nameEn) + '</span>'
           +   '<span class="hint">' + esc(packLabel(l.pack, c)) + '</span></span>'
@@ -282,26 +291,46 @@ registerScreen('pick', async () => {
       +     '<span class="mono"><b>' + esc(rupees(o.grand)) + '</b></span></p></div>'
       + '<button type="button" class="btn ' + (o.paid ? 'ghost' : 'sky') + '" id="paid">'
         + esc(o.paid ? c.markUnpaid : c.markPaid) + '</button>'
-      + (o.status === 'placed'
-          ? '<button type="button" class="btn" id="packed"'
-            + (done === o.lines.length ? '' : ' disabled') + '>' + esc(c.markPacked) + '</button>'
-          : '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
-            + esc(stName(o.status)) + '</span></p>'));
+      // One button for the next step, and -- once it is packed -- a
+      // second for the end of the story, because the shopkeeper who
+      // walks it round the corner himself never passes through "out
+      // for delivery" and should not have to tap his way there.
+      + (next
+          ? '<button type="button" class="btn ' + esc(next[2]) + '" id="adv">'
+            + esc(next[1]) + '</button>'
+          : '')
+      // Only while it is PACKED. Once it is out, the button above is
+      // already "Mark delivered" and a second one saying the same
+      // thing is just a choice between identical doors.
+      + (o.status === 'packed'
+          ? '<button type="button" class="btn ghost" id="dlv">'
+            + esc(c.markDelivered) + '</button>'
+          : '')
+      + (o.status === 'delivered'
+          ? '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
+            + esc(stName(o.status)) + '</span></p>'
+          : ''));
 
-    box.onclick = (e) => {
-      const li = e.target.closest('[data-pick]');
-      if (!li) return;
-      S.picked[li.dataset.pick] = !S.picked[li.dataset.pick];
-      draw();
-    };
     $('paid').onclick = async () => {
       try { await orders.setPaid(o.id, !o.paid, 'upi'); }
       catch (err){ toast(String(err.message)); }
     };
-    const b = $('packed');
-    if (b && !b.disabled) b.onclick = async () => {
-      try { await orders.advance(o.id, 'packed'); show('run', false); }
+    const b = $('adv');
+    if (b) b.onclick = async () => {
+      try { await orders.advance(o.id, next[0]); show('run', false); }
       catch (err){ toast(String(err.message)); }
+    };
+    const d = $('dlv');
+    if (d) d.onclick = async () => {
+      try {
+        // `packed -> delivered` is not a legal move in ORDER_NEXT, and
+        // the table is right: an order has to go out before it can
+        // arrive. So step it through rather than widen the table and
+        // lose the history that the track screen reads.
+        if (o.status === 'packed') await orders.advance(o.id, 'out');
+        await orders.advance(o.id, 'delivered');
+        show('run', false);
+      } catch (err){ toast(String(err.message)); }
     };
   };
   await draw();
