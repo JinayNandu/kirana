@@ -448,10 +448,15 @@ registerScreen('addr', async () => {
     + '</div>'
     + field('fname',  c.fName,     true,  '',            me.name,  'text')
     + field('fphone', c.fPhone,    true,  '',            me.phone, 'tel')
-    + field('fflat',  c.fFlat,     true,  c.phFlat2,     me.flat)
-    + field('fsoc',   c.fSociety,  true,  c.phSociety,   me.society)
-    + field('farea',  c.fArea,     true,  c.phArea2,     me.area)
-    + field('fmark',  c.fLandmark, false, c.phLandmark,  me.landmark)
+    // No placeholders. Grey example text inside a box reads as a value
+    // that is already there -- especially next to the two fields the
+    // location button really does fill -- so half the form looked
+    // answered when it was empty. The labels above say what each one
+    // is, which is the job the placeholder was doing badly.
+    + field('fflat',  c.fFlat,     true,  '',  me.flat)
+    + field('fsoc',   c.fSociety,  true,  '',  me.society)
+    + field('farea',  c.fArea,     true,  '',  me.area)
+    + field('fmark',  c.fLandmark, false, '',  me.landmark)
 
     + '<p id="aerr" class="ferr" hidden></p>'
     + '<button type="button" class="btn" id="place">' + esc(c.placeOrder) + '</button>');
@@ -513,9 +518,13 @@ registerScreen('addr', async () => {
       // address is worse than an empty one the customer fills in, so a
       // point with no street reports finding nothing rather than
       // offering the suburb as a consolation.
+      // The street only. The landmark was filled too, from whatever
+      // building OSM had nearest -- which is a real place but not
+      // necessarily YOUR landmark, and a wrong one is worse than a
+      // blank, since the whole point of that field is that the
+      // customer knows something the map does not.
       if (!g.street) throw new Error('nothing');
       fill('farea', g.street);
-      fill('fmark', g.landmark);
 
       hint.textContent = f(c.locFound,
         { s: [g.street, g.postcode].filter(Boolean).join(', ') });

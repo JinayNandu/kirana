@@ -437,8 +437,15 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
   padding:var(--s3) 0; border-bottom:1px solid var(--edge); cursor:pointer;
 }
 .orow:active{background:var(--sunk)}
-.obody{flex:1; display:flex; flex-direction:column; min-width:0}
+.obody{flex:1; display:flex; flex-direction:column; min-width:0; gap:2px}
 .obody .hint{font-size:13px}
+.oline1{display:flex; align-items:baseline; justify-content:space-between; gap:var(--s3)}
+.omoney{font-weight:700; font-variant-numeric:tabular-nums}
+/* Struck through, not hidden and not greyed away: whoever is handing
+   over the bag still wants to see what this order was worth, they
+   just must not ask for it again. */
+.omoney.paid{text-decoration:line-through; color:var(--ink-dim); font-weight:600}
+.opills{display:flex; flex-wrap:wrap; gap:var(--s1); margin-top:var(--s1)}
 .orow > svg{color:var(--ink-dim); flex:none}
 .seqn{
   flex:none; width:26px; height:26px; border-radius:999px; display:grid; place-items:center;
@@ -447,13 +454,40 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 
 /* --- shopkeeper board ------------------------------------------------ */
 .runcard{display:block; width:100%; text-align:left; margin-bottom:var(--s2)}
-.runcard.dim{opacity:.6}
-.runcard.off{opacity:.4}
+/* No .dim. Tomorrow's windows used to be drawn at 60% and read as
+   switched off, which they never were -- those cards have always
+   opened. Only a window the shopkeeper has actually turned OFF is
+   dimmed, because that one really is unavailable. */
+.runcard.off{opacity:.45}
 .rc1{display:flex; justify-content:space-between; align-items:center; gap:var(--s3)}
-.rc1 b{font-size:16px}
+.rc1 b{font-size:17px; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
 .rc2{display:block; margin-top:2px; font-size:13px; color:var(--ink-soft)}
-.rc3{display:flex; gap:var(--s3); margin-top:var(--s2); font-size:13px; flex-wrap:wrap}
-.rc3 .mono{margin-left:auto; font-weight:600}
+.rc3{
+  display:flex; gap:var(--s3); align-items:baseline;
+  margin-top:var(--s2); font-size:13px;
+}
+/* The money is the thing the shop is looking for, so it is the only
+   thing on the card allowed to be bigger than the label above it. */
+.rc3 .money{
+  margin-left:auto; font-family:var(--f-mono); font-variant-numeric:tabular-nums;
+  font-size:17px; font-weight:700;
+}
+.rc4{
+  display:flex; align-items:center; gap:var(--s1);
+  margin-top:var(--s2); padding-top:var(--s2); border-top:1px solid var(--edge);
+  font-size:14px; font-weight:600; color:var(--leaf-ink);
+}
+.rc4 svg{width:16px; height:16px; margin-left:auto}
+
+/* --- the day's tally, above the windows ------------------------------ */
+.tally{margin-bottom:var(--s4)}
+.tbig{
+  display:flex; justify-content:space-between; align-items:baseline;
+  gap:var(--s3); margin:0; font-size:14px; color:var(--ink-soft);
+}
+.tbig b{font-size:28px; color:var(--ink); line-height:1.1}
+.tdo{display:flex; flex-wrap:wrap; gap:var(--s2); margin:var(--s3) 0 0}
+.tquiet{margin:0; color:var(--ink-soft); font-size:14px}
 
 /* --- picking list ---------------------------------------------------- */
 .pick .pkrow{

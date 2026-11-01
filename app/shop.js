@@ -48,7 +48,19 @@ registerScreen('board', async () => {
     const list = await runs.today();
     const tmrw = await runs.forDate(addDays(today, 1));
 
-    const card = async (r, dim) => {
+    // The one line that says what is waiting to be DONE, rather than
+    // what state a window is in. "2 to pack" is an instruction; "Closed
+    // - pack these" was a label, and the owner could not tell from it
+    // whether anything was actually owed.
+    const work = (n) => {
+      if (n.byStatus.placed)  return f(c.bPack, { n: n.byStatus.placed });
+      if (n.byStatus.packed)  return f(c.bReady, { n: n.byStatus.packed });
+      if (n.byStatus.out)     return f(c.bOut,   { n: n.byStatus.out });
+      if (n.byStatus.delivered && n.orders === n.byStatus.delivered) return c.bAllDone;
+      return '';
+    };
+
+    const card = async (r) => {
       const st = runState(r, today, now);
       const n = await runs.counts(r.id);
       // A closed window with nothing in it says so. "Closed, pack
@@ -57,24 +69,67 @@ registerScreen('board', async () => {
       const pill = !r.enabled ? ['', c.runOff]
                  : empty      ? ['', c.rsNone]
                  : [RUN_TONE[st] || '', rsName(st)];
-      return '<button type="button" class="card runcard' + (dim ? ' dim' : '')
+      const todo = r.enabled && n.orders ? work(n) : '';
+      return '<button type="button" class="card runcard'
         + (r.enabled ? '' : ' off') + '" data-run="' + esc(r.id) + '">'
-        + '<span class="rc1"><b>' + esc(lbl(r)) + '</b>'
+        + '<span class="rc1"><b>' + esc(windowOf(r)) + '</b>'
         +   '<span class="pill ' + esc(pill[0]) + '">' + esc(pill[1]) + '</span></span>'
-        + '<span class="rc2 mono">' + esc(windowOf(r)) + '</span>'
-        + '<span class="rc3">'
-        +   '<span>' + esc(f(n.orders === 1 ? c.oneOrder : c.nOrders, { n: n.orders })) + '</span>'
-        +   '<span class="hint">' + esc(f(c.nItemsShort, { n: n.items })) + '</span>'
-        +   '<span class="mono">' + esc(f(c.cashExpected, { s: rupees(n.cash) })) + '</span>'
-        + '</span></button>';
+        + '<span class="rc2">' + esc(lbl(r)) + '</span>'
+        + (n.orders
+            ? '<span class="rc3">'
+              + '<span>' + esc(f(n.orders === 1 ? c.oneOrder : c.nOrders, { n: n.orders }))
+              +   ' · ' + esc(f(c.nItemsShort, { n: n.items })) + '</span>'
+              + '<span class="money">' + esc(rupees(n.cash)) + '</span>'
+              + '</span>'
+              + (todo ? '<span class="rc4">' + esc(todo) + icon('chev') + '</span>' : '')
+            : '')
+        + '</button>';
     };
 
-    const a = [];
-    for (const r of list) a.push(await card(r, false));
-    const b = [];
-    for (const r of tmrw) if (r.enabled) b.push(await card(r, true));
+    // What the shop opens this screen to find out, in the order it
+    // wants to know it: the money first, then the work.
+    const sum = { orders: 0, items: 0, cash: 0, paid: 0, paidCount: 0, pack: 0, out: 0 };
+    for (const r of list){
+      if (!r.enabled) continue;
+      const n = await runs.counts(r.id);
+      sum.orders += n.orders; sum.items += n.items;
+      sum.cash += n.cash; sum.paid += n.paidTotal; sum.paidCount += n.paidCount;
+      sum.pack += (n.byStatus.placed || 0);
+      sum.out  += (n.byStatus.out || 0);
+    }
 
-    mount(box, h1(c.boardTitle) + a.join('')
+    const head = sum.orders
+      ? '<div class="card tally">'
+        + '<p class="tbig"><span>' + esc(c.bMoney) + '</span>'
+        +   '<b class="mono">' + esc(rupees(sum.cash)) + '</b></p>'
+        + '<p class="trow"><span>'
+        +   esc(f(sum.orders === 1 ? c.oneOrder : c.nOrders, { n: sum.orders }))
+        +   ' · ' + esc(f(c.nItemsShort, { n: sum.items })) + '</span>'
+        +   (sum.paidCount
+              ? '<span class="hint">' + esc(f(c.bPaid, { s: rupees(sum.paid) })) + '</span>'
+              : '') + '</p>'
+        + (sum.pack || sum.out
+            ? '<p class="tdo">'
+              + (sum.pack ? '<span class="pill spice">'
+                  + esc(f(c.bPack, { n: sum.pack })) + '</span>' : '')
+              + (sum.out ? '<span class="pill sky">'
+                  + esc(f(c.bOut, { n: sum.out })) + '</span>' : '')
+              + '</p>'
+            : '')
+        + '</div>'
+      : '<div class="card tally"><p class="tquiet">' + esc(c.bNothing) + '</p></div>';
+
+    const a = [];
+    for (const r of list) a.push(await card(r));
+    // Tomorrow is NOT dimmed. It was, at 60% opacity, and read as
+    // disabled -- which it never was; those cards have always opened.
+    // A window the shop can already look into should not look switched
+    // off just because it has not come round yet.
+    const b = [];
+    for (const r of tmrw) if (r.enabled) b.push(await card(r));
+
+    mount(box, h1(c.boardTitle) + head
+      + '<h2>' + esc(c.boardToday) + '</h2>' + a.join('')
       + '<h2>' + esc(c.boardTomorrow) + '</h2>' + b.join(''));
 
     box.onclick = (e) => {
@@ -133,13 +188,24 @@ registerScreen('run', async () => {
 
       + '<h2>' + esc(c.ordersTitle) + '</h2>'
       + (list.length ? '<ul class="plist flat">' + list.map((o) =>
+          // Each order carries its OWN amount, because "977 to collect"
+          // at the top of the screen does not tell whoever is handing
+          // over a bag what to ask this particular customer for. A paid
+          // one shows the figure struck through: the money is real and
+          // still worth seeing, it is simply not owed.
           '<li class="orow" data-order="' + esc(o.id) + '">'
           + (o.seq ? '<span class="seqn mono">' + esc(String(o.seq)) + '</span>' : '')
-          + '<span class="obody"><b class="mono">' + esc(o.code) + '</b>'
-          +   '<span class="hint">' + esc(o.customer.name + ' · ' + addressOf(o)) + '</span></span>'
-          + (o.paid ? '<span class="pill leaf">' + esc(c.payDone) + '</span>' : '')
-          + '<span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
-            + esc(stName(o.status)) + '</span>'
+          + '<span class="obody">'
+          +   '<span class="oline1"><b class="mono">' + esc(o.code) + '</b>'
+          +     '<span class="omoney mono' + (o.paid ? ' paid' : '') + '">'
+          +       esc(rupees(o.grand)) + '</span></span>'
+          +   '<span class="hint">' + esc(o.customer.name + ' · ' + addressOf(o)) + '</span>'
+          +   '<span class="opills">'
+          +     (o.paid ? '<span class="pill leaf">' + esc(c.payDone) + '</span>' : '')
+          +     '<span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
+          +       esc(stName(o.status)) + '</span>'
+          +   '</span>'
+          + '</span>'
           + icon('chev') + '</li>').join('') + '</ul>'
         : empty(c.noOrdersRun, '')));
 

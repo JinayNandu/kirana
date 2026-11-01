@@ -114,5 +114,26 @@ for my $l (grep { $_ ne 'en' } sort keys %T) {
     scalar @same, $l, join(', ', @same[0 .. ($#same > 5 ? 5 : $#same)]) if @same;
 }
 
+# --- double-encoded Devanagari ----------------------------------------
+# A script edits i18n.js, decodes it to characters, splices in a byte
+# string, and encodes the whole thing again. The Devanagari goes
+# through UTF-8 twice and lands as a run of Latin-1 letters:
+# 'DEVANAGARI' becomes 'Ã Â¤Â®Ã Â¤Â¾'. It still parses, the keys still
+# match, the app still renders -- and what it renders is rubbish that
+# nobody in this room can read well enough to notice. It happened, to
+# 28 lines, and every other check in here passed while it was true.
+#
+# The tell is unambiguous: a Marathi or Hindi string has no business
+# holding U+00C0..U+00FF, and real Devanagari never decodes to them.
+for my $l (qw(mr hi)) {
+  for my $k (sort keys %{ $T{$l} }) {
+    my $v = $T{$l}{$k};
+    next unless $v =~ /[\x{00C0}-\x{00FF}]/ && $v !~ /[\x{0900}-\x{097F}]/;
+    printf "MOJIBAKE   %s.%s is double-encoded -- '%s...'\n",
+      $l, $k, substr($v, 0, 20);
+    $bad = 1;
+  }
+}
+
 print $bad ? "\nFAIL\n" : "\nall three languages agree\n";
 exit($bad ? 1 : 0);

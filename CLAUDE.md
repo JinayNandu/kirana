@@ -253,6 +253,27 @@ somebody already makes, so *"sent out at 5:02"* is an observation and
 not a guess. A customer-facing live map is **Phase 2 and needs a
 server.**
 
+### The board answers "how much, and what do I pack"
+
+That is the question the shop opens the Store view with, and the board
+used to answer a different one -- what STATE each window was in. It now
+leads with a tally: **the money to collect today** in 28px, the order
+and item count under it, what has already been paid online, and pills
+for the work outstanding (*4 to pack*, *2 out for delivery*).
+
+Each window card then shows its time, its state, its own orders and
+items, **its own money**, and one line of work with a chevron. And each
+ORDER in a window carries its own amount, because "977 to collect" at
+the top of a screen does not tell whoever is handing over a bag what to
+ask this particular customer for. A paid order shows its figure
+**struck through** rather than hidden: still worth seeing, simply not
+owed.
+
+⚠️ **Tomorrow is not dimmed.** It was drawn at 60% opacity and read as
+switched off, which it never was -- those cards have always opened. The
+only thing dimmed now is a window the shopkeeper has actually turned
+off, which really is unavailable.
+
 ### Everyone gets the same window
 
 Three one-hour windows a day — 11:00–12:00, 15:00–16:00, 19:00–20:00 —
@@ -269,6 +290,18 @@ yet.
 `data.pl` asserts the windows do not overlap and that each closes
 before it opens — an order that could fall into two windows at once
 has no right answer.
+
+### No placeholders in the address form
+
+Grey example text inside an input reads as a value that is already
+there. Next to the two fields the location button genuinely does fill,
+half the form looked answered when it was empty. The labels above each
+box say what it is, which is the job the placeholder was doing badly.
+
+**The landmark is not auto-filled either**, though the geocoder offers
+one. OSM returns whatever building it has nearest, which is a real
+place but not necessarily YOUR landmark -- and the whole point of that
+field is that the customer knows something the map does not.
 
 ## Delivery is free, everywhere
 
@@ -746,11 +779,41 @@ otherwise have to sit and wait for.
 | script | catches |
 |---|---|
 | `balance.pl` | unbalanced brackets and strings. **Found the real one**: a `mount(` that was never closed. Neutralises regex literals, or `/[&<>"]/g` pairs its quote with the next string. |
-| `i18n.pl` | en/mr/hi key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail. |
+| `i18n.pl` | en/mr/hi key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail., and **double-encoded Devanagari** -- see below. |
 | `data.pl` | ids, categories, whole rupees, `price <= mrp`, all three names present, the delivery windows not overlapping, a demo UPI id that cannot resolve, every pairing naming a product that still exists, and every product having a pairing of its own |
 | `slots.pl` | the run state machine across a whole day, **including 00:15 IST**; also greps for `toISOString` outside `domain.js` |
 | `tokens.pl` | both palettes define the same colour set; no literal colour in a component rule |
 | `money.pl` | 500 random baskets; the minimum-order-on-items case against a synthetic minimum, since the shop now has none; and 200 coupon baskets for whole-rupee, once-on-the-total rounding |
+
+### The bug that every other check passed through
+
+A script edited `i18n.js`, decoded it to characters, spliced in a byte
+string, and encoded the whole file again. The Devanagari went through
+UTF-8 twice and landed as runs of Latin-1 letters -- `माझं` as
+`Ã Â¤Â®Ã Â¤Â¾Ã Â¤Â`. **28 lines of Marathi and Hindi were silently
+turned to rubbish.**
+
+Nothing caught it. The file still parsed, the keys still matched, the
+app still rendered, `i18n.pl` reported all three languages agreeing --
+and the one person who could have read the difference was not in the
+room. That is the whole danger of a language nobody on the project
+speaks: there is no accidental review.
+
+Two things came out of it:
+
+- **`i18n.pl` now fails on it.** A Marathi or Hindi value holding
+  U+00C0..U+00FF and no Devanagari at all is double-encoded; real
+  Devanagari never decodes to those. Proved by re-breaking one string
+  and watching the check go red -- the first attempt at that proof
+  broke the ENGLISH value, which is ASCII and round-trips unchanged,
+  so it proved nothing and looked like a passing test.
+- **Patch `i18n.js` in raw bytes.** No `decode`, no `encode`. The
+  needles are ASCII and the values are already the UTF-8 bytes they
+  should be, so nothing needs converting and nothing can be converted
+  twice. Where a block must be found per language, find the ASCII key
+  three times in order -- en, mr, hi -- rather than matching on the
+  translated text.
+
 
 **Each one was proved by breaking the code and watching it fail**, not
 by passing on a clean tree. `slots.pl` with a minute-only comparison
