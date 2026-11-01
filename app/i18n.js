@@ -1,0 +1,658 @@
+// =====================================================================
+//  i18n
+//
+//  One object literal per language, same key set in each. Marathi and
+//  Hindi arrive in step 7 -- deliberately last, because translating a
+//  UI that is still moving means translating it twice.
+//
+//  TWO TRAPS, both of which have already cost a day on the sibling
+//  project:
+//
+//  1. A duplicate key in an object literal overwrites the earlier one
+//     SILENTLY, and key-count parity does not catch it. i18n.pl does.
+//  2. A colon inside an English string reads as a key boundary to the
+//     checker. Use an em dash in copy -- never a colon.
+//
+//  Placeholders are {n} / {s} / {d}, string-replaced, never
+//  interpolated. Every placeholder in an `en` string must appear in
+//  the same key of every other language.
+// =====================================================================
+
+export const LANGS = ['en', 'mr', 'hi'];
+export const LANG_NAMES = { en: 'English', mr: 'मराठी', hi: 'हिंदी' };
+export const LOCALE = { en: 'en-IN', mr: 'mr-IN', hi: 'hi-IN' };
+
+export const T = {
+  en: {
+    // ---- shell ----
+    brand: 'Kirana', brandsub: 'Borivali West',
+    rolecust: 'Shop', roleshop: 'Store',
+    back: 'Back', close: 'Close', save: 'Save', cancel: 'Cancel',
+    retry: 'Try again', loading: 'Loading…',
+
+    // ---- tabs ----
+    tabShop: 'Shop', tabCart: 'Cart', tabOrders: 'Orders',
+    tabRuns: 'Runs', tabLoad: 'Load', tabStock: 'Items',
+
+    // ---- storefront ----
+    searchph: 'Search for atta, soap, Parle-G…',
+    catsHead: 'What do you need?',
+    buyAgain: 'Buy it again',
+    goesWith: 'Goes well with your order',
+    addedOne: 'Added',
+    buyAgainSub: 'From your last order',
+    allItems: 'Everything',
+    noResults: 'Nothing matched “{s}”',
+    noResultsSub: 'Try a brand name, or the Marathi or Hindi word.',
+    offMrp: '{s} off',
+    outOfStock: 'Out of stock',
+    lastFew: 'Only {n} left',
+    add: 'Add',
+
+    // ---- cart ----
+    cartTitle: 'Your basket',
+    cartEmpty: 'Your basket is empty',
+    cartEmptySub: 'Add something from the shop and it will show up here.',
+    goShop: 'Start shopping',
+    nItems: '{n} items', oneItem: '1 item',
+    itemsTotal: 'Items',
+    deliveryFee: 'Delivery',
+    feeFree: 'Free',
+    youSave: 'You save {s} off MRP',
+    toPay: 'To pay',
+    minOrderShort: 'Minimum order is {s} — add {d} more',
+    chooseRun: 'Choose a delivery time',
+
+    // ---- slot picker ----
+    slotTitle: 'When should it come?',
+    slotSub: 'The tempo does a fixed round. Pick the one that suits you.',
+    today: 'Today', tomorrow: 'Tomorrow',
+    closesIn: 'Closes in {s}',
+    closedAt: 'Closed at {s}',
+    runFull: 'Full',
+    noneToday: 'Today’s last run has gone.',
+    noneTodaySub: 'Next delivery is tomorrow, {s}.',
+    continue: 'Continue',
+
+    // ---- address ----
+    addrTitle: 'Where should it go?',
+    fName: 'Your name', fPhone: 'Phone number',
+    fArea: 'Area or street', fFlat: 'Flat / floor', fLandmark: 'Landmark',
+    phArea: 'Choose your area',
+    phFlat: 'B-304, Shanti Apartments',
+    phLandmark: 'Opposite Chamunda Circle',
+    payHead: 'Pay by UPI',
+    paySub: 'Pay now or when it arrives — whichever suits you.',
+    placeOrder: 'Place order',
+    errName: 'Please tell us your name',
+    errPhone: 'A 10-digit mobile number, please',
+    errArea: 'Pick your area',
+    errFlat: 'Which flat or floor?',
+    errRunClosed: 'The {s} run has just closed. The next leaves {d}.',
+    errRunFull: 'That run is full. Please pick another.',
+
+    // ---- order placed / tracking ----
+    doneTitle: 'Order placed',
+    doneCode: 'Your order is {s}',
+    doneBody: 'The tempo leaves at {s}. We will reach your lane around {d}.',
+    trackIt: 'Track this order', keepShopping: 'Keep shopping',
+    trackTitle: 'Order {s}',
+    ordersTitle: 'Your orders',
+    noOrders: 'No orders yet',
+    noOrdersSub: 'Your past orders will be listed here.',
+    reorder: 'Order this again',
+    callShop: 'Call the shop',
+    notLeftYet: 'Not yet left the shop',
+    runningLate: 'Running late — please call us',
+
+    // ---- statuses ----
+    stPlaced: 'Placed', stPacked: 'Packed', stOut: 'On the tempo',
+    stDelivered: 'Delivered', stFailed: 'Nobody home', stCancelled: 'Cancelled',
+
+    // ---- run names (runplan.json points at these keys) ----
+    runMorning: 'Morning', runMidday: 'Midday',
+    runEvening: 'Evening',
+
+    // ---- run statuses ----
+    rsOpen: 'Open for orders', rsCutoff: 'Closed · pack these', rsOut: 'Out for delivery',
+    rsDone: 'Delivered', rsCancelled: 'Cancelled', rsNone: 'No orders',
+
+    // ---- shopkeeper ----
+    boardTitle: 'Today’s runs',
+    boardTomorrow: 'Tomorrow',
+    nOrders: '{n} orders', oneOrder: '1 order',
+    nItemsShort: '{n} items',
+    cashExpected: '{s} to collect',
+    closeRun: 'Close orders and start packing',
+    dispatch: 'Send out for delivery',
+    finishRun: 'Mark all delivered',
+    runTitle: '{s} run',
+    openPickList: 'Picking list',
+    openLoadList: 'What to load',
+    noOrdersRun: 'No orders on this run yet',
+    pickTitle: 'Pick {s}',
+    pickedN: '{n} of {d} picked',
+    markPacked: 'All picked — mark packed',
+    loadTitle: 'Load the tempo',
+    loadSub: 'Everything on the {s} run, added up.',
+    loadTotal: '{n} items across {d} orders',
+    runOff: 'Not running',
+    warnNotPacked: '{n} still not packed — they went out anyway',
+
+    // ---- driver ----
+    openMaps: 'Open in Maps',
+
+    // ---- settings ----
+    setTitle: 'Settings',
+    setLang: 'Language',
+    setRole: 'You are using this as',
+    setAbout: 'About',
+    resetTitle: 'Start fresh',
+    resetSub: 'Clears every order, basket and saved address on this device. It cannot be undone.',
+    resetBtn: 'Clear all data',
+    resetConfirm: 'Tap again to clear everything',
+    aboutBody: 'A neighbourhood shop that delivers on a fixed round, three to four times a day. Not ten minutes — but cheaper, and you know when it comes.',
+    useLoc: 'Use my location',
+    locBlocked: 'This preview will not share location. It works when the app is opened on its own web address.',
+    locNoSupport: 'This browser cannot find your location. Type the address instead.',
+    locStatus: 'Location',
+    locOn: 'available on this device',
+    locOff: 'not available here (preview)',
+    useLocBusy: 'Finding you...',
+    useLocHint: 'Fills in the street. Add your flat and building yourself.',
+    locFound: 'Found: {s}',
+    locDenied: 'Location permission was refused. Type the address instead.',
+    locUnavailable: 'Your phone could not get a location. Type the address instead.',
+    locTimeout: 'That took too long. Type the address instead.',
+    locLookup: 'Could not reach the map service. Type the address instead.',
+    locNothing: 'No street found at that spot. Type the address instead.',
+    photoCredit: 'Product photographs from the Open Food Facts community, used under CC-BY-SA.',
+
+    // ---- units ----
+    unitG: 'g', unitKg: 'kg', unitMl: 'ml', unitL: 'L',
+    unitPc: 'pc', unitPkt: 'pkt', unitDozen: 'dozen',
+    unitHr: 'hr', unitMin: 'min',
+
+    // ---- free delivery ----
+    freeDelivery: 'Free delivery on all orders',
+    freeAlways: 'Always free',
+
+    // ---- the three windows ----
+    runAfternoon: 'Afternoon',
+    nextSlotHead: 'Next delivery {s}',
+    arriveBetween: 'Arrives between {s}',
+    orderByTime: 'Order by {s}',
+    anywhere: 'We deliver anywhere you are',
+
+    // ---- address ----
+    optionalTag: '(optional)',
+    fSociety: 'Building or society',
+    phSociety: 'Sagar Apartment',
+    phFlat2: 'B-304, 3rd floor',
+    phArea2: 'Shimpoli, near the market',
+    useLocation: 'Use my current location',
+    locating: 'Finding you…',
+    locationOk: 'Location saved — the driver will see it',
+    locationFail: 'Could not get your location. Type the address instead.',
+    locationWhy: 'Helps the driver find you. Nothing is shared with anyone else.',
+    errSociety: 'Which building or society?',
+    errArea2: 'Which area or street?',
+
+    // ---- order placed ----
+    doneItems: 'What you ordered',
+
+    // ---- paying ----
+    payNow: 'Pay {s} by UPI',
+    payScan: 'Or scan with any UPI app',
+    payMark: 'I have paid',
+    payDone: 'Paid',
+    payDoneSub: 'Thank you — nothing to pay on delivery.',
+    payUnpaid: 'Not paid yet',
+    payAnytime: 'Pay now or when it arrives — whichever suits you.',
+    upiNotSet: 'UPI is not set up yet. Please pay the driver.',
+    payDemo: 'Sample QR — this is a demo id and cannot take money',
+    payHow: 'How would you like to pay?',
+    payByUpi: 'Pay by UPI',
+    payCod: 'Cash on delivery',
+    payCodChosen: 'Paying cash on delivery',
+    payCodSub: 'Please keep the amount ready for the delivery associate.',
+    payScanHead: 'Scan to pay',
+    payProof: 'After paying, please show the payment screenshot to the delivery associate.',
+    paySwitchUpi: 'Pay by UPI instead',
+    paySwitchCod: 'Pay cash instead',
+    couponLabel: 'Coupon code',
+    couponPlace: 'Enter code',
+    couponApply: 'Apply',
+    couponOn: '{s} applied — {n}% off',
+    couponOff: 'Remove',
+    couponBad: 'That code is not valid',
+    couponSaved: 'Coupon {s}',
+    upiNoQr: 'Could not draw the QR. Use the button above.',
+    markPaid: 'Mark paid', markUnpaid: 'Mark unpaid',
+    paidAlready: '{s} already paid',
+
+    // ---- map ----
+  },
+
+  // ===================================================================
+  //  मराठी
+  // ===================================================================
+  mr: {
+    brand: 'किराणा', brandsub: 'बोरिवली पश्चिम',
+    rolecust: 'दुकान', roleshop: 'स्टोअर',
+    back: 'मागे', close: 'बंद', save: 'जतन करा', cancel: 'रद्द करा',
+    retry: 'पुन्हा प्रयत्न करा', loading: 'लोड होत आहे…',
+
+    tabShop: 'दुकान', tabCart: 'बास्केट', tabOrders: 'ऑर्डर',
+    tabRuns: 'फेऱ्या', tabLoad: 'लोड', tabStock: 'वस्तू',
+
+    searchph: 'आटा, साबण, पारले-जी शोधा…',
+    catsHead: 'काय हवंय?',
+    buyAgain: 'पुन्हा मागवा',
+    goesWith: 'तुमच्या ऑर्डरसोबत हे छान जातं',
+    addedOne: 'घातलं',
+    buyAgainSub: 'तुमच्या मागच्या ऑर्डरमधून',
+    allItems: 'सर्व काही',
+    noResults: '“{s}” साठी काही मिळालं नाही',
+    noResultsSub: 'ब्रँडचं नाव किंवा मराठी शब्द वापरून पहा.',
+    offMrp: '{s} सूट',
+    outOfStock: 'संपलं आहे',
+    lastFew: 'फक्त {n} शिल्लक',
+    add: 'घाला',
+
+    cartTitle: 'तुमची बास्केट',
+    cartEmpty: 'तुमची बास्केट रिकामी आहे',
+    cartEmptySub: 'दुकानातून काहीतरी घाला, ते इथे दिसेल.',
+    goShop: 'खरेदी सुरू करा',
+    nItems: '{n} वस्तू', oneItem: '1 वस्तू',
+    itemsTotal: 'वस्तू',
+    deliveryFee: 'डिलिव्हरी',
+    feeFree: 'मोफत',
+    youSave: 'एमआरपीवर {s} वाचले',
+    toPay: 'द्यायचे',
+    minOrderShort: 'किमान ऑर्डर {s} — आणखी {d} घाला',
+    chooseRun: 'डिलिव्हरीची वेळ निवडा',
+
+    slotTitle: 'कधी यायला हवं?',
+    slotSub: 'टेम्पो ठरलेली फेरी मारतो. तुम्हाला सोयीची वेळ निवडा.',
+    today: 'आज', tomorrow: 'उद्या',
+    closesIn: '{s} मध्ये बंद',
+    closedAt: '{s} ला बंद झाली',
+    runFull: 'भरली',
+    noneToday: 'आजची शेवटची फेरी गेली.',
+    noneTodaySub: 'पुढची डिलिव्हरी उद्या, {s}.',
+    continue: 'पुढे',
+
+    addrTitle: 'कुठे पाठवायचं?',
+    fName: 'तुमचं नाव', fPhone: 'फोन नंबर',
+    fArea: 'भाग किंवा रस्ता', fFlat: 'फ्लॅट / मजला', fLandmark: 'खूण',
+    phArea: 'तुमचा भाग निवडा',
+    phFlat: 'बी-३०४, शांती अपार्टमेंट',
+    phLandmark: 'चामुंडा सर्कलसमोर',
+    payHead: 'यूपीआयने पैसे भरा',
+    paySub: 'आत्ता भरा किंवा डिलिव्हरीच्या वेळी — तुम्हाला सोयीचे असेल तेव्हा.',
+    placeOrder: 'ऑर्डर द्या',
+    errName: 'कृपया तुमचं नाव सांगा',
+    errPhone: 'दहा अंकी मोबाइल नंबर हवा',
+    errArea: 'तुमचा भाग निवडा',
+    errFlat: 'कोणता फ्लॅट किंवा मजला?',
+    errRunClosed: '{s} ची फेरी आत्ताच बंद झाली. पुढची {d} ला निघते.',
+    errRunFull: 'ती फेरी भरली आहे. दुसरी निवडा.',
+
+    doneTitle: 'ऑर्डर नोंदवली',
+    doneCode: 'तुमची ऑर्डर {s} आहे',
+    doneBody: 'टेम्पो {s} ला निघतो. आम्ही तुमच्या गल्लीत सुमारे {d} पोहोचू.',
+    trackIt: 'ऑर्डर पाहा', keepShopping: 'खरेदी सुरू ठेवा',
+    trackTitle: 'ऑर्डर {s}',
+    ordersTitle: 'तुमच्या ऑर्डर',
+    noOrders: 'अजून ऑर्डर नाही',
+    noOrdersSub: 'तुमच्या जुन्या ऑर्डर इथे दिसतील.',
+    reorder: 'पुन्हा मागवा',
+    callShop: 'दुकानाला फोन करा',
+    notLeftYet: 'अजून दुकानातून निघाला नाही',
+    runningLate: 'उशीर होतोय — कृपया फोन करा',
+
+    stPlaced: 'नोंदवली', stPacked: 'बांधली', stOut: 'टेम्पोत',
+    stDelivered: 'पोहोचवली', stFailed: 'कोणी नव्हतं', stCancelled: 'रद्द',
+
+    runMorning: 'सकाळ', runMidday: 'दुपार',
+    runEvening: 'संध्याकाळ',
+
+    rsOpen: 'ऑर्डर घेत आहोत', rsCutoff: 'बंद · आता बांधा', rsOut: 'डिलिव्हरीला गेलं',
+    rsDone: 'पोहोचवलं', rsCancelled: 'रद्द', rsNone: 'ऑर्डर नाहीत',
+
+    boardTitle: 'आजच्या फेऱ्या',
+    boardTomorrow: 'उद्या',
+    nOrders: '{n} ऑर्डर', oneOrder: '1 ऑर्डर',
+    nItemsShort: '{n} वस्तू',
+    cashExpected: '{s} घ्यायचे',
+    closeRun: 'ऑर्डर बंद करून बांधायला घ्या',
+    dispatch: 'डिलिव्हरीला पाठवा',
+    finishRun: 'सर्व पोहोचवलं म्हणून नोंदवा',
+    runTitle: '{s} ची फेरी',
+    openPickList: 'पिकिंग यादी',
+    openLoadList: 'काय भरायचं',
+    noOrdersRun: 'या फेरीत अजून ऑर्डर नाही',
+    pickTitle: '{s} काढा',
+    pickedN: '{d} पैकी {n} काढले',
+    markPacked: 'सर्व काढलं — बांधली म्हणून नोंदवा',
+    loadTitle: 'टेम्पो भरा',
+    loadSub: '{s} च्या फेरीतलं सगळं, एकत्र.',
+    loadTotal: '{d} ऑर्डरमधल्या {n} वस्तू',
+    runOff: 'चालू नाही',
+    warnNotPacked: '{n} अजून बांधल्या नव्हत्या — तरीही गेल्या',
+
+    openMaps: 'नकाशात उघडा',
+
+    setTitle: 'सेटिंग्ज',
+    setLang: 'भाषा',
+    setRole: 'तुम्ही हे वापरताय',
+    setAbout: 'माहिती',
+    resetTitle: 'नव्याने सुरू करा',
+    resetSub: 'या डिव्हाइसवरील सर्व ऑर्डर, बास्केट आणि जतन केलेला पत्ता पुसला जाईल. हे पूर्ववत होणार नाही.',
+    resetBtn: 'सर्व डेटा पुसा',
+    resetConfirm: 'पुसण्यासाठी पुन्हा टॅप करा',
+    aboutBody: 'शेजारचं दुकान, दिवसातून तीन-चार वेळा ठरलेल्या फेरीवर डिलिव्हरी करतं. दहा मिनिटं नाही — पण स्वस्त, आणि कधी येणार हे नक्की माहीत.',
+    useLoc: 'à¤®à¤¾à¤à¤ à¤²à¥à¤à¥à¤¶à¤¨ à¤µà¤¾à¤ªà¤°à¤¾',
+    locBlocked: 'à¤¯à¤¾ à¤ªà¥à¤°à¤¿à¤µà¥à¤¹à¥à¤¯à¥à¤®à¤§à¥à¤¯à¥ à¤²à¥à¤à¥à¤¶à¤¨ à¤®à¤¿à¤³à¤¤ à¤¨à¤¾à¤¹à¥. à¤âà¥à¤ª à¤¸à¥à¤µà¤¤à¤à¤à¥à¤¯à¤¾ à¤µà¥à¤¬ à¤ªà¤¤à¥à¤¤à¥à¤¯à¤¾à¤µà¤° à¤à¤à¤¡à¤²à¤ à¤à¥ à¤à¤¾à¤²à¥à¤².',
+    locNoSupport: 'à¤¯à¤¾ à¤¬à¥à¤°à¤¾à¤à¤à¤°à¤²à¤¾ à¤²à¥à¤à¥à¤¶à¤¨ à¤®à¤¿à¤³à¤¤ à¤¨à¤¾à¤¹à¥. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    locStatus: 'à¤²à¥à¤à¥à¤¶à¤¨',
+    locOn: 'à¤¯à¤¾ à¤¡à¤¿à¤µà¥à¤¹à¤¾à¤à¤¸à¤µà¤° à¤à¤ªà¤²à¤¬à¥à¤§',
+    locOff: 'à¤à¤¥à¥ à¤à¤ªà¤²à¤¬à¥à¤§ à¤¨à¤¾à¤¹à¥ (à¤ªà¥à¤°à¤¿à¤µà¥à¤¹à¥à¤¯à¥)',
+    useLocBusy: 'à¤¶à¥à¤§à¤¤ à¤à¤¹à¥à¤¤...',
+    useLocHint: 'à¤°à¤¸à¥à¤¤à¤¾ à¤à¤ªà¥à¤à¤ª à¤­à¤°à¥à¤². à¤«à¥à¤²à¥à¤ à¤à¤£à¤¿ à¤¬à¤¿à¤²à¥à¤¡à¤¿à¤à¤ à¤¤à¥à¤®à¥à¤¹à¥ à¤²à¤¿à¤¹à¤¾.',
+    locFound: 'à¤¸à¤¾à¤ªà¤¡à¤²à¤: {s}',
+    locDenied: 'à¤²à¥à¤à¥à¤¶à¤¨à¤à¥ à¤ªà¤°à¤µà¤¾à¤¨à¤à¥ à¤®à¤¿à¤³à¤¾à¤²à¥ à¤¨à¤¾à¤¹à¥. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    locUnavailable: 'à¤«à¥à¤¨à¤²à¤¾ à¤²à¥à¤à¥à¤¶à¤¨ à¤®à¤¿à¤³à¤¾à¤²à¤ à¤¨à¤¾à¤¹à¥. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    locTimeout: 'à¤à¥à¤ª à¤µà¥à¤³ à¤²à¤¾à¤à¤²à¤¾. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    locLookup: 'à¤¨à¤à¤¾à¤¶à¤¾ à¤¸à¥à¤µà¥à¤¶à¥ à¤¸à¤à¤ªà¤°à¥à¤ à¤à¤¾à¤²à¤¾ à¤¨à¤¾à¤¹à¥. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    locNothing: 'à¤¤à¤¿à¤¥à¥ à¤°à¤¸à¥à¤¤à¤¾ à¤¸à¤¾à¤ªà¤¡à¤²à¤¾ à¤¨à¤¾à¤¹à¥. à¤ªà¤¤à¥à¤¤à¤¾ à¤²à¤¿à¤¹à¤¾.',
+    photoCredit: 'उत्पादनांचे फोटो Open Food Facts समुदायाकडून, CC-BY-SA अंतर्गत वापरले आहेत.',
+
+    unitG: 'ग्रॅम', unitKg: 'किलो', unitMl: 'मिली', unitL: 'लिटर',
+    unitPc: 'नग', unitPkt: 'पाकीट', unitDozen: 'डझन',
+    unitHr: 'तास', unitMin: 'मिनिटं',
+
+    freeDelivery: 'सर्व ऑर्डरवर मोफत डिलिव्हरी',
+    freeAlways: 'नेहमी मोफत',
+
+    runAfternoon: 'दुपार',
+    nextSlotHead: 'पुढची डिलिव्हरी {s}',
+    arriveBetween: '{s} दरम्यान पोहोचेल',
+    orderByTime: '{s} पर्यंत ऑर्डर करा',
+    anywhere: 'तुम्ही कुठेही असाल तिथे आम्ही पोहोचवतो',
+
+    optionalTag: '(ऐच्छिक)',
+    fSociety: 'इमारत किंवा सोसायटी',
+    phSociety: 'सागर अपार्टमेंट',
+    phFlat2: 'बी-३०४, तिसरा मजला',
+    phArea2: 'शिंपोली, मार्केटजवळ',
+    useLocation: 'माझे सध्याचे लोकेशन वापरा',
+    locating: 'शोधत आहोत…',
+    locationOk: 'लोकेशन जतन झाले — ड्रायव्हरला दिसेल',
+    locationFail: 'लोकेशन मिळाले नाही. पत्ता टाइप करा.',
+    locationWhy: 'ड्रायव्हरला शोधायला मदत होते. इतर कोणालाही दिले जात नाही.',
+    errSociety: 'कोणती इमारत किंवा सोसायटी?',
+    errArea2: 'कोणता भाग किंवा रस्ता?',
+
+    doneItems: 'तुम्ही काय मागवलं',
+
+    payNow: 'यूपीआयने {s} भरा',
+    payScan: 'किंवा कोणत्याही यूपीआय ॲपने स्कॅन करा',
+    payMark: 'मी पैसे भरले',
+    payDone: 'पैसे भरले',
+    payDoneSub: 'धन्यवाद — डिलिव्हरीच्या वेळी काही द्यायचे नाही.',
+    payUnpaid: 'अजून भरले नाहीत',
+    payAnytime: 'आत्ता भरा किंवा डिलिव्हरीच्या वेळी — तुम्हाला सोयीचे असेल तेव्हा.',
+    upiNotSet: 'यूपीआय अजून सेट केलेले नाही. कृपया ड्रायव्हरला पैसे द्या.',
+    payDemo: 'नमुना क्यूआर — हा डेमो आयडी आहे, पैसे जाणार नाहीत',
+    payHow: 'पैसे कसे द्यायचे?',
+    payByUpi: 'यूपीआयने भरा',
+    payCod: 'डिलिव्हरीच्या वेळी रोख',
+    payCodChosen: 'डिलिव्हरीच्या वेळी रोख देणार',
+    payCodSub: 'कृपया डिलिव्हरी करणाऱ्याला देण्यासाठी रक्कम तयार ठेवा.',
+    payScanHead: 'स्कॅन करून भरा',
+    payProof: 'पैसे भरल्यावर कृपया पेमेंटचा स्क्रीनशॉट डिलिव्हरी करणाऱ्याला दाखवा.',
+    paySwitchUpi: 'त्याऐवजी यूपीआयने भरा',
+    paySwitchCod: 'त्याऐवजी रोख देणार',
+    couponLabel: 'कूपन कोड',
+    couponPlace: 'कोड टाका',
+    couponApply: 'लावा',
+    couponOn: '{s} लागू — {n}% सूट',
+    couponOff: 'काढा',
+    couponBad: 'हा कोड चालत नाही',
+    couponSaved: 'कूपन {s}',
+    upiNoQr: 'क्यूआर दाखवता आला नाही. वरचे बटण वापरा.',
+    markPaid: 'भरले म्हणून नोंदवा', markUnpaid: 'भरले नाही म्हणून नोंदवा',
+    paidAlready: '{s} आधीच भरले',
+
+  },
+
+  // ===================================================================
+  //  हिंदी
+  // ===================================================================
+  hi: {
+    brand: 'किराना', brandsub: 'बोरीवली पश्चिम',
+    rolecust: 'दुकान', roleshop: 'स्टोर',
+    back: 'पीछे', close: 'बंद', save: 'सेव करें', cancel: 'रद्द करें',
+    retry: 'फिर कोशिश करें', loading: 'लोड हो रहा है…',
+
+    tabShop: 'दुकान', tabCart: 'टोकरी', tabOrders: 'ऑर्डर',
+    tabRuns: 'फेरे', tabLoad: 'लोड', tabStock: 'सामान',
+
+    searchph: 'आटा, साबुन, पारले-जी खोजें…',
+    catsHead: 'क्या चाहिए?',
+    buyAgain: 'फिर से मंगाएँ',
+    goesWith: 'आपके ऑर्डर के साथ यह अच्छा लगेगा',
+    addedOne: 'डाल दिया',
+    buyAgainSub: 'आपके पिछले ऑर्डर से',
+    allItems: 'सब कुछ',
+    noResults: '“{s}” के लिए कुछ नहीं मिला',
+    noResultsSub: 'ब्रांड का नाम या हिंदी शब्द आज़माएँ.',
+    offMrp: '{s} छूट',
+    outOfStock: 'खत्म हो गया',
+    lastFew: 'सिर्फ़ {n} बचे',
+    add: 'डालें',
+
+    cartTitle: 'आपकी टोकरी',
+    cartEmpty: 'आपकी टोकरी खाली है',
+    cartEmptySub: 'दुकान से कुछ डालिए, वह यहाँ दिखेगा.',
+    goShop: 'खरीदारी शुरू करें',
+    nItems: '{n} सामान', oneItem: '1 सामान',
+    itemsTotal: 'सामान',
+    deliveryFee: 'डिलीवरी',
+    feeFree: 'मुफ़्त',
+    youSave: 'एमआरपी पर {s} की बचत',
+    toPay: 'देना है',
+    minOrderShort: 'कम से कम ऑर्डर {s} — {d} और डालें',
+    chooseRun: 'डिलीवरी का समय चुनें',
+
+    slotTitle: 'कब आना चाहिए?',
+    slotSub: 'टेम्पो तय फेरा लगाता है. जो समय ठीक लगे वह चुनें.',
+    today: 'आज', tomorrow: 'कल',
+    closesIn: '{s} में बंद',
+    closedAt: '{s} पर बंद हुआ',
+    runFull: 'भर गया',
+    noneToday: 'आज का आखिरी फेरा जा चुका है.',
+    noneTodaySub: 'अगली डिलीवरी कल, {s}.',
+    continue: 'आगे',
+
+    addrTitle: 'कहाँ भेजना है?',
+    fName: 'आपका नाम', fPhone: 'फोन नंबर',
+    fArea: 'इलाका या रास्ता', fFlat: 'फ्लैट / मंज़िल', fLandmark: 'निशानी',
+    phArea: 'अपना इलाका चुनें',
+    phFlat: 'बी-304, शांति अपार्टमेंट',
+    phLandmark: 'चामुंडा सर्कल के सामने',
+    payHead: 'यूपीआई से भुगतान करें',
+    paySub: 'अभी भरें या डिलीवरी के समय — जो आपको ठीक लगे.',
+    placeOrder: 'ऑर्डर करें',
+    errName: 'कृपया अपना नाम बताएँ',
+    errPhone: 'दस अंकों का मोबाइल नंबर चाहिए',
+    errArea: 'अपना इलाका चुनें',
+    errFlat: 'कौन सा फ्लैट या मंज़िल?',
+    errRunClosed: '{s} का फेरा अभी बंद हुआ. अगला {d} पर निकलता है.',
+    errRunFull: 'वह फेरा भर गया है. दूसरा चुनें.',
+
+    doneTitle: 'ऑर्डर हो गया',
+    doneCode: 'आपका ऑर्डर {s} है',
+    doneBody: 'टेम्पो {s} पर निकलता है. हम आपकी गली में लगभग {d} पहुँचेंगे.',
+    trackIt: 'ऑर्डर देखें', keepShopping: 'खरीदारी जारी रखें',
+    trackTitle: 'ऑर्डर {s}',
+    ordersTitle: 'आपके ऑर्डर',
+    noOrders: 'अभी कोई ऑर्डर नहीं',
+    noOrdersSub: 'आपके पुराने ऑर्डर यहाँ दिखेंगे.',
+    reorder: 'फिर से मंगाएँ',
+    callShop: 'दुकान को फोन करें',
+    notLeftYet: 'अभी दुकान से निकला नहीं',
+    runningLate: 'देर हो रही है — कृपया फोन करें',
+
+    stPlaced: 'हो गया', stPacked: 'बँध गया', stOut: 'टेम्पो में',
+    stDelivered: 'पहुँच गया', stFailed: 'कोई नहीं मिला', stCancelled: 'रद्द',
+
+    runMorning: 'सुबह', runMidday: 'दोपहर',
+    runEvening: 'शाम',
+
+    rsOpen: 'ऑर्डर ले रहे हैं', rsCutoff: 'बंद · अब बाँधें', rsOut: 'डिलीवरी पर गया',
+    rsDone: 'पहुँच गया', rsCancelled: 'रद्द', rsNone: 'कोई ऑर्डर नहीं',
+
+    boardTitle: 'आज के फेरे',
+    boardTomorrow: 'कल',
+    nOrders: '{n} ऑर्डर', oneOrder: '1 ऑर्डर',
+    nItemsShort: '{n} सामान',
+    cashExpected: '{s} लेने हैं',
+    closeRun: 'ऑर्डर बंद करके बाँधना शुरू करें',
+    dispatch: 'डिलीवरी पर भेजें',
+    finishRun: 'सब पहुँच गया दर्ज करें',
+    runTitle: '{s} का फेरा',
+    openPickList: 'पिकिंग सूची',
+    openLoadList: 'क्या भरना है',
+    noOrdersRun: 'इस फेरे में अभी कोई ऑर्डर नहीं',
+    pickTitle: '{s} निकालें',
+    pickedN: '{d} में से {n} निकाले',
+    markPacked: 'सब निकल गया — बँधा हुआ दर्ज करें',
+    loadTitle: 'टेम्पो भरें',
+    loadSub: '{s} के फेरे का सब कुछ, जोड़कर.',
+    loadTotal: '{d} ऑर्डर का {n} सामान',
+    runOff: 'नहीं चल रहा',
+    warnNotPacked: '{n} अभी बँधे नहीं थे — फिर भी चले गए',
+
+    openMaps: 'मैप में खोलें',
+
+    setTitle: 'सेटिंग्स',
+    setLang: 'भाषा',
+    setRole: 'आप इसे इस तरह चला रहे हैं',
+    setAbout: 'जानकारी',
+    resetTitle: 'नए सिरे से शुरू करें',
+    resetSub: 'इस डिवाइस के सभी ऑर्डर, टोकरी और सेव किया पता मिट जाएगा. यह वापस नहीं होगा.',
+    resetBtn: 'सारा डेटा मिटाएँ',
+    resetConfirm: 'मिटाने के लिए फिर टैप करें',
+    aboutBody: 'पड़ोस की दुकान, दिन में तीन-चार बार तय फेरे पर डिलीवरी करती है. दस मिनट नहीं — पर सस्ता, और आपको पता है कब आएगा.',
+    useLoc: 'à¤®à¥à¤°à¥ à¤²à¥à¤à¥à¤¶à¤¨ à¤à¤¸à¥à¤¤à¥à¤®à¤¾à¤² à¤à¤°à¥à¤',
+    locBlocked: 'à¤à¤¸ à¤ªà¥à¤°à¤¿à¤µà¥à¤¯à¥ à¤®à¥à¤ à¤²à¥à¤à¥à¤¶à¤¨ à¤¨à¤¹à¥à¤ à¤®à¤¿à¤²à¤¤à¥. à¤à¤ª à¤à¤ªà¤¨à¥ à¤µà¥à¤¬ à¤ªà¤¤à¥ à¤ªà¤° à¤à¥à¤²à¤¨à¥ à¤ªà¤° à¤à¤²à¥à¤à¤¾.',
+    locNoSupport: 'à¤¯à¤¹ à¤¬à¥à¤°à¤¾à¤à¤à¤¼à¤° à¤²à¥à¤à¥à¤¶à¤¨ à¤¨à¤¹à¥à¤ à¤à¥à¤ à¤¸à¤à¤¤à¤¾. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    locStatus: 'à¤²à¥à¤à¥à¤¶à¤¨',
+    locOn: 'à¤à¤¸ à¤¡à¤¿à¤µà¤¾à¤à¤¸ à¤ªà¤° à¤à¤ªà¤²à¤¬à¥à¤§',
+    locOff: 'à¤¯à¤¹à¤¾à¤ à¤à¤ªà¤²à¤¬à¥à¤§ à¤¨à¤¹à¥à¤ (à¤ªà¥à¤°à¤¿à¤µà¥à¤¯à¥)',
+    useLocBusy: 'à¤¢à¥à¤à¤¢ à¤°à¤¹à¥ à¤¹à¥à¤...',
+    useLocHint: 'à¤¸à¤¡à¤¼à¤ à¤à¤ªà¤¨à¥ à¤à¤ª à¤­à¤° à¤à¤¾à¤à¤à¥. à¤«à¥à¤²à¥à¤ à¤à¤° à¤¬à¤¿à¤²à¥à¤¡à¤¿à¤à¤ à¤à¤ª à¤²à¤¿à¤à¥à¤.',
+    locFound: 'à¤®à¤¿à¤²à¤¾: {s}',
+    locDenied: 'à¤²à¥à¤à¥à¤¶à¤¨ à¤à¥ à¤à¤¨à¥à¤®à¤¤à¤¿ à¤¨à¤¹à¥à¤ à¤®à¤¿à¤²à¥. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    locUnavailable: 'à¤«à¥à¤¨ à¤à¥ à¤²à¥à¤à¥à¤¶à¤¨ à¤¨à¤¹à¥à¤ à¤®à¤¿à¤²à¥. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    locTimeout: 'à¤¬à¤¹à¥à¤¤ à¤¸à¤®à¤¯ à¤²à¤ à¤à¤¯à¤¾. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    locLookup: 'à¤¨à¤à¥à¤¶à¤¾ à¤¸à¥à¤µà¤¾ à¤¸à¥ à¤¸à¤à¤ªà¤°à¥à¤ à¤¨à¤¹à¥à¤ à¤¹à¥à¤. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    locNothing: 'à¤µà¤¹à¤¾à¤ à¤à¥à¤ à¤¸à¤¡à¤¼à¤ à¤¨à¤¹à¥à¤ à¤®à¤¿à¤²à¥. à¤ªà¤¤à¤¾ à¤²à¤¿à¤à¥à¤.',
+    photoCredit: 'उत्पादों की तस्वीरें Open Food Facts समुदाय से, CC-BY-SA के तहत इस्तेमाल की गई हैं.',
+
+    unitG: 'ग्राम', unitKg: 'किलो', unitMl: 'मिली', unitL: 'लीटर',
+    unitPc: 'नग', unitPkt: 'पैकेट', unitDozen: 'दर्जन',
+    unitHr: 'घंटे', unitMin: 'मिनट',
+
+    freeDelivery: 'सभी ऑर्डर पर मुफ़्त डिलीवरी',
+    freeAlways: 'हमेशा मुफ़्त',
+
+    runAfternoon: 'दोपहर',
+    nextSlotHead: 'अगली डिलीवरी {s}',
+    arriveBetween: '{s} के बीच पहुँचेगा',
+    orderByTime: '{s} तक ऑर्डर करें',
+    anywhere: 'आप जहाँ भी हों, हम पहुँचाते हैं',
+
+    optionalTag: '(वैकल्पिक)',
+    fSociety: 'इमारत या सोसायटी',
+    phSociety: 'सागर अपार्टमेंट',
+    phFlat2: 'बी-304, तीसरी मंज़िल',
+    phArea2: 'शिंपोली, मार्केट के पास',
+    useLocation: 'मेरी मौजूदा लोकेशन लें',
+    locating: 'ढूँढ रहे हैं…',
+    locationOk: 'लोकेशन सेव हो गई — ड्राइवर को दिखेगी',
+    locationFail: 'लोकेशन नहीं मिली. पता टाइप करें.',
+    locationWhy: 'ड्राइवर को ढूँढने में मदद मिलती है. किसी और को नहीं दी जाती.',
+    errSociety: 'कौन सी इमारत या सोसायटी?',
+    errArea2: 'कौन सा इलाका या रास्ता?',
+
+    doneItems: 'आपने क्या मंगाया',
+
+    payNow: 'यूपीआई से {s} भरें',
+    payScan: 'या किसी भी यूपीआई ऐप से स्कैन करें',
+    payMark: 'मैंने भुगतान कर दिया',
+    payDone: 'भुगतान हो गया',
+    payDoneSub: 'धन्यवाद — डिलीवरी पर कुछ नहीं देना है.',
+    payUnpaid: 'अभी भुगतान नहीं हुआ',
+    payAnytime: 'अभी भरें या डिलीवरी के समय — जो आपको ठीक लगे.',
+    upiNotSet: 'यूपीआई अभी सेट नहीं है. कृपया ड्राइवर को भुगतान करें.',
+    payDemo: 'नमूना क्यूआर — यह डेमो आईडी है, पैसे नहीं जाएँगे',
+    payHow: 'भुगतान कैसे करेंगे?',
+    payByUpi: 'यूपीआई से भरें',
+    payCod: 'डिलीवरी पर नकद',
+    payCodChosen: 'डिलीवरी पर नकद देंगे',
+    payCodSub: 'कृपया डिलीवरी वाले को देने के लिए रकम तैयार रखें.',
+    payScanHead: 'स्कैन करके भुगतान करें',
+    payProof: 'भुगतान के बाद कृपया पेमेंट का स्क्रीनशॉट डिलीवरी वाले को दिखाएँ.',
+    paySwitchUpi: 'इसके बजाय यूपीआई से भरें',
+    paySwitchCod: 'इसके बजाय नकद देंगे',
+    couponLabel: 'कूपन कोड',
+    couponPlace: 'कोड डालें',
+    couponApply: 'लगाएँ',
+    couponOn: '{s} लागू — {n}% छूट',
+    couponOff: 'हटाएँ',
+    couponBad: 'यह कोड नहीं चलता',
+    couponSaved: 'कूपन {s}',
+    upiNoQr: 'क्यूआर नहीं बन सका. ऊपर का बटन इस्तेमाल करें.',
+    markPaid: 'भुगतान दर्ज करें', markUnpaid: 'भुगतान हटाएँ',
+    paidAlready: '{s} पहले ही भर दिए',
+
+  },
+};
+
+let lang = 'en';
+
+export const getLang = () => lang;
+export const t = () => T[lang] || T.en;
+
+export function setLang(code){
+  if (!T[code]) return;
+  lang = code;
+  try { localStorage.setItem('kirana.lang', code); } catch {}
+  document.documentElement.lang = code;
+}
+
+export function bootLang(){
+  let saved = null;
+  try { saved = localStorage.getItem('kirana.lang'); } catch {}
+  setLang(T[saved] ? saved : 'en');
+}
+
+// Fill a {n} / {s} / {d} hole. The value is dropped in AFTER escaping
+// elsewhere, so this never sees untrusted input -- these strings are
+// ours, and the values are numbers and times we computed.
+export function f(str, vals){
+  let out = String(str ?? '');
+  for (const k of Object.keys(vals || {})) out = out.split('{' + k + '}').join(vals[k]);
+  return out;
+}
+
+// Element id -> key, for the handful of static labels in index.html.
+// Everything else is drawn by a render function and reads t() directly.
+export const TXT = {
+  'l-rolecust': 'rolecust',
+  'l-roleshop': 'roleshop',
+};

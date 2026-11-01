@@ -1,0 +1,8 @@
+# Generated: `perl tools/pricelist.pl > prices.txt` rebuilds it from the
+# catalogue, so the edited copy is a working file, not a source of truth.
+prices.txt
+
+# Supabase credentials, if and when the backend swap happens.
+app/secrets.js
+
+*.log

@@ -1,0 +1,710 @@
+{
+   "images" : {
+      "p-agarbatti120" : {
+         "brands" : "Cycle",
+         "bytes" : 31060,
+         "code" : "8901751003109",
+         "matched" : "All in 1 Agarbathi",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-amulbutter100" : {
+         "brands" : "Amul",
+         "bytes" : 24976,
+         "code" : "8901262010016",
+         "matched" : "Amul Pasteurized Butter",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-amulcheese200" : {
+         "brands" : "Amul",
+         "bytes" : 24482,
+         "code" : "8901262020015",
+         "matched" : "Cheese slices",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-amuldahi400" : {
+         "brands" : "Amul",
+         "bytes" : 30845,
+         "code" : "8901262200677",
+         "matched" : "amul masti dahi",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-amulgold500" : {
+         "brands" : "Amul",
+         "bytes" : 39590,
+         "code" : "8901262260107",
+         "matched" : "Amul Gold Milky Milk",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-amultaaza500" : {
+         "brands" : "Amul",
+         "bytes" : 21705,
+         "code" : "8901262261234",
+         "matched" : "Taaza Pasteurised Homogenised Toned Milk",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-ariel1" : {
+         "brands" : "Ariel",
+         "bytes" : 30214,
+         "code" : "8700216287258",
+         "matched" : "Detergent",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-atta-aash5" : {
+         "brands" : "Aashirvaad, ITC",
+         "bytes" : 26436,
+         "code" : "8901725121129",
+         "matched" : "Shudh Chakki Atta",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-atta-aashmg5" : {
+         "brands" : "Aashirvaad",
+         "bytes" : 25490,
+         "code" : "8901725006679",
+         "matched" : "Atta with Multigrains kg",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-balaji135" : {
+         "brands" : "Balaji Wafers",
+         "bytes" : 32369,
+         "code" : "8906010500016",
+         "matched" : "Simply Salted",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-banana12" : {
+         "bytes" : 50411,
+         "matched" : "File:Banana Bunch Top Virus.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Banana_Bunch_Top_Virus.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-bhujia200" : {
+         "brands" : "Haldiram's",
+         "bytes" : 37079,
+         "code" : "8904004400731",
+         "matched" : "Aloo Bhujia Sev",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bingo66" : {
+         "brands" : "Bingo, ITC Limited",
+         "bytes" : 29554,
+         "code" : "8901725013684",
+         "matched" : "Bingo! Mad Angles Achaari Masti",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bisleri1" : {
+         "brands" : "Bisleri",
+         "bytes" : 13019,
+         "code" : "8906017290064",
+         "matched" : "Bisleri Water Bottle",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bisleri2" : {
+         "brands" : "Bisleri",
+         "bytes" : 13019,
+         "code" : "8906017290064",
+         "matched" : "Bisleri Water Bottle",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bournville80" : {
+         "brands" : "Cadbury",
+         "bytes" : 30674,
+         "code" : "5034660021445",
+         "matched" : "Bournville Cocoa",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bournvita500" : {
+         "brands" : "Cadbury",
+         "bytes" : 35153,
+         "code" : "7622202386497",
+         "matched" : "BournVita",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bread-brown" : {
+         "brands" : "Britannia",
+         "bytes" : 26125,
+         "code" : "8901063338593",
+         "matched" : "100% Whole Wheat Brown Bread",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bread-ww" : {
+         "brands" : "Britannia",
+         "bytes" : 26125,
+         "code" : "8901063338593",
+         "matched" : "100% Whole Wheat Brown Bread",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-bru100" : {
+         "brands" : "Bru",
+         "bytes" : 33795,
+         "code" : "8901030535895",
+         "matched" : "Bru Instant Coffee",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-candles6" : {
+         "bytes" : 14926,
+         "matched" : "File:Candle light projected through a glass orb.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Candle_light_projected_through_a_glass_orb.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-chana-mdh100" : {
+         "brands" : null,
+         "bytes" : 17148,
+         "code" : "8902167000812",
+         "matched" : "CHANA MASALA mdh",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-chilli250" : {
+         "bytes" : 116643,
+         "matched" : "File:VitorJubini MercadoDaVilaRubim Vitoria ES (39182859020) (square crop).jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:VitorJubini_MercadoDaVilaRubim_Vitoria_ES_(39182859020)_(square_crop).jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-clinicplus175" : {
+         "brands" : "Clinic Plus, hul",
+         "bytes" : 14869,
+         "code" : "8901030937194",
+         "matched" : "Health Shampoo Strong & Long",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-closeup150" : {
+         "brands" : "closeup",
+         "bytes" : 28314,
+         "code" : "4800888147288",
+         "matched" : "close up tootpaste (r) red hot 20g",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-colgate200" : {
+         "brands" : "Colgate",
+         "bytes" : 47549,
+         "code" : "8850006962503",
+         "matched" : "Colgate strong theeth",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-comfort860" : {
+         "brands" : "Comfort",
+         "bytes" : 20930,
+         "code" : "8901030803642",
+         "matched" : "Fabric Conditioner",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-cornflakes475" : {
+         "brands" : "KELLOGG S PRODUITS ALIMENT SAS",
+         "bytes" : 29967,
+         "code" : "3159470000120",
+         "matched" : "CORN FLAKES",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-curryleaf1" : {
+         "bytes" : 70764,
+         "matched" : "File:20260317 Murraya koenigii 01.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:20260317_Murraya_koenigii_01.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-dabur275" : {
+         "brands" : "dabur",
+         "bytes" : 20512,
+         "code" : "8901207050466",
+         "matched" : "dabur amla hair oil",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-dairymilk50" : {
+         "brands" : "Cadbury, Dairy Milk",
+         "bytes" : 15869,
+         "code" : "7622202334009",
+         "matched" : "dairy milk",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-dal-chana1" : {
+         "brands" : "Tata Sampann",
+         "bytes" : 29681,
+         "code" : "8904043926643",
+         "matched" : "Unpolished Chana Dal",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-dal-moong1" : {
+         "brands" : "TATA sampann",
+         "bytes" : 22467,
+         "code" : "8904043926315",
+         "matched" : "Unpolished Moong Dal",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-dal-toor1" : {
+         "brands" : "Tata Sampann",
+         "bytes" : 30439,
+         "code" : "8904043926216",
+         "matched" : "Unpolished Toor Dal",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-darkfantasy" : {
+         "brands" : "Sunfeast, Sunfeast is sold by ITC Limited",
+         "bytes" : 14807,
+         "code" : "8901725015275",
+         "matched" : "Dark Fantasy Choco fills",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-dettol4" : {
+         "brands" : "Dettol",
+         "bytes" : 15656,
+         "code" : "50158980",
+         "matched" : "Dettol antibacterial soap Original",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-dove3" : {
+         "brands" : "Dove",
+         "bytes" : 19238,
+         "code" : "8720182264664",
+         "matched" : "Beauty cream bar",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-eggs12" : {
+         "bytes" : 64760,
+         "matched" : "File:Egg cartons with chicken eggs 03.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Egg_cartons_with_chicken_eggs_03.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-frooti600" : {
+         "brands" : null,
+         "bytes" : 23529,
+         "code" : "8902579001605",
+         "matched" : "Frooti mango drink",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-garlic250" : {
+         "bytes" : 42134,
+         "matched" : "File:Garlic bulbs and cloves.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Garlic_bulbs_and_cloves.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-ghee-amul500" : {
+         "brands" : "Amul",
+         "bytes" : 23036,
+         "code" : "8901262030700",
+         "matched" : "Amul pure ghee 1 ltr",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-ginger250" : {
+         "bytes" : 42990,
+         "matched" : "File:Ginger Root (179871501).jpeg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Ginger_Root_(179871501).jpeg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-gm-everest100" : {
+         "brands" : "Everest",
+         "bytes" : 14964,
+         "code" : "8901786100507",
+         "matched" : "EVEREST Garam Masala",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-goodday100" : {
+         "brands" : "Britannia",
+         "bytes" : 18196,
+         "code" : "8901063093522",
+         "matched" : "Good Day - Cashew Cookies",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-gowardhan500" : {
+         "brands" : "Gowardhan",
+         "bytes" : 31050,
+         "code" : "8906001021087",
+         "matched" : "Cow Milk - Gold",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-haldi-ev200" : {
+         "brands" : "EVEREST",
+         "bytes" : 12418,
+         "code" : "8901786425006",
+         "matched" : "Everest Turmeric",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-harpic1" : {
+         "brands" : "",
+         "bytes" : 19519,
+         "code" : "3059941006388",
+         "matched" : "Harpic power plus Max 10",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-hns180" : {
+         "brands" : "Head & Shoulders",
+         "bytes" : 15288,
+         "code" : "4084500015012",
+         "matched" : "2 in 1 Anti Dandruff Shampoo & Conditioner",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-horlicks500" : {
+         "brands" : "Horlicks",
+         "bytes" : 23336,
+         "code" : "8909106052185",
+         "matched" : "Classic Malt",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-icecream700" : {
+         "brands" : "Amul",
+         "bytes" : 27913,
+         "code" : "8901262173490",
+         "matched" : "Vanilla ice cream",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-jnjpowder400" : {
+         "brands" : "Johnson’s",
+         "bytes" : 18069,
+         "code" : "3574661728131",
+         "matched" : "Baby powder",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-jnjsoap100" : {
+         "brands" : "Johnson’s",
+         "bytes" : 18069,
+         "code" : "3574661728131",
+         "matched" : "Baby powder",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-ketchup-kissan" : {
+         "brands" : "Kissan",
+         "bytes" : 23656,
+         "code" : "8901030902932",
+         "matched" : "Fresh Tomato Ketchup",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-kk-everest100" : {
+         "brands" : "everest",
+         "bytes" : 15998,
+         "code" : "8901786120505",
+         "matched" : "Kitchen King Masala",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-kurkure90" : {
+         "brands" : "Kurkure, PepsiCo",
+         "bytes" : 34734,
+         "code" : "8901491361026",
+         "matched" : "Kurkure Masala Munch",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-lassi200" : {
+         "brands" : "Mother Dairy",
+         "bytes" : 24290,
+         "code" : "8901648001768",
+         "matched" : "Lassi sweet",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-lays52" : {
+         "brands" : "Lay's",
+         "bytes" : 37267,
+         "code" : "8901491503020",
+         "matched" : "Lays India's Magic Masala",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-lemon250" : {
+         "bytes" : 35390,
+         "matched" : "File:Lemon.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Lemon.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-lifebuoy4" : {
+         "brands" : "Lifebuoy",
+         "bytes" : 14551,
+         "code" : "8901030813252",
+         "matched" : "Lifebuoy Total 10 Handwash",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-maaza600" : {
+         "brands" : "Coca cola, Maaza",
+         "bytes" : 15858,
+         "code" : "8901764175022",
+         "matched" : "Maaza Refresh Mango Drink",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-mach3" : {
+         "brands" : "PROCTER & GAMBLE NORGE AS",
+         "bytes" : 40125,
+         "code" : "7702018465385",
+         "matched" : "Gillette Barberblad Mach3 Turbo 8 blader",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-maggi-8" : {
+         "brands" : "Maggi",
+         "bytes" : 29973,
+         "code" : "8901058023787",
+         "matched" : "2-minute noodles masala taste",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-marie250" : {
+         "brands" : "Britannia Industries Ltd.",
+         "bytes" : 28518,
+         "code" : "8901063014299",
+         "matched" : "Britannia Vita Marie Gold Biscuits",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-matchbox10" : {
+         "bytes" : 245175,
+         "matched" : "File:Match and match labels, 100 years ago.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Match_and_match_labels,_100_years_ago.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-mirch-mdh100" : {
+         "brands" : "MDH",
+         "bytes" : 25356,
+         "code" : "8902167000034",
+         "matched" : "Deggi mirch",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-monaco200" : {
+         "brands" : "Parle",
+         "bytes" : 14422,
+         "code" : "8901719135118",
+         "matched" : "MONACO",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-moongdal200" : {
+         "brands" : "Haldiram's",
+         "bytes" : 33459,
+         "code" : "8904004403725",
+         "matched" : "Moong Dal",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-nescafe50" : {
+         "brands" : "Nescafe",
+         "bytes" : 17109,
+         "code" : "89009949",
+         "matched" : "Nescafe Classic Instant coffee",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-nivea100" : {
+         "brands" : "Nivea",
+         "bytes" : 16782,
+         "code" : "42204084",
+         "matched" : "Nivea Soft Light Moisturiser",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-oats1kg" : {
+         "brands" : "Pepsico, Quaker",
+         "bytes" : 27667,
+         "code" : "8901491103794",
+         "matched" : "Quaker Oats",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-oil-fort1" : {
+         "brands" : null,
+         "bytes" : 43214,
+         "code" : "8906007280272",
+         "matched" : "Fortune Sunlite Refined Sunflower Oil",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-oil-mustard1" : {
+         "brands" : "AWL Agri Business Limited, Adani Wilmar Limited, Fortune",
+         "bytes" : 29522,
+         "code" : "8906007280969",
+         "matched" : "Fortune Premium Kachi Ghani Pure Mustard Oil",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-oil-saffola1" : {
+         "brands" : "Saffola",
+         "bytes" : 19777,
+         "code" : "8901088017411",
+         "matched" : "Saffola gold Blended oil 5 l",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-onion1" : {
+         "bytes" : 35711,
+         "matched" : "File:Red Onion on White.JPG",
+         "page" : "https://commons.wikimedia.org/wiki/File:Red_Onion_on_White.JPG",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-oreo120" : {
+         "brands" : "Oreo",
+         "bytes" : 17528,
+         "code" : "7622210653031",
+         "matched" : "Cookies with cocoa and vanilla flavored cream filling Oreo Original",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-pampers-m56" : {
+         "brands" : "Pampers",
+         "bytes" : 33608,
+         "code" : "8700216910194",
+         "matched" : "Couches Culottes Bébés Baby-Dry Pants 9-15kg Taille 4",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-paneer200" : {
+         "brands" : "Amul",
+         "bytes" : 26060,
+         "code" : "8901262180115",
+         "matched" : "malai paneer fresh",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-parachute250" : {
+         "brands" : "Parachute",
+         "bytes" : 21041,
+         "code" : "8901088150095",
+         "matched" : "Parachute Advansed Gold Coconut Hair Oil",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-parleg250" : {
+         "brands" : "Parle",
+         "bytes" : 40816,
+         "code" : "8901719134845",
+         "matched" : "Parle-G Biscuit",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-pepper-catch50" : {
+         "brands" : "Catch",
+         "bytes" : 20261,
+         "code" : "8901192114006",
+         "matched" : "Sprinkler Black Pepper",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-pepsodent150" : {
+         "brands" : "Pepsodent",
+         "bytes" : 17117,
+         "code" : "8901030970368",
+         "matched" : "Pepsodent Germi Check Toothpaste",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-poha500" : {
+         "bytes" : 54658,
+         "matched" : "File:Poha.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Poha.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-potato1" : {
+         "bytes" : 86191,
+         "matched" : "File:A heap of potatoes on a harvested field's edge - geograph.org.uk - 1581256.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:A_heap_of_potatoes_on_a_harvested_field%27s_edge_-_geograph.org.uk_-_1581256.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-rajma500" : {
+         "bytes" : 99151,
+         "matched" : "File:Pounding Dried kidney beans.JPG",
+         "page" : "https://commons.wikimedia.org/wiki/File:Pounding_Dried_kidney_beans.JPG",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-real1l" : {
+         "brands" : "Real",
+         "bytes" : 20996,
+         "code" : "8901888005748",
+         "matched" : "Real Masala Mixed Fruit Juice",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-redlabel500" : {
+         "brands" : "Brooke Bond",
+         "bytes" : 24737,
+         "code" : "8901030674570",
+         "matched" : "Brooke Bond Red Label Natural Care Flavoured Tea",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-rice-daawat1" : {
+         "brands" : "Daawat",
+         "bytes" : 34777,
+         "code" : "8901537006027",
+         "matched" : "Rozana Gold  basmati rice",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-rice-igc1" : {
+         "brands" : "India Gate",
+         "bytes" : 33098,
+         "code" : "0690225303903",
+         "matched" : "India Gate Basmati Rice Classic",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-rice-igr5" : {
+         "brands" : "KRBL limited",
+         "bytes" : 32706,
+         "code" : "0690225101103",
+         "matched" : "India gate super Basmati rice 1.5 kg",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-rice-kolam5" : {
+         "bytes" : 117962,
+         "matched" : "File:Uncooked ST25 rice on bamboo surface.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Uncooked_ST25_rice_on_bamboo_surface.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-rin4" : {
+         "brands" : "HUL, Rin",
+         "bytes" : 25010,
+         "code" : "8901030968266",
+         "matched" : "Rin Bar",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-salt-tata1" : {
+         "brands" : "TATA",
+         "bytes" : 32334,
+         "code" : "8904043901077",
+         "matched" : "Salt LITE",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-santoor4" : {
+         "brands" : "",
+         "bytes" : 18753,
+         "code" : "8901399005305",
+         "matched" : "SANTOOR Skin Moisturising Sandal & Turmeric",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-sprite750" : {
+         "brands" : "The Coca-Cola Company",
+         "bytes" : 12385,
+         "code" : "5000112651898",
+         "matched" : "Carbonated softdrink with lemon and lime taste - Sprite",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-sting250" : {
+         "brands" : "PepsiCo",
+         "bytes" : 17546,
+         "code" : "8902080000227",
+         "matched" : "Sting Energy",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-sugar1" : {
+         "bytes" : 41080,
+         "matched" : "File:Granulated White Sugar with Large Crystals, Light Through the Crystals.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Granulated_White_Sugar_with_Large_Crystals,_Light_Through_the_Crystals.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-sunsilk180" : {
+         "brands" : null,
+         "bytes" : 21551,
+         "code" : "6281006424548",
+         "matched" : "Sunsilk stunning black shine shampoo 200ml",
+         "source" : "world.openbeautyfacts.org"
+      },
+      "p-surf1" : {
+         "brands" : "Surf Excel",
+         "bytes" : 33058,
+         "code" : "8909106006478",
+         "matched" : "Surf Excel Quick Wash Detergent Powder",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-surfmatic2" : {
+         "brands" : "Surf Excel",
+         "bytes" : 22300,
+         "code" : "8909106051096",
+         "matched" : "Surf Excel Matic Top Load Liquid Detergent",
+         "source" : "world.openproductsfacts.org"
+      },
+      "p-tajmahal250" : {
+         "brands" : "Brooke Bond",
+         "bytes" : 38548,
+         "code" : "8901030624230",
+         "matched" : "Brooke Bond  taj mahal tea",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-tatatea500" : {
+         "brands" : "Tata Tea",
+         "bytes" : 29783,
+         "code" : "8901052010615",
+         "matched" : "Premium",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-tomato1" : {
+         "bytes" : 90753,
+         "matched" : "File:Organic home-grown tomatoes - unripe to ripe.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Organic_home-grown_tomatoes_-_unripe_to_ripe.jpg",
+         "source" : "commons.wikimedia.org"
+      },
+      "p-vimbar300" : {
+         "brands" : "Henkel, Hindustan Unilever Ltd. (HUL), Vim",
+         "bytes" : 23067,
+         "code" : "8901030535697",
+         "matched" : "Maha Bar",
+         "source" : "world.openproductsfacts.org"
+      }
+   },
+   "note" : "Pack shots from the Open Facts databases (openfoodfacts.org, openbeautyfacts.org, openproductsfacts.org). Photographs are CC-BY-SA, the data ODbL. Regenerate with tools/getimages.pl. Each entry records the barcode it came from so a wrong match can be traced and replaced."
+}

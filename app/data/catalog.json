@@ -1,0 +1,2754 @@
+{
+   "note" : "Everything sells AT MRP -- that is how the shop prices, so `price` equals `mrp` on every row and no per-product discount is shown. The only discount is a coupon code, which is in shop.json. Prices are realistic 2026 Mumbai MRPs but ILLUSTRATIVE, not scraped; correct them with tools/pricelist.pl and tools/setprice.pl. Both are whole rupees: there is no floating point anywhere in this app.",
+   "products" : [
+      {
+         "brand" : "Aashirvaad",
+         "cat" : "staples",
+         "id" : "p-atta-aash5",
+         "mrp" : 299,
+         "name" : {
+            "en" : "Shudh Chakki Atta",
+            "hi" : "शुद्ध चक्की आटा",
+            "mr" : "शुद्ध चक्की आटा"
+         },
+         "pack" : {
+            "n" : 5,
+            "u" : "kg"
+         },
+         "price" : 299,
+         "stock" : 14,
+         "tags" : [
+            "atta",
+            "flour",
+            "wheat",
+            "आटा",
+            "कणीक",
+            "गहू"
+         ],
+         "tile" : "sack"
+      },
+      {
+         "brand" : "Aashirvaad",
+         "cat" : "staples",
+         "id" : "p-atta-aashmg5",
+         "mrp" : 355,
+         "name" : {
+            "en" : "Multigrain Atta",
+            "hi" : "मल्टीग्रेन आटा",
+            "mr" : "मल्टिग्रेन आटा"
+         },
+         "pack" : {
+            "n" : 5,
+            "u" : "kg"
+         },
+         "price" : 355,
+         "stock" : 8,
+         "tags" : [
+            "atta",
+            "multigrain",
+            "आटा",
+            "कणीक"
+         ],
+         "tile" : "sack"
+      },
+      {
+         "brand" : "India Gate",
+         "cat" : "staples",
+         "id" : "p-rice-igc1",
+         "mrp" : 155,
+         "name" : {
+            "en" : "Classic Basmati Rice",
+            "hi" : "क्लासिक बासमती चावल",
+            "mr" : "क्लासिक बासमती तांदूळ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 155,
+         "stock" : 22,
+         "tags" : [
+            "rice",
+            "basmati",
+            "तांदूळ",
+            "चावल",
+            "बासमती"
+         ],
+         "tile" : "grain"
+      },
+      {
+         "brand" : "India Gate",
+         "cat" : "staples",
+         "id" : "p-rice-igr5",
+         "mrp" : 450,
+         "name" : {
+            "en" : "Feast Rozana Basmati Rice",
+            "hi" : "फीस्ट रोज़ाना बासमती चावल",
+            "mr" : "फीस्ट रोजाना बासमती तांदूळ"
+         },
+         "pack" : {
+            "n" : 5,
+            "u" : "kg"
+         },
+         "price" : 450,
+         "stock" : 10,
+         "tags" : [
+            "rice",
+            "basmati",
+            "तांदूळ",
+            "चावल"
+         ],
+         "tile" : "sack"
+      },
+      {
+         "brand" : "Daawat",
+         "cat" : "staples",
+         "id" : "p-rice-daawat1",
+         "mrp" : 110,
+         "name" : {
+            "en" : "Rozana Gold Basmati Rice",
+            "hi" : "रोज़ाना गोल्ड बासमती चावल",
+            "mr" : "रोजाना गोल्ड बासमती तांदूळ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 110,
+         "stock" : 18,
+         "tags" : [
+            "rice",
+            "basmati",
+            "तांदूळ",
+            "चावल"
+         ],
+         "tile" : "grain"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "staples",
+         "id" : "p-rice-kolam5",
+         "mrp" : 310,
+         "name" : {
+            "en" : "Kolam Rice (loose)",
+            "hi" : "कोलम चावल (खुला)",
+            "mr" : "कोलम तांदूळ (सुटा)"
+         },
+         "pack" : {
+            "n" : 5,
+            "u" : "kg"
+         },
+         "price" : 310,
+         "stock" : 12,
+         "tags" : [
+            "rice",
+            "kolam",
+            "तांदूळ",
+            "चावल",
+            "कोलम"
+         ],
+         "tile" : "sack"
+      },
+      {
+         "brand" : "Tata Sampann",
+         "cat" : "staples",
+         "id" : "p-dal-toor1",
+         "mrp" : 185,
+         "name" : {
+            "en" : "Unpolished Toor Dal",
+            "hi" : "तूर दाल",
+            "mr" : "तूर डाळ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 185,
+         "stock" : 20,
+         "tags" : [
+            "dal",
+            "toor",
+            "arhar",
+            "डाळ",
+            "दाल",
+            "तूर"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Tata Sampann",
+         "cat" : "staples",
+         "id" : "p-dal-moong1",
+         "mrp" : 165,
+         "name" : {
+            "en" : "Unpolished Moong Dal",
+            "hi" : "मूंग दाल",
+            "mr" : "मूग डाळ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 165,
+         "stock" : 16,
+         "tags" : [
+            "dal",
+            "moong",
+            "डाळ",
+            "दाल",
+            "मूग"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Tata Sampann",
+         "cat" : "staples",
+         "id" : "p-dal-chana1",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Unpolished Chana Dal",
+            "hi" : "चना दाल",
+            "mr" : "चणा डाळ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 95,
+         "stock" : 18,
+         "tags" : [
+            "dal",
+            "chana",
+            "डाळ",
+            "दाल",
+            "चणा"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "staples",
+         "id" : "p-rajma500",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Rajma (loose)",
+            "hi" : "राजमा (खुला)",
+            "mr" : "राजमा (सुटा)"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 95,
+         "stock" : 14,
+         "tags" : [
+            "rajma",
+            "beans",
+            "राजमा"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Tata",
+         "cat" : "staples",
+         "id" : "p-salt-tata1",
+         "mrp" : 28,
+         "name" : {
+            "en" : "Iodised Salt",
+            "hi" : "आयोडीनयुक्त नमक",
+            "mr" : "आयोडीनयुक्त मीठ"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 28,
+         "stock" : 40,
+         "tags" : [
+            "salt",
+            "namak",
+            "मीठ",
+            "नमक"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "staples",
+         "id" : "p-sugar1",
+         "mrp" : 50,
+         "name" : {
+            "en" : "Sugar (loose)",
+            "hi" : "चीनी (खुली)",
+            "mr" : "साखर (सुटी)"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 50,
+         "stock" : 30,
+         "tags" : [
+            "sugar",
+            "shakkar",
+            "साखर",
+            "चीनी",
+            "शक्कर"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Fortune",
+         "cat" : "masala",
+         "id" : "p-oil-fort1",
+         "mrp" : 145,
+         "name" : {
+            "en" : "Sunlite Refined Sunflower Oil",
+            "hi" : "सनलाइट रिफाइंड सूरजमुखी तेल",
+            "mr" : "सनलाइट रिफाइंड सूर्यफूल तेल"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 145,
+         "stock" : 24,
+         "tags" : [
+            "oil",
+            "sunflower",
+            "तेल",
+            "सूर्यफूल"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Fortune",
+         "cat" : "masala",
+         "id" : "p-oil-mustard1",
+         "mrp" : 175,
+         "name" : {
+            "en" : "Kachi Ghani Mustard Oil",
+            "hi" : "कच्ची घानी सरसों तेल",
+            "mr" : "कच्ची घाणी मोहरी तेल"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 175,
+         "stock" : 14,
+         "tags" : [
+            "oil",
+            "mustard",
+            "sarson",
+            "तेल",
+            "मोहरी",
+            "सरसों"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Saffola",
+         "cat" : "masala",
+         "id" : "p-oil-saffola1",
+         "mrp" : 195,
+         "name" : {
+            "en" : "Gold Blended Oil",
+            "hi" : "गोल्ड ब्लेंडेड तेल",
+            "mr" : "गोल्ड ब्लेंडेड तेल"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 195,
+         "stock" : 16,
+         "tags" : [
+            "oil",
+            "saffola",
+            "तेल"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "masala",
+         "id" : "p-ghee-amul500",
+         "mrp" : 345,
+         "name" : {
+            "en" : "Pure Ghee",
+            "hi" : "शुद्ध घी",
+            "mr" : "शुद्ध तूप"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "ml"
+         },
+         "price" : 345,
+         "stock" : 12,
+         "tags" : [
+            "ghee",
+            "tup",
+            "तूप",
+            "घी"
+         ],
+         "tile" : "tin"
+      },
+      {
+         "brand" : "Everest",
+         "cat" : "masala",
+         "id" : "p-gm-everest100",
+         "mrp" : 90,
+         "name" : {
+            "en" : "Garam Masala",
+            "hi" : "गरम मसाला",
+            "mr" : "गरम मसाला"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 90,
+         "stock" : 26,
+         "tags" : [
+            "masala",
+            "garam",
+            "मसाला"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Everest",
+         "cat" : "masala",
+         "id" : "p-haldi-ev200",
+         "mrp" : 72,
+         "name" : {
+            "en" : "Turmeric Powder",
+            "hi" : "हल्दी पाउडर",
+            "mr" : "हळद पावडर"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 72,
+         "stock" : 28,
+         "tags" : [
+            "haldi",
+            "turmeric",
+            "हळद",
+            "हल्दी"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "MDH",
+         "cat" : "masala",
+         "id" : "p-mirch-mdh100",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Deggi Mirch",
+            "hi" : "देगी मिर्च",
+            "mr" : "देगी मिरची"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 95,
+         "stock" : 20,
+         "tags" : [
+            "mirchi",
+            "chilli",
+            "मिरची",
+            "मिर्च"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "MDH",
+         "cat" : "masala",
+         "id" : "p-chana-mdh100",
+         "mrp" : 85,
+         "name" : {
+            "en" : "Chana Masala",
+            "hi" : "चना मसाला",
+            "mr" : "चणा मसाला"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 85,
+         "stock" : 18,
+         "tags" : [
+            "masala",
+            "chana",
+            "मसाला"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Catch",
+         "cat" : "masala",
+         "id" : "p-pepper-catch50",
+         "mrp" : 110,
+         "name" : {
+            "en" : "Black Pepper Sprinkler",
+            "hi" : "काली मिर्च स्प्रिंकलर",
+            "mr" : "काळी मिरी स्प्रिंकलर"
+         },
+         "pack" : {
+            "n" : 50,
+            "u" : "g"
+         },
+         "price" : 110,
+         "stock" : 15,
+         "tags" : [
+            "pepper",
+            "kali mirch",
+            "मिरी",
+            "मिर्च"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Everest",
+         "cat" : "masala",
+         "id" : "p-kk-everest100",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Kitchen King Masala",
+            "hi" : "किचन किंग मसाला",
+            "mr" : "किचन किंग मसाला"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 95,
+         "stock" : 16,
+         "tags" : [
+            "masala",
+            "मसाला"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Maggi",
+         "cat" : "masala",
+         "id" : "p-maggi-8",
+         "mrp" : 152,
+         "name" : {
+            "en" : "2-Minute Masala Noodles, 8 pack",
+            "hi" : "2-मिनट मसाला नूडल्स, 8 पैक",
+            "mr" : "२-मिनिट मसाला नूडल्स, ८ नग"
+         },
+         "pack" : {
+            "n" : 560,
+            "u" : "g"
+         },
+         "price" : 152,
+         "stock" : 22,
+         "tags" : [
+            "maggi",
+            "noodles",
+            "नूडल्स",
+            "मॅगी",
+            "मैगी"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Kissan",
+         "cat" : "masala",
+         "id" : "p-ketchup-kissan",
+         "mrp" : 150,
+         "name" : {
+            "en" : "Fresh Tomato Ketchup",
+            "hi" : "टमाटर केचप",
+            "mr" : "टोमॅटो केचप"
+         },
+         "pack" : {
+            "n" : 850,
+            "u" : "g"
+         },
+         "price" : 150,
+         "stock" : 14,
+         "tags" : [
+            "ketchup",
+            "sauce",
+            "केचप",
+            "सॉस"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "masala",
+         "id" : "p-poha500",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Thick Poha (loose)",
+            "hi" : "मोटा पोहा (खुला)",
+            "mr" : "जाड पोहे (सुटे)"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 24,
+         "tags" : [
+            "poha",
+            "pohe",
+            "पोहे",
+            "पोहा"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Parle",
+         "cat" : "snacks",
+         "id" : "p-parleg250",
+         "mrp" : 25,
+         "name" : {
+            "en" : "Parle-G Original Glucose Biscuits",
+            "hi" : "पारले-जी ओरिजिनल ग्लूकोज़ बिस्किट",
+            "mr" : "पारले-जी ओरिजिनल ग्लुकोज बिस्किटे"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 25,
+         "stock" : 48,
+         "tags" : [
+            "biscuit",
+            "parle",
+            "glucose",
+            "बिस्किट",
+            "बिस्कुट"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Britannia",
+         "cat" : "snacks",
+         "id" : "p-goodday100",
+         "mrp" : 30,
+         "name" : {
+            "en" : "Good Day Cashew Cookies",
+            "hi" : "गुड डे काजू कुकीज़",
+            "mr" : "गुड डे काजू कुकीज"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 30,
+         "stock" : 36,
+         "tags" : [
+            "cookie",
+            "cashew",
+            "काजू",
+            "बिस्किट"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Britannia",
+         "cat" : "snacks",
+         "id" : "p-marie250",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Marie Gold Biscuits",
+            "hi" : "मैरी गोल्ड बिस्किट",
+            "mr" : "मारी गोल्ड बिस्किटे"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 30,
+         "tags" : [
+            "marie",
+            "biscuit",
+            "बिस्किट",
+            "चहा"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Sunfeast",
+         "cat" : "snacks",
+         "id" : "p-darkfantasy",
+         "mrp" : 150,
+         "name" : {
+            "en" : "Dark Fantasy Choco Fills",
+            "hi" : "डार्क फैंटसी चोको फिल्स",
+            "mr" : "डार्क फँटसी चोको फिल्स"
+         },
+         "pack" : {
+            "n" : 300,
+            "u" : "g"
+         },
+         "price" : 150,
+         "stock" : 12,
+         "tags" : [
+            "chocolate",
+            "cookie",
+            "चॉकलेट"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Oreo",
+         "cat" : "snacks",
+         "id" : "p-oreo120",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Original Cream Biscuits",
+            "hi" : "ओरिजिनल क्रीम बिस्किट",
+            "mr" : "ओरिजिनल क्रीम बिस्किटे"
+         },
+         "pack" : {
+            "n" : 120,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 26,
+         "tags" : [
+            "oreo",
+            "cream",
+            "बिस्किट"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Parle",
+         "cat" : "snacks",
+         "id" : "p-monaco200",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Monaco Salted Crackers",
+            "hi" : "मोनाको सॉल्टेड क्रैकर्स",
+            "mr" : "मोनॅको सॉल्टेड क्रॅकर्स"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 22,
+         "tags" : [
+            "monaco",
+            "salted",
+            "बिस्किट",
+            "खारी"
+         ],
+         "tile" : "biscuit"
+      },
+      {
+         "brand" : "Lay's",
+         "cat" : "snacks",
+         "id" : "p-lays52",
+         "mrp" : 20,
+         "name" : {
+            "en" : "India's Magic Masala Chips",
+            "hi" : "इंडियाज़ मैजिक मसाला चिप्स",
+            "mr" : "इंडियाज मॅजिक मसाला चिप्स"
+         },
+         "pack" : {
+            "n" : 52,
+            "u" : "g"
+         },
+         "price" : 20,
+         "stock" : 60,
+         "tags" : [
+            "chips",
+            "wafer",
+            "चिप्स",
+            "वेफर"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Kurkure",
+         "cat" : "snacks",
+         "id" : "p-kurkure90",
+         "mrp" : 30,
+         "name" : {
+            "en" : "Masala Munch",
+            "hi" : "मसाला मंच",
+            "mr" : "मसाला मंच"
+         },
+         "pack" : {
+            "n" : 90,
+            "u" : "g"
+         },
+         "price" : 30,
+         "stock" : 44,
+         "tags" : [
+            "kurkure",
+            "chips",
+            "चिप्स"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Bingo",
+         "cat" : "snacks",
+         "id" : "p-bingo66",
+         "mrp" : 20,
+         "name" : {
+            "en" : "Mad Angles Achaari Masti",
+            "hi" : "मैड एंगल्स अचारी मस्ती",
+            "mr" : "मॅड अँगल्स अचारी मस्ती"
+         },
+         "pack" : {
+            "n" : 66,
+            "u" : "g"
+         },
+         "price" : 20,
+         "stock" : 38,
+         "tags" : [
+            "bingo",
+            "chips",
+            "चिप्स"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Haldiram's",
+         "cat" : "snacks",
+         "id" : "p-bhujia200",
+         "mrp" : 55,
+         "name" : {
+            "en" : "Aloo Bhujia",
+            "hi" : "आलू भुजिया",
+            "mr" : "आलू भुजिया"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 55,
+         "stock" : 24,
+         "tags" : [
+            "namkeen",
+            "bhujia",
+            "farsan",
+            "नमकीन",
+            "भुजिया",
+            "फरसाण"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Haldiram's",
+         "cat" : "snacks",
+         "id" : "p-moongdal200",
+         "mrp" : 60,
+         "name" : {
+            "en" : "Moong Dal Namkeen",
+            "hi" : "मूंग दाल नमकीन",
+            "mr" : "मूग डाळ नमकीन"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 60,
+         "stock" : 20,
+         "tags" : [
+            "namkeen",
+            "farsan",
+            "नमकीन",
+            "फरसाण"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Balaji",
+         "cat" : "snacks",
+         "id" : "p-balaji135",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Simply Salted Wafers",
+            "hi" : "सिंपली सॉल्टेड वेफर्स",
+            "mr" : "सिंपली सॉल्टेड वेफर्स"
+         },
+         "pack" : {
+            "n" : 135,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 26,
+         "tags" : [
+            "wafer",
+            "chips",
+            "वेफर",
+            "चिप्स"
+         ],
+         "tile" : "pouch"
+      },
+      {
+         "brand" : "Cadbury",
+         "cat" : "snacks",
+         "id" : "p-dairymilk50",
+         "mrp" : 50,
+         "name" : {
+            "en" : "Dairy Milk Chocolate",
+            "hi" : "डेयरी मिल्क चॉकलेट",
+            "mr" : "डेअरी मिल्क चॉकलेट"
+         },
+         "pack" : {
+            "n" : 50,
+            "u" : "g"
+         },
+         "price" : 50,
+         "stock" : 40,
+         "tags" : [
+            "chocolate",
+            "cadbury",
+            "चॉकलेट"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Cadbury",
+         "cat" : "snacks",
+         "id" : "p-bournville80",
+         "mrp" : 110,
+         "name" : {
+            "en" : "Bournville Rich Cocoa",
+            "hi" : "बॉर्नविल रिच कोको",
+            "mr" : "बॉर्नव्हिल रिच कोको"
+         },
+         "pack" : {
+            "n" : 80,
+            "u" : "g"
+         },
+         "price" : 110,
+         "stock" : 14,
+         "tags" : [
+            "chocolate",
+            "dark",
+            "चॉकलेट"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Thums Up",
+         "cat" : "drinks",
+         "id" : "p-thumsup750",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Soft Drink",
+            "hi" : "कोल्ड ड्रिंक",
+            "mr" : "थंड पेय"
+         },
+         "pack" : {
+            "n" : 750,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 36,
+         "tags" : [
+            "cold drink",
+            "cola",
+            "थंड",
+            "कोल्ड ड्रिंक",
+            "कोला"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Sprite",
+         "cat" : "drinks",
+         "id" : "p-sprite750",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Lime Soft Drink",
+            "hi" : "नींबू कोल्ड ड्रिंक",
+            "mr" : "लिंबू थंड पेय"
+         },
+         "pack" : {
+            "n" : 750,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 30,
+         "tags" : [
+            "cold drink",
+            "lime",
+            "थंड",
+            "कोल्ड ड्रिंक"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Coca-Cola",
+         "cat" : "drinks",
+         "id" : "p-coke750",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Soft Drink",
+            "hi" : "कोल्ड ड्रिंक",
+            "mr" : "थंड पेय"
+         },
+         "pack" : {
+            "n" : 750,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 30,
+         "tags" : [
+            "cold drink",
+            "cola",
+            "थंड",
+            "कोल्ड ड्रिंक"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Limca",
+         "cat" : "drinks",
+         "id" : "p-limca750",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Lemon Soft Drink",
+            "hi" : "नींबू कोल्ड ड्रिंक",
+            "mr" : "लिंबू थंड पेय"
+         },
+         "pack" : {
+            "n" : 750,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 22,
+         "tags" : [
+            "cold drink",
+            "lemon",
+            "थंड"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Maaza",
+         "cat" : "drinks",
+         "id" : "p-maaza600",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Mango Drink",
+            "hi" : "आम का पेय",
+            "mr" : "आंबा पेय"
+         },
+         "pack" : {
+            "n" : 600,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 32,
+         "tags" : [
+            "mango",
+            "juice",
+            "आंबा",
+            "आम",
+            "ज्यूस"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Frooti",
+         "cat" : "drinks",
+         "id" : "p-frooti600",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Mango Drink",
+            "hi" : "आम का पेय",
+            "mr" : "आंबा पेय"
+         },
+         "pack" : {
+            "n" : 600,
+            "u" : "ml"
+         },
+         "price" : 45,
+         "stock" : 28,
+         "tags" : [
+            "mango",
+            "juice",
+            "आंबा",
+            "आम"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Real",
+         "cat" : "drinks",
+         "id" : "p-real1l",
+         "mrp" : 130,
+         "name" : {
+            "en" : "Mixed Fruit Juice",
+            "hi" : "मिक्स फ्रूट जूस",
+            "mr" : "मिक्स फ्रूट ज्यूस"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 130,
+         "stock" : 16,
+         "tags" : [
+            "juice",
+            "fruit",
+            "ज्यूस",
+            "जूस"
+         ],
+         "tile" : "carton"
+      },
+      {
+         "brand" : "Bisleri",
+         "cat" : "drinks",
+         "id" : "p-bisleri1",
+         "mrp" : 20,
+         "name" : {
+            "en" : "Packaged Drinking Water",
+            "hi" : "पैक्ड पीने का पानी",
+            "mr" : "पॅकबंद पिण्याचे पाणी"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 20,
+         "stock" : 80,
+         "tags" : [
+            "water",
+            "pani",
+            "पाणी",
+            "पानी"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Bisleri",
+         "cat" : "drinks",
+         "id" : "p-bisleri2",
+         "mrp" : 32,
+         "name" : {
+            "en" : "Packaged Drinking Water",
+            "hi" : "पैक्ड पीने का पानी",
+            "mr" : "पॅकबंद पिण्याचे पाणी"
+         },
+         "pack" : {
+            "n" : 2,
+            "u" : "l"
+         },
+         "price" : 32,
+         "stock" : 50,
+         "tags" : [
+            "water",
+            "pani",
+            "पाणी",
+            "पानी"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Sting",
+         "cat" : "drinks",
+         "id" : "p-sting250",
+         "mrp" : 20,
+         "name" : {
+            "en" : "Energy Drink",
+            "hi" : "एनर्जी ड्रिंक",
+            "mr" : "एनर्जी ड्रिंक"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "ml"
+         },
+         "price" : 20,
+         "stock" : 34,
+         "tags" : [
+            "energy",
+            "drink",
+            "एनर्जी"
+         ],
+         "tile" : "can"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-amultaaza500",
+         "mrp" : 29,
+         "name" : {
+            "en" : "Taaza Toned Milk",
+            "hi" : "ताज़ा टोन्ड दूध",
+            "mr" : "ताजा टोन्ड दूध"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "ml"
+         },
+         "price" : 29,
+         "stock" : 60,
+         "tags" : [
+            "milk",
+            "doodh",
+            "दूध"
+         ],
+         "tile" : "carton"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-amulgold500",
+         "mrp" : 35,
+         "name" : {
+            "en" : "Gold Full Cream Milk",
+            "hi" : "गोल्ड फुल क्रीम दूध",
+            "mr" : "गोल्ड फुल क्रीम दूध"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "ml"
+         },
+         "price" : 35,
+         "stock" : 50,
+         "tags" : [
+            "milk",
+            "doodh",
+            "दूध"
+         ],
+         "tile" : "carton"
+      },
+      {
+         "brand" : "Gowardhan",
+         "cat" : "dairy",
+         "id" : "p-gowardhan500",
+         "mrp" : 32,
+         "name" : {
+            "en" : "Cow Milk",
+            "hi" : "गाय का दूध",
+            "mr" : "गाईचे दूध"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "ml"
+         },
+         "price" : 32,
+         "stock" : 36,
+         "tags" : [
+            "milk",
+            "doodh",
+            "दूध",
+            "गाय"
+         ],
+         "tile" : "carton"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-amulbutter100",
+         "mrp" : 62,
+         "name" : {
+            "en" : "Pasteurised Butter",
+            "hi" : "बटर (मक्खन)",
+            "mr" : "बटर (लोणी)"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 62,
+         "stock" : 28,
+         "tags" : [
+            "butter",
+            "loni",
+            "makhan",
+            "लोणी",
+            "मक्खन",
+            "बटर"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-amuldahi400",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Masti Dahi",
+            "hi" : "मस्ती दही",
+            "mr" : "मस्ती दही"
+         },
+         "pack" : {
+            "n" : 400,
+            "u" : "g"
+         },
+         "price" : 45,
+         "stock" : 24,
+         "tags" : [
+            "curd",
+            "dahi",
+            "दही"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-amulcheese200",
+         "mrp" : 150,
+         "name" : {
+            "en" : "Cheese Slices, 10 slices",
+            "hi" : "चीज़ स्लाइस, 10 नग",
+            "mr" : "चीज स्लाइस, १० नग"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 150,
+         "stock" : 14,
+         "tags" : [
+            "cheese",
+            "चीज"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-paneer200",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Fresh Paneer",
+            "hi" : "ताज़ा पनीर",
+            "mr" : "ताजे पनीर"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 95,
+         "stock" : 16,
+         "tags" : [
+            "paneer",
+            "पनीर"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Britannia",
+         "cat" : "dairy",
+         "id" : "p-bread-ww",
+         "mrp" : 55,
+         "name" : {
+            "en" : "Whole Wheat Bread",
+            "hi" : "गेहूँ का ब्रेड",
+            "mr" : "गव्हाचा ब्रेड"
+         },
+         "pack" : {
+            "n" : 400,
+            "u" : "g"
+         },
+         "price" : 55,
+         "stock" : 20,
+         "tags" : [
+            "bread",
+            "pav",
+            "ब्रेड",
+            "पाव"
+         ],
+         "tile" : "loaf"
+      },
+      {
+         "brand" : "Britannia",
+         "cat" : "dairy",
+         "id" : "p-bread-brown",
+         "mrp" : 50,
+         "name" : {
+            "en" : "Brown Bread",
+            "hi" : "ब्राउन ब्रेड",
+            "mr" : "ब्राऊन ब्रेड"
+         },
+         "pack" : {
+            "n" : 400,
+            "u" : "g"
+         },
+         "price" : 50,
+         "stock" : 18,
+         "tags" : [
+            "bread",
+            "ब्रेड",
+            "पाव"
+         ],
+         "tile" : "loaf"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "dairy",
+         "id" : "p-eggs12",
+         "mrp" : 90,
+         "name" : {
+            "en" : "Eggs, tray of 12",
+            "hi" : "अंडे, 12 नग",
+            "mr" : "अंडी, १२ नग"
+         },
+         "pack" : {
+            "n" : 12,
+            "u" : "pc"
+         },
+         "price" : 90,
+         "stock" : 30,
+         "tags" : [
+            "egg",
+            "anda",
+            "अंडी",
+            "अंडे"
+         ],
+         "tile" : "egg"
+      },
+      {
+         "brand" : "Mother Dairy",
+         "cat" : "dairy",
+         "id" : "p-lassi200",
+         "mrp" : 25,
+         "name" : {
+            "en" : "Lassi",
+            "hi" : "लस्सी",
+            "mr" : "लस्सी"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "ml"
+         },
+         "price" : 25,
+         "stock" : 28,
+         "tags" : [
+            "lassi",
+            "लस्सी",
+            "ताक"
+         ],
+         "tile" : "carton"
+      },
+      {
+         "brand" : "Amul",
+         "cat" : "dairy",
+         "id" : "p-icecream700",
+         "mrp" : 180,
+         "name" : {
+            "en" : "Vanilla Ice Cream",
+            "hi" : "वनीला आइसक्रीम",
+            "mr" : "व्हॅनिला आइस्क्रीम"
+         },
+         "pack" : {
+            "n" : 700,
+            "u" : "ml"
+         },
+         "price" : 180,
+         "stock" : 10,
+         "tags" : [
+            "ice cream",
+            "आइस्क्रीम",
+            "आइसक्रीम"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Red Label",
+         "cat" : "tea",
+         "id" : "p-redlabel500",
+         "mrp" : 290,
+         "name" : {
+            "en" : "Natural Care Tea",
+            "hi" : "नेचुरल केयर चाय",
+            "mr" : "नॅचरल केअर चहा"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 290,
+         "stock" : 18,
+         "tags" : [
+            "tea",
+            "chai",
+            "चहा",
+            "चाय"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Tata Tea",
+         "cat" : "tea",
+         "id" : "p-tatatea500",
+         "mrp" : 285,
+         "name" : {
+            "en" : "Premium Tea",
+            "hi" : "प्रीमियम चाय",
+            "mr" : "प्रीमियम चहा"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 285,
+         "stock" : 20,
+         "tags" : [
+            "tea",
+            "chai",
+            "चहा",
+            "चाय"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Taj Mahal",
+         "cat" : "tea",
+         "id" : "p-tajmahal250",
+         "mrp" : 185,
+         "name" : {
+            "en" : "Rich & Flavourful Tea",
+            "hi" : "रिच चाय",
+            "mr" : "रिच चहा"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 185,
+         "stock" : 14,
+         "tags" : [
+            "tea",
+            "chai",
+            "चहा",
+            "चाय"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Bru",
+         "cat" : "tea",
+         "id" : "p-bru100",
+         "mrp" : 310,
+         "name" : {
+            "en" : "Instant Coffee",
+            "hi" : "इंस्टेंट कॉफ़ी",
+            "mr" : "इन्स्टंट कॉफी"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 310,
+         "stock" : 12,
+         "tags" : [
+            "coffee",
+            "कॉफी",
+            "कॉफ़ी"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Nescafé",
+         "cat" : "tea",
+         "id" : "p-nescafe50",
+         "mrp" : 230,
+         "name" : {
+            "en" : "Classic Instant Coffee",
+            "hi" : "क्लासिक इंस्टेंट कॉफ़ी",
+            "mr" : "क्लासिक इन्स्टंट कॉफी"
+         },
+         "pack" : {
+            "n" : 50,
+            "u" : "g"
+         },
+         "price" : 230,
+         "stock" : 14,
+         "tags" : [
+            "coffee",
+            "कॉफी",
+            "कॉफ़ी"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Cadbury",
+         "cat" : "tea",
+         "id" : "p-bournvita500",
+         "mrp" : 265,
+         "name" : {
+            "en" : "Bournvita Health Drink",
+            "hi" : "बॉर्नविटा हेल्थ ड्रिंक",
+            "mr" : "बॉर्नव्हिटा हेल्थ ड्रिंक"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 265,
+         "stock" : 16,
+         "tags" : [
+            "health drink",
+            "बॉर्नव्हिटा",
+            "बॉर्नविटा"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Horlicks",
+         "cat" : "tea",
+         "id" : "p-horlicks500",
+         "mrp" : 275,
+         "name" : {
+            "en" : "Classic Malt",
+            "hi" : "क्लासिक माल्ट",
+            "mr" : "क्लासिक माल्ट"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 275,
+         "stock" : 14,
+         "tags" : [
+            "health drink",
+            "हॉर्लिक्स"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Tata Sampann",
+         "cat" : "tea",
+         "id" : "p-chaimasala50",
+         "mrp" : 70,
+         "name" : {
+            "en" : "Chai Masala",
+            "hi" : "चाय मसाला",
+            "mr" : "चहा मसाला"
+         },
+         "pack" : {
+            "n" : 50,
+            "u" : "g"
+         },
+         "price" : 70,
+         "stock" : 18,
+         "tags" : [
+            "chai",
+            "masala",
+            "चहा",
+            "चाय",
+            "मसाला"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Kellogg's",
+         "cat" : "tea",
+         "id" : "p-cornflakes475",
+         "mrp" : 230,
+         "name" : {
+            "en" : "Corn Flakes",
+            "hi" : "कॉर्न फ्लेक्स",
+            "mr" : "कॉर्न फ्लेक्स"
+         },
+         "pack" : {
+            "n" : 475,
+            "u" : "g"
+         },
+         "price" : 230,
+         "stock" : 12,
+         "tags" : [
+            "cereal",
+            "breakfast",
+            "फ्लेक्स"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Quaker",
+         "cat" : "tea",
+         "id" : "p-oats1kg",
+         "mrp" : 195,
+         "name" : {
+            "en" : "Rolled Oats",
+            "hi" : "ओट्स",
+            "mr" : "ओट्स"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 195,
+         "stock" : 14,
+         "tags" : [
+            "oats",
+            "breakfast",
+            "ओट्स"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-onion1",
+         "mrp" : 45,
+         "name" : {
+            "en" : "Onion",
+            "hi" : "प्याज़",
+            "mr" : "कांदा"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 45,
+         "stock" : 40,
+         "tags" : [
+            "onion",
+            "kanda",
+            "कांदा",
+            "प्याज"
+         ],
+         "tile" : "fruit"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-potato1",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Potato",
+            "hi" : "आलू",
+            "mr" : "बटाटा"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 40,
+         "stock" : 40,
+         "tags" : [
+            "potato",
+            "batata",
+            "aloo",
+            "बटाटा",
+            "आलू"
+         ],
+         "tile" : "fruit"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-tomato1",
+         "mrp" : 50,
+         "name" : {
+            "en" : "Tomato",
+            "hi" : "टमाटर",
+            "mr" : "टोमॅटो"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 50,
+         "stock" : 30,
+         "tags" : [
+            "tomato",
+            "टोमॅटो",
+            "टमाटर"
+         ],
+         "tile" : "fruit"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-banana12",
+         "mrp" : 70,
+         "name" : {
+            "en" : "Banana",
+            "hi" : "केला",
+            "mr" : "केळी"
+         },
+         "pack" : {
+            "n" : 12,
+            "u" : "pc"
+         },
+         "price" : 70,
+         "stock" : 24,
+         "tags" : [
+            "banana",
+            "kela",
+            "केळी",
+            "केला"
+         ],
+         "tile" : "fruit"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-lemon250",
+         "mrp" : 40,
+         "name" : {
+            "en" : "Lemon",
+            "hi" : "नींबू",
+            "mr" : "लिंबू"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 40,
+         "stock" : 26,
+         "tags" : [
+            "lemon",
+            "limbu",
+            "लिंबू",
+            "नींबू"
+         ],
+         "tile" : "fruit"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-ginger250",
+         "mrp" : 60,
+         "name" : {
+            "en" : "Ginger",
+            "hi" : "अदरक",
+            "mr" : "आले"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 60,
+         "stock" : 20,
+         "tags" : [
+            "ginger",
+            "adrak",
+            "आले",
+            "अदरक"
+         ],
+         "tile" : "leaf"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-garlic250",
+         "mrp" : 90,
+         "name" : {
+            "en" : "Garlic",
+            "hi" : "लहसुन",
+            "mr" : "लसूण"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 90,
+         "stock" : 18,
+         "tags" : [
+            "garlic",
+            "lasun",
+            "लसूण",
+            "लहसुन"
+         ],
+         "tile" : "leaf"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-chilli250",
+         "mrp" : 30,
+         "name" : {
+            "en" : "Green Chilli",
+            "hi" : "हरी मिर्च",
+            "mr" : "हिरवी मिरची"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 30,
+         "stock" : 22,
+         "tags" : [
+            "chilli",
+            "mirchi",
+            "मिरची",
+            "मिर्च"
+         ],
+         "tile" : "leaf"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-coriander1",
+         "mrp" : 20,
+         "name" : {
+            "en" : "Coriander, one bunch",
+            "hi" : "धनिया, एक गुच्छा",
+            "mr" : "कोथिंबीर, एक जुडी"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "pc"
+         },
+         "price" : 20,
+         "stock" : 30,
+         "tags" : [
+            "coriander",
+            "kothimbir",
+            "dhania",
+            "कोथिंबीर",
+            "धनिया"
+         ],
+         "tile" : "leaf"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "fresh",
+         "id" : "p-curryleaf1",
+         "mrp" : 15,
+         "name" : {
+            "en" : "Curry Leaves, one bunch",
+            "hi" : "करी पत्ता, एक गुच्छा",
+            "mr" : "कढीपत्ता, एक जुडी"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "pc"
+         },
+         "price" : 15,
+         "stock" : 28,
+         "tags" : [
+            "curry leaves",
+            "kadipatta",
+            "कढीपत्ता",
+            "करी पत्ता"
+         ],
+         "tile" : "leaf"
+      },
+      {
+         "brand" : "Lifebuoy",
+         "cat" : "care",
+         "id" : "p-lifebuoy4",
+         "mrp" : 160,
+         "name" : {
+            "en" : "Total 10 Soap, pack of 4",
+            "hi" : "टोटल 10 साबुन, 4 नग",
+            "mr" : "टोटल १० साबण, ४ नग"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 160,
+         "stock" : 22,
+         "tags" : [
+            "soap",
+            "sabun",
+            "साबण",
+            "साबुन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Santoor",
+         "cat" : "care",
+         "id" : "p-santoor4",
+         "mrp" : 165,
+         "name" : {
+            "en" : "Sandal & Turmeric Soap, pack of 4",
+            "hi" : "चंदन-हल्दी साबुन, 4 नग",
+            "mr" : "चंदन-हळद साबण, ४ नग"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 165,
+         "stock" : 20,
+         "tags" : [
+            "soap",
+            "sabun",
+            "साबण",
+            "साबुन",
+            "चंदन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Dove",
+         "cat" : "care",
+         "id" : "p-dove3",
+         "mrp" : 225,
+         "name" : {
+            "en" : "Cream Beauty Bar, pack of 3",
+            "hi" : "क्रीम ब्यूटी बार, 3 नग",
+            "mr" : "क्रीम ब्युटी बार, ३ नग"
+         },
+         "pack" : {
+            "n" : 300,
+            "u" : "g"
+         },
+         "price" : 225,
+         "stock" : 14,
+         "tags" : [
+            "soap",
+            "sabun",
+            "साबण",
+            "साबुन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Dettol",
+         "cat" : "care",
+         "id" : "p-dettol4",
+         "mrp" : 180,
+         "name" : {
+            "en" : "Original Soap, pack of 4",
+            "hi" : "ओरिजिनल साबुन, 4 नग",
+            "mr" : "ओरिजिनल साबण, ४ नग"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 180,
+         "stock" : 18,
+         "tags" : [
+            "soap",
+            "dettol",
+            "साबण",
+            "साबुन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Clinic Plus",
+         "cat" : "care",
+         "id" : "p-clinicplus175",
+         "mrp" : 109,
+         "name" : {
+            "en" : "Strong & Long Shampoo",
+            "hi" : "स्ट्रॉन्ग एंड लॉन्ग शैम्पू",
+            "mr" : "स्ट्राँग अँड लाँग शॅम्पू"
+         },
+         "pack" : {
+            "n" : 175,
+            "u" : "ml"
+         },
+         "price" : 109,
+         "stock" : 24,
+         "tags" : [
+            "shampoo",
+            "hair",
+            "शॅम्पू",
+            "शैम्पू",
+            "केस",
+            "बाल"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Head & Shoulders",
+         "cat" : "care",
+         "id" : "p-hns180",
+         "mrp" : 235,
+         "name" : {
+            "en" : "Anti-Hairfall Shampoo",
+            "hi" : "एंटी-हेयरफॉल शैम्पू",
+            "mr" : "अँटी-हेअरफॉल शॅम्पू"
+         },
+         "pack" : {
+            "n" : 180,
+            "u" : "ml"
+         },
+         "price" : 235,
+         "stock" : 12,
+         "tags" : [
+            "shampoo",
+            "dandruff",
+            "शॅम्पू",
+            "शैम्पू",
+            "कोंडा"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Sunsilk",
+         "cat" : "care",
+         "id" : "p-sunsilk180",
+         "mrp" : 145,
+         "name" : {
+            "en" : "Black Shine Shampoo",
+            "hi" : "ब्लैक शाइन शैम्पू",
+            "mr" : "ब्लॅक शाइन शॅम्पू"
+         },
+         "pack" : {
+            "n" : 180,
+            "u" : "ml"
+         },
+         "price" : 145,
+         "stock" : 16,
+         "tags" : [
+            "shampoo",
+            "शॅम्पू",
+            "शैम्पू"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Parachute",
+         "cat" : "care",
+         "id" : "p-parachute250",
+         "mrp" : 115,
+         "name" : {
+            "en" : "Pure Coconut Oil",
+            "hi" : "शुद्ध नारियल तेल",
+            "mr" : "शुद्ध खोबरेल तेल"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "ml"
+         },
+         "price" : 115,
+         "stock" : 26,
+         "tags" : [
+            "hair oil",
+            "coconut",
+            "खोबरेल",
+            "नारियल",
+            "तेल"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Dabur",
+         "cat" : "care",
+         "id" : "p-dabur275",
+         "mrp" : 145,
+         "name" : {
+            "en" : "Amla Hair Oil",
+            "hi" : "आँवला बाल तेल",
+            "mr" : "आवळा केस तेल"
+         },
+         "pack" : {
+            "n" : 275,
+            "u" : "ml"
+         },
+         "price" : 145,
+         "stock" : 18,
+         "tags" : [
+            "hair oil",
+            "amla",
+            "आवळा",
+            "आँवला",
+            "तेल"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Colgate",
+         "cat" : "care",
+         "id" : "p-colgate200",
+         "mrp" : 115,
+         "name" : {
+            "en" : "Strong Teeth Toothpaste",
+            "hi" : "स्ट्रॉन्ग टीथ टूथपेस्ट",
+            "mr" : "स्ट्राँग टीथ टूथपेस्ट"
+         },
+         "pack" : {
+            "n" : 200,
+            "u" : "g"
+         },
+         "price" : 115,
+         "stock" : 30,
+         "tags" : [
+            "toothpaste",
+            "dant",
+            "टूथपेस्ट",
+            "दात",
+            "दाँत"
+         ],
+         "tile" : "tube"
+      },
+      {
+         "brand" : "Closeup",
+         "cat" : "care",
+         "id" : "p-closeup150",
+         "mrp" : 105,
+         "name" : {
+            "en" : "Red Hot Gel Toothpaste",
+            "hi" : "रेड हॉट जेल टूथपेस्ट",
+            "mr" : "रेड हॉट जेल टूथपेस्ट"
+         },
+         "pack" : {
+            "n" : 150,
+            "u" : "g"
+         },
+         "price" : 105,
+         "stock" : 22,
+         "tags" : [
+            "toothpaste",
+            "टूथपेस्ट"
+         ],
+         "tile" : "tube"
+      },
+      {
+         "brand" : "Pepsodent",
+         "cat" : "care",
+         "id" : "p-pepsodent150",
+         "mrp" : 95,
+         "name" : {
+            "en" : "Germicheck Toothpaste",
+            "hi" : "जर्मीचेक टूथपेस्ट",
+            "mr" : "जर्मिचेक टूथपेस्ट"
+         },
+         "pack" : {
+            "n" : 150,
+            "u" : "g"
+         },
+         "price" : 95,
+         "stock" : 20,
+         "tags" : [
+            "toothpaste",
+            "टूथपेस्ट"
+         ],
+         "tile" : "tube"
+      },
+      {
+         "brand" : "Nivea",
+         "cat" : "care",
+         "id" : "p-nivea100",
+         "mrp" : 235,
+         "name" : {
+            "en" : "Soft Light Moisturiser",
+            "hi" : "सॉफ्ट लाइट मॉइस्चराइज़र",
+            "mr" : "सॉफ्ट लाइट मॉइश्चरायझर"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "ml"
+         },
+         "price" : 235,
+         "stock" : 10,
+         "tags" : [
+            "cream",
+            "moisturiser",
+            "क्रीम"
+         ],
+         "tile" : "jar"
+      },
+      {
+         "brand" : "Gillette",
+         "cat" : "care",
+         "id" : "p-mach3",
+         "mrp" : 310,
+         "name" : {
+            "en" : "Mach3 Cartridges, 2 pc",
+            "hi" : "मैक3 कार्ट्रिज, 2 नग",
+            "mr" : "मॅक३ काड्रिज, २ नग"
+         },
+         "pack" : {
+            "n" : 2,
+            "u" : "pc"
+         },
+         "price" : 310,
+         "stock" : 8,
+         "tags" : [
+            "razor",
+            "shave",
+            "रेझर",
+            "दाढी"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Surf Excel",
+         "cat" : "clean",
+         "id" : "p-surf1",
+         "mrp" : 135,
+         "name" : {
+            "en" : "Easy Wash Detergent Powder",
+            "hi" : "ईज़ी वॉश डिटर्जेंट पाउडर",
+            "mr" : "इझी वॉश डिटर्जंट पावडर"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 135,
+         "stock" : 24,
+         "tags" : [
+            "detergent",
+            "washing",
+            "डिटर्जंट",
+            "डिटर्जेंट",
+            "साबण पावडर"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Surf Excel",
+         "cat" : "clean",
+         "id" : "p-surfmatic2",
+         "mrp" : 420,
+         "name" : {
+            "en" : "Matic Top Load Powder",
+            "hi" : "मैटिक टॉप लोड पाउडर",
+            "mr" : "मॅटिक टॉप लोड पावडर"
+         },
+         "pack" : {
+            "n" : 2,
+            "u" : "kg"
+         },
+         "price" : 420,
+         "stock" : 10,
+         "tags" : [
+            "detergent",
+            "matic",
+            "डिटर्जंट",
+            "डिटर्जेंट"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Ariel",
+         "cat" : "clean",
+         "id" : "p-ariel1",
+         "mrp" : 145,
+         "name" : {
+            "en" : "Complete Detergent Powder",
+            "hi" : "कंप्लीट डिटर्जेंट पाउडर",
+            "mr" : "कम्प्लीट डिटर्जंट पावडर"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 145,
+         "stock" : 16,
+         "tags" : [
+            "detergent",
+            "डिटर्जंट",
+            "डिटर्जेंट"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Rin",
+         "cat" : "clean",
+         "id" : "p-rin4",
+         "mrp" : 80,
+         "name" : {
+            "en" : "Advanced Bar, pack of 4",
+            "hi" : "एडवांस्ड बार, 4 नग",
+            "mr" : "ॲडव्हान्स्ड बार, ४ नग"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "kg"
+         },
+         "price" : 80,
+         "stock" : 26,
+         "tags" : [
+            "detergent bar",
+            "डिटर्जंट",
+            "वडी"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Vim",
+         "cat" : "clean",
+         "id" : "p-vimbar300",
+         "mrp" : 30,
+         "name" : {
+            "en" : "Dishwash Bar",
+            "hi" : "बर्तन साबुन",
+            "mr" : "भांडी साबण वडी"
+         },
+         "pack" : {
+            "n" : 300,
+            "u" : "g"
+         },
+         "price" : 30,
+         "stock" : 44,
+         "tags" : [
+            "dishwash",
+            "bartan",
+            "भांडी",
+            "बर्तन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Vim",
+         "cat" : "clean",
+         "id" : "p-vimgel750",
+         "mrp" : 155,
+         "name" : {
+            "en" : "Dishwash Gel, Lemon",
+            "hi" : "डिशवॉश जेल, नींबू",
+            "mr" : "डिशवॉश जेल, लिंबू"
+         },
+         "pack" : {
+            "n" : 750,
+            "u" : "ml"
+         },
+         "price" : 155,
+         "stock" : 18,
+         "tags" : [
+            "dishwash",
+            "liquid",
+            "भांडी",
+            "बर्तन"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Harpic",
+         "cat" : "clean",
+         "id" : "p-harpic1",
+         "mrp" : 185,
+         "name" : {
+            "en" : "Power Plus Toilet Cleaner",
+            "hi" : "पावर प्लस टॉयलेट क्लीनर",
+            "mr" : "पॉवर प्लस टॉयलेट क्लीनर"
+         },
+         "pack" : {
+            "n" : 1,
+            "u" : "l"
+         },
+         "price" : 185,
+         "stock" : 16,
+         "tags" : [
+            "toilet",
+            "cleaner",
+            "टॉयलेट",
+            "क्लीनर"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Lizol",
+         "cat" : "clean",
+         "id" : "p-lizol975",
+         "mrp" : 215,
+         "name" : {
+            "en" : "Floor Cleaner, Citrus",
+            "hi" : "फ़र्श क्लीनर, सिट्रस",
+            "mr" : "फरशी क्लीनर, सिट्रस"
+         },
+         "pack" : {
+            "n" : 975,
+            "u" : "ml"
+         },
+         "price" : 215,
+         "stock" : 14,
+         "tags" : [
+            "floor",
+            "cleaner",
+            "फरशी",
+            "फ़र्श"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Colin",
+         "cat" : "clean",
+         "id" : "p-colin500",
+         "mrp" : 110,
+         "name" : {
+            "en" : "Glass Cleaner",
+            "hi" : "ग्लास क्लीनर",
+            "mr" : "ग्लास क्लीनर"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "ml"
+         },
+         "price" : 110,
+         "stock" : 18,
+         "tags" : [
+            "glass",
+            "cleaner",
+            "काच",
+            "क्लीनर"
+         ],
+         "tile" : "spray"
+      },
+      {
+         "brand" : "Comfort",
+         "cat" : "clean",
+         "id" : "p-comfort860",
+         "mrp" : 220,
+         "name" : {
+            "en" : "After Wash Fabric Conditioner",
+            "hi" : "आफ्टर वॉश फैब्रिक कंडीशनर",
+            "mr" : "आफ्टर वॉश फॅब्रिक कंडिशनर"
+         },
+         "pack" : {
+            "n" : 860,
+            "u" : "ml"
+         },
+         "price" : 220,
+         "stock" : 12,
+         "tags" : [
+            "fabric",
+            "conditioner",
+            "कपडे",
+            "कंडिशनर"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Exo",
+         "cat" : "clean",
+         "id" : "p-exo700",
+         "mrp" : 65,
+         "name" : {
+            "en" : "Dishwash Bar",
+            "hi" : "बर्तन साबुन",
+            "mr" : "भांडी साबण वडी"
+         },
+         "pack" : {
+            "n" : 700,
+            "u" : "g"
+         },
+         "price" : 65,
+         "stock" : 22,
+         "tags" : [
+            "dishwash",
+            "भांडी",
+            "बर्तन"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Good Knight",
+         "cat" : "clean",
+         "id" : "p-goodknight45",
+         "mrp" : 85,
+         "name" : {
+            "en" : "Activ+ Refill",
+            "hi" : "एक्टिव+ रिफिल",
+            "mr" : "ॲक्टिव्ह+ रिफिल"
+         },
+         "pack" : {
+            "n" : 45,
+            "u" : "ml"
+         },
+         "price" : 85,
+         "stock" : 26,
+         "tags" : [
+            "mosquito",
+            "machhar",
+            "डास",
+            "मच्छर"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Pampers",
+         "cat" : "baby",
+         "id" : "p-pampers-m56",
+         "mrp" : 999,
+         "name" : {
+            "en" : "Baby-Dry Pants, Medium, 56 pc",
+            "hi" : "बेबी-ड्राई पैंट्स, मीडियम, 56 नग",
+            "mr" : "बेबी-ड्राय पँट्स, मीडियम, ५६ नग"
+         },
+         "pack" : {
+            "n" : 56,
+            "u" : "pc"
+         },
+         "price" : 999,
+         "stock" : 8,
+         "tags" : [
+            "diaper",
+            "baby",
+            "डायपर",
+            "बाळ",
+            "बच्चा"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Johnson's",
+         "cat" : "baby",
+         "id" : "p-jnjpowder400",
+         "mrp" : 265,
+         "name" : {
+            "en" : "Baby Powder",
+            "hi" : "बेबी पाउडर",
+            "mr" : "बेबी पावडर"
+         },
+         "pack" : {
+            "n" : 400,
+            "u" : "g"
+         },
+         "price" : 265,
+         "stock" : 12,
+         "tags" : [
+            "powder",
+            "baby",
+            "पावडर",
+            "बाळ"
+         ],
+         "tile" : "bottle"
+      },
+      {
+         "brand" : "Johnson's",
+         "cat" : "baby",
+         "id" : "p-jnjsoap100",
+         "mrp" : 85,
+         "name" : {
+            "en" : "Baby Soap",
+            "hi" : "बेबी साबुन",
+            "mr" : "बेबी साबण"
+         },
+         "pack" : {
+            "n" : 100,
+            "u" : "g"
+         },
+         "price" : 85,
+         "stock" : 18,
+         "tags" : [
+            "soap",
+            "baby",
+            "साबण",
+            "साबुन",
+            "बाळ"
+         ],
+         "tile" : "soap"
+      },
+      {
+         "brand" : "Cycle",
+         "cat" : "baby",
+         "id" : "p-agarbatti120",
+         "mrp" : 110,
+         "name" : {
+            "en" : "Three-in-One Agarbatti, 120 sticks",
+            "hi" : "थ्री-इन-वन अगरबत्ती, 120 स्टिक",
+            "mr" : "थ्री-इन-वन अगरबत्ती, १२० काड्या"
+         },
+         "pack" : {
+            "n" : 120,
+            "u" : "pc"
+         },
+         "price" : 110,
+         "stock" : 24,
+         "tags" : [
+            "agarbatti",
+            "incense",
+            "अगरबत्ती",
+            "उदबत्ती"
+         ],
+         "tile" : "packet"
+      },
+      {
+         "brand" : "Origami",
+         "cat" : "baby",
+         "id" : "p-toiletroll4",
+         "mrp" : 150,
+         "name" : {
+            "en" : "Toilet Rolls, pack of 4",
+            "hi" : "टॉयलेट रोल, 4 नग",
+            "mr" : "टॉयलेट रोल, ४ नग"
+         },
+         "pack" : {
+            "n" : 4,
+            "u" : "pc"
+         },
+         "price" : 150,
+         "stock" : 16,
+         "tags" : [
+            "tissue",
+            "toilet roll",
+            "टिश्यू",
+            "रोल"
+         ],
+         "tile" : "roll"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "baby",
+         "id" : "p-candles6",
+         "mrp" : 60,
+         "name" : {
+            "en" : "Candles, pack of 6",
+            "hi" : "मोमबत्ती, 6 नग",
+            "mr" : "मेणबत्त्या, ६ नग"
+         },
+         "pack" : {
+            "n" : 6,
+            "u" : "pc"
+         },
+         "price" : 60,
+         "stock" : 20,
+         "tags" : [
+            "candle",
+            "मेणबत्ती",
+            "मोमबत्ती"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "baby",
+         "id" : "p-matchbox10",
+         "mrp" : 30,
+         "name" : {
+            "en" : "Matchboxes, pack of 10",
+            "hi" : "माचिस, 10 नग",
+            "mr" : "काड्यापेटी, १० नग"
+         },
+         "pack" : {
+            "n" : 10,
+            "u" : "pc"
+         },
+         "price" : 30,
+         "stock" : 30,
+         "tags" : [
+            "matchbox",
+            "काडेपेटी",
+            "माचिस"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Origami",
+         "cat" : "baby",
+         "id" : "p-garbagebag30",
+         "mrp" : 145,
+         "name" : {
+            "en" : "Garbage Bags, Medium, 30 pc",
+            "hi" : "कचरा बैग, मीडियम, 30 नग",
+            "mr" : "कचरा पिशव्या, मीडियम, ३० नग"
+         },
+         "pack" : {
+            "n" : 30,
+            "u" : "pc"
+         },
+         "price" : 145,
+         "stock" : 14,
+         "tags" : [
+            "garbage",
+            "bag",
+            "कचरा",
+            "पिशवी"
+         ],
+         "tile" : "bag"
+      }
+   ]
+}

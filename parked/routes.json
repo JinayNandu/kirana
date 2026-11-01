@@ -1,0 +1,563 @@
+{
+   "generated" : "2026-10-27",
+   "note" : "Road geometry and leg times baked from router.project-osrm.org (overview=full, geometries=geojson) by tools/bakeroute.pl. This is an AUTHORING step, never a runtime call -- see CLAUDE.md. Coordinates are [lat,lng] for Leaflet, flipped from the [lng,lat] GeoJSON returns. The stop ORDER is still hand-written and is the shopkeeper to confirm; OSRM only answers how to drive between the stops, not which stops to make.",
+   "routes" : [
+      {
+         "hasPath" : true,
+         "id" : "loop-cw",
+         "name" : "Clockwise loop",
+         "path" : null,
+         "stops" : [
+            {
+               "dwellMin" : 0,
+               "id" : "s-depot",
+               "kind" : "depot",
+               "legSec" : 0,
+               "ll" : [
+                  19.2382,
+                  72.8513
+               ],
+               "localityId" : null,
+               "name" : {
+                  "en" : "Milan's Super Shoppe",
+                  "hi" : "मिलन सुपर शॉपी",
+                  "mr" : "मिलन सुपर शॉपी"
+               },
+               "seq" : 0,
+               "zoneId" : null
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-yogi-nagar",
+               "kind" : "stop",
+               "legSec" : 161,
+               "ll" : [
+                  19.2385,
+                  72.8424
+               ],
+               "localityId" : "yogi-nagar",
+               "name" : {
+                  "en" : "Yogi Nagar",
+                  "hi" : "योगी नगर",
+                  "mr" : "योगी नगर"
+               },
+               "seq" : 1,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-vazira",
+               "kind" : "stop",
+               "legSec" : 245,
+               "ll" : [
+                  19.2264,
+                  72.8426
+               ],
+               "localityId" : "vazira",
+               "name" : {
+                  "en" : "Vazira",
+                  "hi" : "वज़ीरा",
+                  "mr" : "वजिरा"
+               },
+               "seq" : 2,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-kastur-park",
+               "kind" : "stop",
+               "legSec" : 157,
+               "ll" : [
+                  19.225,
+                  72.8458
+               ],
+               "localityId" : "kastur-park",
+               "name" : {
+                  "en" : "Kastur Park",
+                  "hi" : "कस्तूर पार्क",
+                  "mr" : "कस्तूर पार्क"
+               },
+               "seq" : 3,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-shimpoli",
+               "kind" : "stop",
+               "legSec" : 43,
+               "ll" : [
+                  19.2239,
+                  72.8477
+               ],
+               "localityId" : "shimpoli",
+               "name" : {
+                  "en" : "Shimpoli",
+                  "hi" : "शिंपोली",
+                  "mr" : "शिंपोली"
+               },
+               "seq" : 4,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-babhai",
+               "kind" : "stop",
+               "legSec" : 57,
+               "ll" : [
+                  19.2283,
+                  72.8481
+               ],
+               "localityId" : "babhai",
+               "name" : {
+                  "en" : "Babhai Naka",
+                  "hi" : "बाभई नाका",
+                  "mr" : "बाभई नाका"
+               },
+               "seq" : 5,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-chandavarkar",
+               "kind" : "stop",
+               "legSec" : 39,
+               "ll" : [
+                  19.2307,
+                  72.8484
+               ],
+               "localityId" : "chandavarkar",
+               "name" : {
+                  "en" : "Chandavarkar Road",
+                  "hi" : "चंदावरकर रोड",
+                  "mr" : "चंदावरकर रोड"
+               },
+               "seq" : 6,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-vazira-naka",
+               "kind" : "stop",
+               "legSec" : 105,
+               "ll" : [
+                  19.229,
+                  72.8448
+               ],
+               "localityId" : "vazira-naka",
+               "name" : {
+                  "en" : "Vazira Naka",
+                  "hi" : "वज़ीरा नाका",
+                  "mr" : "वजिरा नाका"
+               },
+               "seq" : 7,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-gorai-road",
+               "kind" : "stop",
+               "legSec" : 82,
+               "ll" : [
+                  19.2311,
+                  72.836
+               ],
+               "localityId" : "gorai-road",
+               "name" : {
+                  "en" : "Gorai Road / MHB",
+                  "hi" : "गोराई रोड / एम.एच.बी.",
+                  "mr" : "गोराई रोड / एम.एच.बी."
+               },
+               "seq" : 8,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-gorai",
+               "kind" : "stop",
+               "legSec" : 163,
+               "ll" : [
+                  19.2284,
+                  72.8259
+               ],
+               "localityId" : "gorai",
+               "name" : {
+                  "en" : "Gorai",
+                  "hi" : "गोराई",
+                  "mr" : "गोराई"
+               },
+               "seq" : 9,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-ashtavinayak",
+               "kind" : "stop",
+               "legSec" : 216,
+               "ll" : [
+                  19.2297,
+                  72.8394
+               ],
+               "localityId" : "ashtavinayak",
+               "name" : {
+                  "en" : "Ashtavinayak Nagar",
+                  "hi" : "अष्टविनायक नगर",
+                  "mr" : "अष्टविनायक नगर"
+               },
+               "seq" : 10,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-eksar",
+               "kind" : "stop",
+               "legSec" : 172,
+               "ll" : [
+                  19.2404,
+                  72.8434
+               ],
+               "localityId" : "eksar",
+               "name" : {
+                  "en" : "Eksar",
+                  "hi" : "एकसर",
+                  "mr" : "एकसर"
+               },
+               "seq" : 11,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-ic-colony",
+               "kind" : "stop",
+               "legSec" : 97,
+               "ll" : [
+                  19.2468,
+                  72.8489
+               ],
+               "localityId" : "ic-colony",
+               "name" : {
+                  "en" : "I.C. Colony",
+                  "hi" : "आई.सी. कॉलोनी",
+                  "mr" : "आय.सी. कॉलनी"
+               },
+               "seq" : 12,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-mandapeshwar",
+               "kind" : "stop",
+               "legSec" : 106,
+               "ll" : [
+                  19.2426,
+                  72.8544
+               ],
+               "localityId" : "mandapeshwar",
+               "name" : {
+                  "en" : "Mandapeshwar",
+                  "hi" : "मंडपेश्वर",
+                  "mr" : "मंडपेश्वर"
+               },
+               "seq" : 13,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 0,
+               "id" : "s-depot-in",
+               "kind" : "depot",
+               "legSec" : 103,
+               "ll" : [
+                  19.2382,
+                  72.8513
+               ],
+               "localityId" : null,
+               "name" : {
+                  "en" : "Milan's Super Shoppe",
+                  "hi" : "मिलन सुपर शॉपी",
+                  "mr" : "मिलन सुपर शॉपी"
+               },
+               "seq" : 14,
+               "zoneId" : null
+            }
+         ]
+      },
+      {
+         "hasPath" : true,
+         "id" : "loop-acw",
+         "name" : "Anticlockwise loop",
+         "path" : null,
+         "stops" : [
+            {
+               "dwellMin" : 0,
+               "id" : "s-depot",
+               "kind" : "depot",
+               "legSec" : 0,
+               "ll" : [
+                  19.2382,
+                  72.8513
+               ],
+               "localityId" : null,
+               "name" : {
+                  "en" : "Milan's Super Shoppe",
+                  "hi" : "मिलन सुपर शॉपी",
+                  "mr" : "मिलन सुपर शॉपी"
+               },
+               "seq" : 0,
+               "zoneId" : null
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-mandapeshwar",
+               "kind" : "stop",
+               "legSec" : 78,
+               "ll" : [
+                  19.2426,
+                  72.8544
+               ],
+               "localityId" : "mandapeshwar",
+               "name" : {
+                  "en" : "Mandapeshwar",
+                  "hi" : "मंडपेश्वर",
+                  "mr" : "मंडपेश्वर"
+               },
+               "seq" : 1,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-ic-colony",
+               "kind" : "stop",
+               "legSec" : 134,
+               "ll" : [
+                  19.2468,
+                  72.8489
+               ],
+               "localityId" : "ic-colony",
+               "name" : {
+                  "en" : "I.C. Colony",
+                  "hi" : "आई.सी. कॉलोनी",
+                  "mr" : "आय.सी. कॉलनी"
+               },
+               "seq" : 2,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-eksar",
+               "kind" : "stop",
+               "legSec" : 117,
+               "ll" : [
+                  19.2404,
+                  72.8434
+               ],
+               "localityId" : "eksar",
+               "name" : {
+                  "en" : "Eksar",
+                  "hi" : "एकसर",
+                  "mr" : "एकसर"
+               },
+               "seq" : 3,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-ashtavinayak",
+               "kind" : "stop",
+               "legSec" : 178,
+               "ll" : [
+                  19.2297,
+                  72.8394
+               ],
+               "localityId" : "ashtavinayak",
+               "name" : {
+                  "en" : "Ashtavinayak Nagar",
+                  "hi" : "अष्टविनायक नगर",
+                  "mr" : "अष्टविनायक नगर"
+               },
+               "seq" : 4,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-gorai",
+               "kind" : "stop",
+               "legSec" : 259,
+               "ll" : [
+                  19.2284,
+                  72.8259
+               ],
+               "localityId" : "gorai",
+               "name" : {
+                  "en" : "Gorai",
+                  "hi" : "गोराई",
+                  "mr" : "गोराई"
+               },
+               "seq" : 5,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-gorai-road",
+               "kind" : "stop",
+               "legSec" : 171,
+               "ll" : [
+                  19.2311,
+                  72.836
+               ],
+               "localityId" : "gorai-road",
+               "name" : {
+                  "en" : "Gorai Road / MHB",
+                  "hi" : "गोराई रोड / एम.एच.बी.",
+                  "mr" : "गोराई रोड / एम.एच.बी."
+               },
+               "seq" : 6,
+               "zoneId" : "z-west"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-vazira-naka",
+               "kind" : "stop",
+               "legSec" : 95,
+               "ll" : [
+                  19.229,
+                  72.8448
+               ],
+               "localityId" : "vazira-naka",
+               "name" : {
+                  "en" : "Vazira Naka",
+                  "hi" : "वज़ीरा नाका",
+                  "mr" : "वजिरा नाका"
+               },
+               "seq" : 7,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-chandavarkar",
+               "kind" : "stop",
+               "legSec" : 62,
+               "ll" : [
+                  19.2307,
+                  72.8484
+               ],
+               "localityId" : "chandavarkar",
+               "name" : {
+                  "en" : "Chandavarkar Road",
+                  "hi" : "चंदावरकर रोड",
+                  "mr" : "चंदावरकर रोड"
+               },
+               "seq" : 8,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-babhai",
+               "kind" : "stop",
+               "legSec" : 70,
+               "ll" : [
+                  19.2283,
+                  72.8481
+               ],
+               "localityId" : "babhai",
+               "name" : {
+                  "en" : "Babhai Naka",
+                  "hi" : "बाभई नाका",
+                  "mr" : "बाभई नाका"
+               },
+               "seq" : 9,
+               "zoneId" : "z-core"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-shimpoli",
+               "kind" : "stop",
+               "legSec" : 65,
+               "ll" : [
+                  19.2239,
+                  72.8477
+               ],
+               "localityId" : "shimpoli",
+               "name" : {
+                  "en" : "Shimpoli",
+                  "hi" : "शिंपोली",
+                  "mr" : "शिंपोली"
+               },
+               "seq" : 10,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-kastur-park",
+               "kind" : "stop",
+               "legSec" : 39,
+               "ll" : [
+                  19.225,
+                  72.8458
+               ],
+               "localityId" : "kastur-park",
+               "name" : {
+                  "en" : "Kastur Park",
+                  "hi" : "कस्तूर पार्क",
+                  "mr" : "कस्तूर पार्क"
+               },
+               "seq" : 11,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-vazira",
+               "kind" : "stop",
+               "legSec" : 91,
+               "ll" : [
+                  19.2264,
+                  72.8426
+               ],
+               "localityId" : "vazira",
+               "name" : {
+                  "en" : "Vazira",
+                  "hi" : "वज़ीरा",
+                  "mr" : "वजिरा"
+               },
+               "seq" : 12,
+               "zoneId" : "z-south"
+            },
+            {
+               "dwellMin" : 4,
+               "id" : "s-yogi-nagar",
+               "kind" : "stop",
+               "legSec" : 287,
+               "ll" : [
+                  19.2385,
+                  72.8424
+               ],
+               "localityId" : "yogi-nagar",
+               "name" : {
+                  "en" : "Yogi Nagar",
+                  "hi" : "योगी नगर",
+                  "mr" : "योगी नगर"
+               },
+               "seq" : 13,
+               "zoneId" : "z-north"
+            },
+            {
+               "dwellMin" : 0,
+               "id" : "s-depot-in",
+               "kind" : "depot",
+               "legSec" : 199,
+               "ll" : [
+                  19.2382,
+                  72.8513
+               ],
+               "localityId" : null,
+               "name" : {
+                  "en" : "Milan's Super Shoppe",
+                  "hi" : "मिलन सुपर शॉपी",
+                  "mr" : "मिलन सुपर शॉपी"
+               },
+               "seq" : 14,
+               "zoneId" : null
+            }
+         ]
+      }
+   ],
+   "source" : "router.project-osrm.org overview=full"
+}

@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Milan's Super Shoppe</title>
+
+<!-- Two theme-colors: one value leaves a pale strip above a dark page. -->
+<meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12150F" media="(prefers-color-scheme: dark)">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===================================================================
+   TOKENS
+
+   Two palettes defining the SAME set. No rule below this block may
+   name a colour, and nothing may reference a token only one palette
+   defines -- that asymmetry is how a theme ends up black on black.
+
+   -wash  tinted background for an accent
+   -ink   contrast-safe TEXT variant of an accent
+   --on-* text ON a filled accent. Never hardcode #fff: the dark
+          accents are light, and white on them scores about 2.5.
+   =================================================================== */
+:root{
+  --paper:#F7F5F0; --card:#FFFFFF; --sunk:#EDEAE3;
+  /* --ink-dim measured 2.73 on --sunk at the obvious value, which is a
+     straight fail: it carries 13px hint text and the 9px pack
+     monogram, both small text, both needing 4.5. */
+  --ink:#1A1D18; --ink-soft:#5F655A; --ink-dim:#6C7366;
+  --edge:#DEDAD0; --edge-2:#C7C2B6;
+
+  --leaf:#1F6B4A;  --leaf-wash:#E4EFE8;  --leaf-ink:#17543A;
+  --spice:#C2740A; --spice-wash:#FAF0DE; --spice-ink:#8F5505;
+  --sky:#15607F;   --sky-wash:#E3EDF2;   --sky-ink:#114F68;
+  --bad:#B3261E;   --bad-wash:#FAEAE6;   --bad-ink:#8E1E17;
+
+  --on-leaf:#FFFFFF; --on-spice:#26190A; --on-sky:#FFFFFF; --on-bad:#FFFFFF;
+
+  /* Deliberately the SAME in both themes. A QR themed to the page
+     loses the contrast a scanner needs, so this pair is a token that
+     does not vary -- which is the honest way to say 'not themed'
+     rather than hardcoding white and arguing with the checker. */
+  --qr-paper:#FFFFFF; --qr-ink:#111111;
+  /* Pack shots are photographs on their own white backdrop, so the
+     tile behind one is paper in BOTH themes -- the same deliberate
+     non-varying token as the QR above. Tinting it to the dark UI
+     puts a grey halo around every product. */
+  --shot-paper:#FFFFFF;
+
+  --sh-card:0 1px 3px rgba(0,0,0,.07);
+  --sh-lift:0 2px 10px rgba(31,107,74,.10);
+
+  --f-ui:'Mukta','Noto Sans Devanagari','Segoe UI',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --r1:6px; --r2:10px;
+  --hh:56px;
+  --gutter:max(16px, env(safe-area-inset-left, 0px));
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12150F; --card:#1B1F17; --sunk:#232820;
+    /* --ink-dim measured at 3.57 on --sunk at the obvious value and
+       had to come up: it carries 13px hint text, which is small text
+       and so needs 4.5, not 3. */
+    --ink:#E9EDE4; --ink-soft:#A3AB9B; --ink-dim:#929B89;
+    --edge:#2E342A; --edge-2:#434A3C;
+
+    --leaf:#5FBF8C;  --leaf-wash:#17291F;  --leaf-ink:#7FD1A4;
+    --spice:#E8A33F; --spice-wash:#2C2114; --spice-ink:#F0B761;
+    --sky:#5BAFD4;   --sky-wash:#14242C;   --sky-ink:#7EC3E0;
+    --bad:#E07A72;   --bad-wash:#2C1816;   --bad-ink:#EA968F;
+
+    --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
+    --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+
+    --sh-card:0 1px 3px rgba(0,0,0,.4);
+    --sh-lift:0 2px 10px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+
+
+/* The same palette again, for a host that forces the theme rather
+   than letting the OS decide. Both must exist or the artifact
+   ignores the viewer toggle. tokens.pl checks all three blocks. */
+:root[data-theme="dark"]{
+    --paper:#12150F; --card:#1B1F17; --sunk:#232820;
+    /* --ink-dim measured at 3.57 on --sunk at the obvious value and
+       had to come up: it carries 13px hint text, which is small text
+       and so needs 4.5, not 3. */
+    --ink:#E9EDE4; --ink-soft:#A3AB9B; --ink-dim:#929B89;
+    --edge:#2E342A; --edge-2:#434A3C;
+
+    --leaf:#5FBF8C;  --leaf-wash:#17291F;  --leaf-ink:#7FD1A4;
+    --spice:#E8A33F; --spice-wash:#2C2114; --spice-ink:#F0B761;
+    --sky:#5BAFD4;   --sky-wash:#14242C;   --sky-ink:#7EC3E0;
+    --bad:#E07A72;   --bad-wash:#2C1816;   --bad-ink:#EA968F;
+
+    --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
+    --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+
+    --sh-card:0 1px 3px rgba(0,0,0,.4);
+    --sh-lift:0 2px 10px rgba(0,0,0,.5);
+    color-scheme:dark;
+}
+
+/* =================================================================== */
+*{box-sizing:border-box}
+/* Any rule giving an element a display beats the UA's [hidden] rule,
+   so every hidden thing here needs this or it stays on screen. */
+[hidden]{display:none !important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--f-ui); font-size:16px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer; background:none; border:0; padding:0}
+a{color:var(--leaf-ink)}
+
+.wrap{
+  max-width:580px; margin:0 auto;
+  /* Must clear the fixed tab bar (54px) or the last button sits under
+     it. --s6 of breathing room on top of that. */
+  padding:0 var(--gutter) calc(54px + var(--s6) + env(safe-area-inset-bottom,0px));
+}
+
+/* --- header ------------------------------------------------------- */
+#hdr{
+  position:sticky; top:0; z-index:10;
+  background:var(--card); border-bottom:1px solid var(--edge);
+  padding-top:env(safe-area-inset-top,0px);
+}
+#hdr .hrow{
+  max-width:580px; margin:0 auto; min-height:var(--hh);
+  padding:var(--s2) var(--gutter);
+  display:flex; align-items:center; gap:var(--s3);
+}
+.brand{font-weight:700; font-size:18px; letter-spacing:-.01em; flex:1; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.brand small{display:block; font-weight:400; font-size:11px; color:var(--ink-dim);
+  letter-spacing:.04em; text-transform:uppercase; line-height:1.2}
+
+/* The role rule: a screenshot is identifiable at a glance. */
+#rolerule{height:3px; background:var(--leaf)}
+body[data-role="shop"]   #rolerule{background:var(--spice)}
+
+#backbtn{
+  width:40px; height:40px; margin-left:calc(var(--s2) * -1);
+  display:grid; place-items:center; border-radius:var(--r2); color:var(--ink-soft);
+}
+#backbtn:active{background:var(--sunk)}
+
+/* --- segmented controls ------------------------------------------- */
+.seg{
+  display:inline-flex; background:var(--sunk); border-radius:var(--r2);
+  padding:3px; gap:2px;
+}
+.seg button{
+  padding:6px 10px; border-radius:7px; font-size:13px; font-weight:600;
+  color:var(--ink-soft); min-height:34px;
+}
+.seg button[aria-pressed="true"]{background:var(--card); color:var(--ink); box-shadow:var(--sh-card)}
+
+#roleseg button[aria-pressed="true"][data-role="customer"]{color:var(--leaf-ink)}
+#roleseg button[aria-pressed="true"][data-role="shop"]{color:var(--spice-ink)}
+
+/* --- generic bits -------------------------------------------------- */
+h1{font-size:22px; font-weight:700; letter-spacing:-.015em; margin:var(--s5) 0 var(--s2)}
+h2{font-size:15px; font-weight:600; margin:var(--s5) 0 var(--s2); color:var(--ink)}
+.sub{color:var(--ink-soft); font-size:14px; margin:0 0 var(--s4)}
+/* A licence credit. 12px on --ink-soft, not --ink-dim: it has to be
+   quiet, but it is a condition of using the photographs, so it stays
+   legible rather than becoming decorative grey. */
+.tiny{font-size:12px; line-height:1.5}
+.hint{color:var(--ink-dim); font-size:13px}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+
+.card{
+  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
+  padding:var(--s3); box-shadow:var(--sh-card);
+}
+.rule{height:1px; background:var(--edge); border:0; margin:var(--s5) 0}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--s2);
+  min-height:48px; padding:0 var(--s5); border-radius:var(--r2);
+  background:var(--leaf); color:var(--on-leaf); font-weight:600; font-size:15px;
+  width:100%;
+}
+.btn:active{filter:brightness(.94)}
+.btn[disabled]{background:var(--sunk); color:var(--ink-dim); cursor:default}
+.btn.ghost{background:transparent; color:var(--leaf-ink); border:1px solid var(--edge-2)}
+.btn.spice{background:var(--spice); color:var(--on-spice)}
+.btn.sky{background:var(--sky); color:var(--on-sky)}
+.btn.small{min-height:38px; padding:0 var(--s3); font-size:14px; width:auto}
+
+.pill{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:999px; font-size:12px; font-weight:600;
+  background:var(--sunk); color:var(--ink-soft);
+}
+.pill.leaf{background:var(--leaf-wash); color:var(--leaf-ink)}
+.pill.spice{background:var(--spice-wash); color:var(--spice-ink)}
+.pill.sky{background:var(--sky-wash); color:var(--sky-ink)}
+.pill.bad{background:var(--bad-wash); color:var(--bad-ink)}
+
+.empty{text-align:center; color:var(--ink-dim); padding:var(--s7) var(--s4)}
+
+label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
+.field{
+  width:100%; min-height:48px; padding:0 var(--s3);
+  background:var(--card); border:1px solid var(--edge-2); border-radius:var(--r2);
+  font-size:16px;   /* never under 16px or iOS zooms the page */
+}
+textarea.field{padding:var(--s3); min-height:76px; line-height:1.4; resize:vertical}
+.field:focus{outline:2px solid var(--leaf); outline-offset:-1px}
+.ferr{color:var(--bad-ink); font-size:13px; margin-top:4px}
+.field.bad{border-color:var(--bad)}
+
+/* --- screens ------------------------------------------------------- */
+section[id^="s-"][hidden]{display:none}
+
+/* --- bottom tabs --------------------------------------------------- */
+#tabs{
+  position:fixed; left:0; right:0; bottom:0; z-index:10;
+  background:var(--card); border-top:1px solid var(--edge);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+#tabs .trow{max-width:580px; margin:0 auto; display:flex}
+#tabs button{
+  flex:1; min-height:54px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:2px;
+  font-size:11px; font-weight:600; color:var(--ink-dim);
+}
+#tabs button[aria-current="true"]{color:var(--leaf-ink)}
+body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink)}
+#tabs svg{width:22px; height:22px}
+.tbadge{
+  position:absolute; transform:translate(14px,-14px);
+  background:var(--spice); color:var(--on-spice);
+  font-size:10px; font-weight:700; min-width:17px; height:17px;
+  border-radius:999px; display:grid; place-items:center; padding:0 4px;
+}
+
+/* --- toast --------------------------------------------------------- */
+#toast{
+  position:fixed; left:50%; bottom:calc(70px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%); z-index:40;
+  background:var(--ink); color:var(--paper);
+  padding:var(--s2) var(--s4); border-radius:999px; font-size:14px; font-weight:500;
+  box-shadow:var(--sh-lift); max-width:90vw; text-align:center;
+}
+#toast[hidden]{display:none}
+
+/* --- icons --------------------------------------------------------- */
+/* Stroked line art, never filled glyphs, never a scene. */
+.ic{width:24px; height:24px; fill:none; stroke:currentColor;
+  stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+
+/* --- search ---------------------------------------------------------- */
+.searchbar{position:relative; margin:var(--s4) 0}
+.searchbar svg{position:absolute; left:12px; top:50%; margin-top:-12px; color:var(--ink-dim)}
+.searchbar .field{padding-left:42px}
+
+/* --- next-run banner ------------------------------------------------- */
+/* The whole competitive argument, in three lines. */
+.banner{
+  background:var(--leaf-wash); border:1px solid var(--edge); border-radius:var(--r2);
+  padding:var(--s3); margin:var(--s4) 0;
+}
+.bhead{display:flex; align-items:center; gap:var(--s2); margin:0 0 var(--s1);
+  font-weight:600; color:var(--leaf-ink)}
+.bhead svg{flex:none; width:20px; height:20px}
+.bline{margin:var(--s1) 0 0; font-size:14px}
+
+/* --- use my location -------------------------------------------------- */
+.locbox #useloc{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:var(--s2); width:100%;
+}
+.locbox #useloc svg{width:18px; height:18px}
+.locbox #useloc[disabled]{opacity:.6}
+/* The hint carries the result and the errors, so it must not jump the
+   form around as the text changes length under it. */
+.locbox .hint{margin:var(--s2) 0 0; min-height:2.6em}
+
+/* --- category grid --------------------------------------------------- */
+.cgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s2)}
+@media (min-width:460px){ .cgrid{grid-template-columns:repeat(3,1fr)} }
+.ccard{
+  display:flex; flex-direction:column; align-items:flex-start; gap:var(--s2);
+  min-height:96px; padding:var(--s3); text-align:left;
+  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
+  font-size:14px; font-weight:600; line-height:1.25;
+}
+/* 44px, bigger than the 26px glyph it replaces, because a photograph
+   needs the room -- but smaller than the 64px product tile, since this
+   is a signpost for an aisle and not the thing being bought. */
+.ctile{
+  position:relative; width:44px; height:44px; border-radius:var(--r1);
+  display:grid; place-items:center; overflow:hidden;
+}
+.ccard svg{color:var(--leaf); width:26px; height:26px}
+.cshot{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; border-radius:inherit;
+  /* Transparent until it lands, for the same reason as .pshot: the
+     white backdrop belongs to a photograph that has arrived. */
+  opacity:0; transition:opacity .18s ease;
+}
+.cshot.on{opacity:1; background:var(--shot-paper)}
+@media (prefers-reduced-motion:reduce){ .cshot{transition:none} }
+.ccard:active{background:var(--sunk)}
+
+/* --- product list ---------------------------------------------------- */
+.plist{list-style:none; margin:0; padding:0}
+.prow{
+  display:grid; grid-template-columns:52px 1fr auto; gap:var(--s3);
+  align-items:center; padding:var(--s3) 0; border-bottom:1px solid var(--edge);
+}
+.ptile{
+  /* 64, not the 52 this was when it held a drawn glyph. A line glyph
+     reads fine small because it is three strokes; a photograph of a
+     packet has a brand band, a flavour name and a picture on it, and
+     at 52px none of those survive. This is the size at which a
+     customer recognises the pack they already have at home. */
+  position:relative; width:64px; height:64px; border-radius:var(--r2);
+  background:var(--sunk); display:grid; place-items:center; color:var(--ink-soft);
+}
+.ptile svg{width:26px; height:26px}
+/* The photograph covers the glyph it is laid over. object-fit:contain
+   keeps a tall packet and a wide carton both whole -- `cover` crops,
+   and a cropped pack shot loses the brand band at the top, which is
+   the only part of it anyone actually reads at this size. */
+.pshot{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; border-radius:inherit;
+  /* Transparent and invisible until it has actually arrived. The white
+     backdrop belongs to a LOADED photograph: painted before one, it
+     covers the glyph underneath and every un-arrived tile reads as a
+     blank white box -- which is what a lazily-loaded list looks like
+     while you scroll it, and it looks broken rather than loading. */
+  opacity:0; transition:opacity .18s ease;
+}
+.pshot.on{opacity:1; background:var(--shot-paper)}
+@media (prefers-reduced-motion:reduce){ .pshot{transition:none} }
+.pmono{
+  position:absolute; left:5px; bottom:3px;
+  font-family:var(--f-mono); font-size:10px; font-weight:600;
+  /* --ink-soft, not --ink-dim: this is the only dim-on-sunk pairing in
+     the app and it measured 4.08, which is a fail for 10px text. */
+  color:var(--ink-soft); letter-spacing:.02em;
+}
+.pbody{display:flex; flex-direction:column; gap:2px; min-width:0}
+.pname{font-size:15px; font-weight:500; line-height:1.3}
+.ppack{font-size:13px}
+.pprice{display:flex; align-items:baseline; gap:var(--s2); flex-wrap:wrap; margin-top:2px}
+.pprice b{font-size:15px}
+.pprice s{font-size:13px}
+.pact{display:flex; justify-content:flex-end}
+.plow{grid-column:2/-1; font-size:12px; color:var(--spice-ink)}
+
+.step{display:inline-flex; align-items:center; gap:var(--s1);
+  border:1px solid var(--leaf); border-radius:var(--r2); background:var(--leaf-wash)}
+.step button{width:36px; height:38px; display:grid; place-items:center; color:var(--leaf-ink)}
+.step button svg{width:18px; height:18px}
+.step b{min-width:22px; text-align:center; font-size:15px; color:var(--leaf-ink)}
+.addb{min-width:68px}
+
+.plist.flat .lrow{
+  display:grid; grid-template-columns:auto 1fr auto; gap:var(--s3);
+  align-items:baseline; padding:var(--s2) 0; border-bottom:1px solid var(--edge); font-size:14px;
+}
+.lq{
+  min-width:26px; text-align:center; font-weight:600; font-size:13px;
+  background:var(--sunk); border-radius:var(--r1); padding:2px 5px;
+}
+
+/* --- totals ---------------------------------------------------------- */
+.totals{margin:var(--s4) 0}
+.trow{display:flex; justify-content:space-between; gap:var(--s3); margin:var(--s2) 0; font-size:14px}
+.trow.leaf{color:var(--leaf-ink)}
+.trow.bad{color:var(--bad-ink)}
+.trule{border:0; height:1px; background:var(--edge); margin:var(--s3) 0}
+.tofree{margin:0 0 var(--s3); color:var(--leaf-ink)}
+
+/* --- slot picker ----------------------------------------------------- */
+.slot{display:block; width:100%; text-align:left; margin-bottom:var(--s2)}
+.slot.on{border-color:var(--leaf); box-shadow:0 0 0 1px var(--leaf), var(--sh-lift)}
+.slot.full{opacity:.55}
+.srow1{display:flex; justify-content:space-between; align-items:baseline; gap:var(--s3)}
+.srow1 b{font-size:16px}
+.srow2{display:block; margin-top:var(--s1); color:var(--leaf-ink); font-weight:600; font-size:14px}
+.srow3{display:block; margin-top:2px; font-size:13px}
+.srow4{display:block; margin-top:var(--s2)}
+.srow4:empty{display:none}
+
+.banner.flat{background:var(--spice-wash)}
+.banner.flat b{color:var(--spice-ink)}
+.arealine{
+  display:flex; align-items:baseline; gap:var(--s2);
+  margin:var(--s4) 0; font-size:14px; color:var(--ink-soft);
+}
+.linkb{color:var(--leaf-ink); font-weight:600; text-decoration:underline; font-size:14px}
+
+/* --- forms ----------------------------------------------------------- */
+.fset{margin:var(--s4) 0}
+.paybox{margin:var(--s4) 0}
+.paybox p{margin:var(--s1) 0 0}
+.btnrow{display:flex; gap:var(--s2); margin:var(--s3) 0}
+.btnrow .btn{flex:1}
+
+/* --- order placed ---------------------------------------------------- */
+.doneart{display:grid; place-items:center; width:64px; height:64px; margin:var(--s6) auto 0;
+  border-radius:999px; background:var(--leaf-wash); color:var(--leaf-ink)}
+.doneart svg{width:32px; height:32px; stroke-width:2.4}
+.donecode{text-align:center; font-size:20px; font-weight:600; margin:var(--s2) 0}
+#s-done h1{text-align:center}
+
+/* --- order rows ------------------------------------------------------ */
+.orow{
+  display:flex; align-items:center; gap:var(--s3);
+  padding:var(--s3) 0; border-bottom:1px solid var(--edge); cursor:pointer;
+}
+.orow:active{background:var(--sunk)}
+.obody{flex:1; display:flex; flex-direction:column; min-width:0}
+.obody .hint{font-size:13px}
+.orow > svg{color:var(--ink-dim); flex:none}
+.seqn{
+  flex:none; width:26px; height:26px; border-radius:999px; display:grid; place-items:center;
+  background:var(--sunk); font-size:12px; font-weight:600;
+}
+
+/* --- shopkeeper board ------------------------------------------------ */
+.runcard{display:block; width:100%; text-align:left; margin-bottom:var(--s2)}
+.runcard.dim{opacity:.6}
+.runcard.off{opacity:.4}
+.rc1{display:flex; justify-content:space-between; align-items:center; gap:var(--s3)}
+.rc1 b{font-size:16px}
+.rc2{display:block; margin-top:2px; font-size:13px; color:var(--ink-soft)}
+.rc3{display:flex; gap:var(--s3); margin-top:var(--s2); font-size:13px; flex-wrap:wrap}
+.rc3 .mono{margin-left:auto; font-weight:600}
+
+/* --- picking list ---------------------------------------------------- */
+.pick .pkrow{
+  display:grid; grid-template-columns:28px auto 1fr auto; gap:var(--s3);
+  align-items:center; padding:var(--s3) 0; border-bottom:1px solid var(--edge); cursor:pointer;
+}
+.pick .tick{
+  width:26px; height:26px; border-radius:var(--r1); border:1.5px solid var(--edge-2);
+  display:grid; place-items:center; color:transparent;
+}
+.pick .pkrow.on .tick{background:var(--leaf); border-color:var(--leaf); color:var(--on-leaf)}
+.pick .pkrow.on .pname{text-decoration:line-through; color:var(--ink-dim)}
+.pick .tick svg{width:16px; height:16px; stroke-width:2.6}
+
+/* --- load list ------------------------------------------------------- */
+.load .ldrow{
+  display:grid; grid-template-columns:auto 1fr; gap:var(--s3);
+  align-items:center; padding:var(--s2) 0; border-bottom:1px solid var(--edge);
+}
+.ldq{
+  min-width:34px; text-align:center; font-size:16px; font-weight:600;
+  background:var(--spice-wash); color:var(--spice-ink);
+  border-radius:var(--r1); padding:3px 6px;
+}
+
+
+/* --- required / optional ---------------------------------------------- */
+/* Every question says whether it must be answered. A form where some
+   fields are marked and others are silent makes the reader guess. */
+.req{color:var(--bad-ink); margin-left:3px; font-weight:700}
+.opt{color:var(--ink-dim); margin-left:5px; font-weight:400; font-size:12px}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);
+  white-space:nowrap; border:0; padding:0; margin:-1px}
+
+/* --- free delivery ----------------------------------------------------- */
+.freeline{
+  display:flex; align-items:center; gap:var(--s2);
+  margin:var(--s3) 0; color:var(--leaf-ink); font-weight:600; font-size:14px;
+}
+.freeline svg{width:20px; height:20px; flex:none}
+
+/* --- the delivery window on a slot card -------------------------------- */
+.win{font-size:15px; font-weight:600; color:var(--leaf-ink)}
+
+/* --- use my location ---------------------------------------------------- */
+#locbtn.gotloc{border-color:var(--leaf); color:var(--leaf-ink); background:var(--leaf-wash)}
+#locbtn svg{width:20px; height:20px}
+
+/* --- paying ------------------------------------------------------------- */
+.paybox.ispaid{border-color:var(--leaf); background:var(--leaf-wash)}
+.paybox.isdemo{border-color:var(--spice)}
+.btn.danger{color:var(--bad-ink); border-color:var(--edge-2)}
+.btn.danger.arm{background:var(--bad); color:var(--on-bad); border-color:var(--bad)}
+/* --- suggestion strips ------------------------------------------------ */
+.railhead{margin-top:var(--s6)}
+.srail{
+  list-style:none; margin:0 calc(var(--gutter) * -1); padding:0 var(--gutter) var(--s2);
+  display:flex; gap:var(--s2); overflow-x:auto; scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.srail::-webkit-scrollbar{display:none}
+.scard{
+  flex:0 0 136px; scroll-snap-align:start;
+  display:flex; flex-direction:column; gap:var(--s1);
+  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
+  padding:var(--s3); box-shadow:var(--sh-card);
+}
+.scard .ptile{width:44px; height:44px}
+.scard .ptile svg{width:22px; height:22px}
+.sname{
+  font-size:13px; font-weight:500; line-height:1.3; margin-top:var(--s1);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden; min-height:34px;
+}
+.spack{font-size:12px}
+.sbuy{display:flex; align-items:center; justify-content:space-between; gap:var(--s2); margin-top:auto; padding-top:var(--s2)}
+.sbuy b{font-size:14px}
+.sbuy .btn{min-height:32px; padding:0 var(--s2); font-size:13px}
+
+.coupbox{margin:var(--s4) 0}
+.coupbox label{margin-bottom:var(--s2)}
+.couprow{display:flex; gap:var(--s2)}
+.couprow .field{flex:1}
+.couprow .btn{width:auto; min-width:84px}
+.couphit{display:flex; align-items:center; gap:var(--s3); margin:0}
+.proof{
+  margin:var(--s3) 0 0; padding:var(--s3);
+  background:var(--spice-wash); color:var(--spice-ink);
+  border-radius:var(--r2); font-size:13px; font-weight:600; text-align:center;
+}
+.paybox .btn + .btn{margin-top:var(--s2)}
+.demostrip{
+  margin:calc(var(--s3) * -1) calc(var(--s3) * -1) var(--s3);
+  padding:var(--s2) var(--s3); border-radius:var(--r2) var(--r2) 0 0;
+  background:var(--spice); color:var(--on-spice);
+  font-size:13px; font-weight:600; text-align:center;
+}
+.paybox .btn{margin-top:var(--s3)}
+.qrwrap{margin-top:var(--s4); text-align:center}
+/* The QR is black on white in BOTH themes, on its own tile. A code
+   themed to the page loses the contrast a scanner needs, so this is
+   the one place in the app that is deliberately not themed -- and the
+   white tile stops it looking like a mistake in dark mode. */
+.qrtile{
+  display:inline-block; padding:var(--s3); border-radius:var(--r2);
+  background:var(--qr-paper); color:var(--qr-ink); line-height:0; min-height:40px;
+}
+.qrtile img, .qrtile canvas{display:block}
+.qrcap{margin:var(--s2) 0 0}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+</style>
+</head>
+<body data-role="customer">
+
+<header id="hdr">
+  <div class="hrow">
+    <button id="backbtn" type="button" hidden aria-label="Back">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="brand"><span id="l-brand">Kirana</span><small id="l-brandsub">Borivali West</small></div>
+    <div class="seg" id="roleseg" role="group" aria-label="View as">
+      <button type="button" data-role="customer" aria-pressed="true"><span id="l-rolecust">Shop</span></button>
+      <button type="button" data-role="shop"     aria-pressed="false"><span id="l-roleshop">Store</span></button>
+    </div>
+  </div>
+  <div id="rolerule"></div>
+</header>
+
+<main class="wrap" id="main">
+
+  <!-- ============ CUSTOMER ============ -->
+  <section id="s-shop"   hidden></section>
+  <section id="s-cat"    hidden></section>
+  <section id="s-find"   hidden></section>
+  <section id="s-cart"   hidden></section>
+  <section id="s-slot"   hidden></section>
+  <section id="s-addr"   hidden></section>
+  <section id="s-done"   hidden></section>
+  <section id="s-track"  hidden></section>
+  <section id="s-orders" hidden></section>
+
+  <!-- ============ SHOPKEEPER ============ -->
+  <section id="s-board"  hidden></section>
+  <section id="s-run"    hidden></section>
+  <section id="s-pick"   hidden></section>
+  <section id="s-load"   hidden></section>
+
+  <!-- ============ SHARED ============ -->
+  <section id="s-set"    hidden></section>
+
+</main>
+
+<nav id="tabs"><div class="trow" id="trow"></div></nav>
+<div id="toast" hidden></div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

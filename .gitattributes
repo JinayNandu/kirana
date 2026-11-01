@@ -1,0 +1,13 @@
+# Keep LF everywhere, on Windows too.
+#
+# Git's default on Windows rewrites checked-out files to CRLF, which
+# would reach the Perl scripts in tools/ -- a shebang line ending in
+# CR is a real problem the moment one of them runs anywhere but here.
+# The app's own files are served to browsers, which do not care, but
+# a repository with two line endings in it produces diffs that are
+# entirely whitespace.
+* text=auto eol=lf
+
+# Pack shots are binary and must never be touched.
+*.jpg binary
+*.png binary

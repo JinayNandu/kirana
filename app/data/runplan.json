@@ -1,0 +1,21 @@
+{
+  "note": "Three delivery windows a day, the same for everyone wherever they live. One hour wide, so the customer gets a promise they can plan around instead of a per-street estimate that moves. Each closes an hour before it starts, which is the shopkeeper's picking time.",
+
+  "slots": [
+    { "id": "s1", "label": "runMorning",
+      "cutoff": "10:00", "from": "11:00", "to": "12:00",
+      "cap": 25, "enabled": true },
+
+    { "id": "s2", "label": "runAfternoon",
+      "cutoff": "14:00", "from": "15:00", "to": "16:00",
+      "cap": 25, "enabled": true },
+
+    { "id": "s3", "label": "runEvening",
+      "cutoff": "18:00", "from": "19:00", "to": "20:00",
+      "cap": 25, "enabled": true }
+  ],
+
+  "capNote": "25 orders a slot is a guess, not a measurement. It is what stops a single window being oversold; raise or lower it once there is a week of real load. A full slot is shown as full rather than hidden.",
+
+  "parked": "There used to be a fixed tempo route here with per-locality arrival times, traffic factors and baked road geometry. It is in parked/ -- the driver works out his own order from the addresses, which is what actually happens, and a one-hour window is a promise that survives traffic."
+}

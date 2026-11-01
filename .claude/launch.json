@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kirana",
+      "runtimeExecutable": "C:/Users/Nandu jinay/AppData/Local/Programs/Git/usr/bin/perl.exe",
+      "runtimeArgs": [
+        "C:/Users/Nandu jinay/Projects/kirana/tools/serve.pl",
+        "8110",
+        "C:/Users/Nandu jinay/Projects/kirana/app"
+      ],
+      "port": 8110
+    }
+  ]
+}

@@ -1,0 +1,330 @@
+{
+   "area" : {
+      "bounds" : [
+         [
+            19.219,
+            72.823
+         ],
+         [
+            19.251,
+            72.862
+         ]
+      ],
+      "centre" : [
+         19.2345,
+         72.8465
+      ],
+      "name" : {
+         "en" : "Borivali West",
+         "hi" : "बोरीवली पश्चिम",
+         "mr" : "बोरिवली पश्चिम"
+      },
+      "pin" : "400092",
+      "pinNote" : "The delivery area spans three postcodes. Most of it is 400091/400092; the shop itself and the Mandapeshwar/Shivaji Nagar corner are 400103. All of it is Borivali West -- do not use the postcode to decide what is in the area, and do not use OpenStreetMap display_name either, which says \"Borivali East\" for several points plainly in the west because S.V. Road is the ward boundary.",
+      "pins" : [
+         "400091",
+         "400092",
+         "400103"
+      ],
+      "zoom" : 14
+   },
+   "landmarks" : [
+      {
+         "ll" : [
+            19.2217,
+            72.853
+         ],
+         "name" : "Kora Kendra"
+      },
+      {
+         "ll" : [
+            19.2291,
+            72.8574
+         ],
+         "name" : "Borivali Station (West)"
+      }
+   ],
+   "note" : "Every coordinate here was checked against OpenStreetMap, not recalled. Four places that sound like Borivali West are deliberately ABSENT because they are not: Kandarpada is Dahisar West 400068; Poisar, Sai Baba Nagar and Mahavir Nagar are Kandivali 400067; Carter Road, Dattapada and Magathane are Borivali EAST. Mandapeshwar is genuinely ambiguous -- residents call it Borivali West, the post office calls it 400103 -- and is included pending the shopkeeper's say-so. Note also that OSM's own display_name says 'Borivali East' for several points plainly in the west, because S.V. Road IS the ward boundary and the geocoder snaps to it: do not filter this data by OSM's labelling. The shop itself lives in shop.json, not here -- this file is the delivery area.",
+   "zones" : [
+      {
+         "id" : "z-core",
+         "ll" : [
+            19.2295,
+            72.8486
+         ],
+         "localities" : [
+            {
+               "aka" : [
+                  "Govind Nagar",
+                  "Chandavarkar Lane"
+               ],
+               "id" : "chandavarkar",
+               "ll" : [
+                  19.2307,
+                  72.8484
+               ],
+               "name" : {
+                  "en" : "Chandavarkar Road",
+                  "hi" : "चंदावरकर रोड",
+                  "mr" : "चंदावरकर रोड"
+               }
+            },
+            {
+               "aka" : [
+                  "L.T. Road",
+                  "Lokmanya Tilak Road"
+               ],
+               "id" : "babhai",
+               "ll" : [
+                  19.2283,
+                  72.8481
+               ],
+               "name" : {
+                  "en" : "Babhai Naka",
+                  "hi" : "बाभई नाका",
+                  "mr" : "बाभई नाका"
+               }
+            },
+            {
+               "aka" : [
+                  "Vazira"
+               ],
+               "id" : "vazira-naka",
+               "ll" : [
+                  19.229,
+                  72.8448
+               ],
+               "name" : {
+                  "en" : "Vazira Naka",
+                  "hi" : "वज़ीरा नाका",
+                  "mr" : "वजिरा नाका"
+               }
+            }
+         ],
+         "name" : {
+            "en" : "Chandavarkar & L.T. Road",
+            "hi" : "चंदावरकर और एल.टी. रोड",
+            "mr" : "चंदावरकर आणि एल.टी. रोड"
+         },
+         "short" : {
+            "en" : "Core",
+            "hi" : "मध्य",
+            "mr" : "मध्य"
+         }
+      },
+      {
+         "id" : "z-south",
+         "ll" : [
+            19.226,
+            72.8452
+         ],
+         "localities" : [
+            {
+               "aka" : [
+                  "Shimpoli Road",
+                  "Chikuwadi"
+               ],
+               "id" : "shimpoli",
+               "ll" : [
+                  19.2239,
+                  72.8477
+               ],
+               "name" : {
+                  "en" : "Shimpoli",
+                  "hi" : "शिंपोली",
+                  "mr" : "शिंपोली"
+               }
+            },
+            {
+               "aka" : [
+                  "Shimpoli"
+               ],
+               "id" : "kastur-park",
+               "ll" : [
+                  19.225,
+                  72.8458
+               ],
+               "name" : {
+                  "en" : "Kastur Park",
+                  "hi" : "कस्तूर पार्क",
+                  "mr" : "कस्तूर पार्क"
+               }
+            },
+            {
+               "aka" : [
+                  "Riddhi Siddhi",
+                  "Vazira Village"
+               ],
+               "id" : "vazira",
+               "ll" : [
+                  19.2264,
+                  72.8426
+               ],
+               "name" : {
+                  "en" : "Vazira",
+                  "hi" : "वज़ीरा",
+                  "mr" : "वजिरा"
+               }
+            }
+         ],
+         "name" : {
+            "en" : "Shimpoli & Vazira",
+            "hi" : "शिंपोली और वज़ीरा",
+            "mr" : "शिंपोली आणि वजिरा"
+         },
+         "short" : {
+            "en" : "South",
+            "hi" : "दक्षिण",
+            "mr" : "दक्षिण"
+         }
+      },
+      {
+         "id" : "z-west",
+         "ll" : [
+            19.2297,
+            72.8338
+         ],
+         "localities" : [
+            {
+               "aka" : [
+                  "New Link Road",
+                  "Link Road"
+               ],
+               "id" : "ashtavinayak",
+               "ll" : [
+                  19.2297,
+                  72.8394
+               ],
+               "name" : {
+                  "en" : "Ashtavinayak Nagar",
+                  "hi" : "अष्टविनायक नगर",
+                  "mr" : "अष्टविनायक नगर"
+               }
+            },
+            {
+               "aka" : [
+                  "MHB Colony",
+                  "Jankalyan Nagar"
+               ],
+               "id" : "gorai-road",
+               "ll" : [
+                  19.2311,
+                  72.836
+               ],
+               "name" : {
+                  "en" : "Gorai Road / MHB",
+                  "hi" : "गोराई रोड / एम.एच.बी.",
+                  "mr" : "गोराई रोड / एम.एच.बी."
+               }
+            },
+            {
+               "aka" : [
+                  "Gorai Village"
+               ],
+               "id" : "gorai",
+               "ll" : [
+                  19.2284,
+                  72.8259
+               ],
+               "name" : {
+                  "en" : "Gorai",
+                  "hi" : "गोराई",
+                  "mr" : "गोराई"
+               }
+            }
+         ],
+         "name" : {
+            "en" : "Link Road & Gorai",
+            "hi" : "लिंक रोड और गोराई",
+            "mr" : "लिंक रोड आणि गोराई"
+         },
+         "short" : {
+            "en" : "West",
+            "hi" : "पश्चिम",
+            "mr" : "पश्चिम"
+         }
+      },
+      {
+         "id" : "z-north",
+         "ll" : [
+            19.2421,
+            72.8468
+         ],
+         "localities" : [
+            {
+               "aka" : [
+                  "Eksar Road"
+               ],
+               "id" : "yogi-nagar",
+               "ll" : [
+                  19.2385,
+                  72.8424
+               ],
+               "name" : {
+                  "en" : "Yogi Nagar",
+                  "hi" : "योगी नगर",
+                  "mr" : "योगी नगर"
+               }
+            },
+            {
+               "aka" : [
+                  "Pahadi Eksar",
+                  "Link Road"
+               ],
+               "id" : "eksar",
+               "ll" : [
+                  19.2404,
+                  72.8434
+               ],
+               "name" : {
+                  "en" : "Eksar",
+                  "hi" : "एकसर",
+                  "mr" : "एकसर"
+               }
+            },
+            {
+               "aka" : [
+                  "Immaculate Conception",
+                  "IC Colony"
+               ],
+               "id" : "ic-colony",
+               "ll" : [
+                  19.2468,
+                  72.8489
+               ],
+               "name" : {
+                  "en" : "I.C. Colony",
+                  "hi" : "आई.सी. कॉलोनी",
+                  "mr" : "आय.सी. कॉलनी"
+               }
+            },
+            {
+               "aka" : [
+                  "Shivaji Nagar",
+                  "Mandpeshwar"
+               ],
+               "id" : "mandapeshwar",
+               "ll" : [
+                  19.2426,
+                  72.8544
+               ],
+               "name" : {
+                  "en" : "Mandapeshwar",
+                  "hi" : "मंडपेश्वर",
+                  "mr" : "मंडपेश्वर"
+               }
+            }
+         ],
+         "name" : {
+            "en" : "Eksar, Yogi Nagar & I.C. Colony",
+            "hi" : "एकसर, योगी नगर और आई.सी. कॉलोनी",
+            "mr" : "एकसर, योगी नगर आणि आय.सी. कॉलनी"
+         },
+         "short" : {
+            "en" : "North",
+            "hi" : "उत्तर",
+            "mr" : "उत्तर"
+         }
+      }
+   ]
+}

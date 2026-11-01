@@ -1,0 +1,49 @@
+{
+   "addr" : {
+      "en" : "Shop 1, 2 & 3, Sagar Apartment, Devidas Cross Lane, Prem Nagar, Borivali West, Mumbai 400103",
+      "hi" : "दुकान नं. 1, 2, 3, सागर अपार्टमेंट, देवीदास क्रॉस लेन, प्रेम नगर, बोरीवली पश्चिम, मुंबई 400103",
+      "mr" : "दुकान क्र. १, २, ३, सागर अपार्टमेंट, देवीदास क्रॉस लेन, प्रेम नगर, बोरिवली पश्चिम, मुंबई ४००१०३"
+   },
+   "coupons" : {
+      "codes" : [
+         "1626",
+         "2048",
+         "3714",
+         "4290",
+         "5361"
+      ],
+      "note" : "Everything sells at MRP, so a coupon is the only discount there is. Four digits, because they get read out over a counter and typed on a phone. 1626 is the real one; the rest are spares to hand out. Codes are matched case-insensitively and with spaces stripped, since nobody types them carefully. Add or remove codes here -- no code change. Set `percent` to 0 to switch coupons off entirely.",
+      "percent" : 5
+   },
+   "delivery" : {
+      "fee" : 0,
+      "freeAlways" : true,
+      "freeOver" : 0,
+      "minOrder" : 0,
+      "note" : "Delivery is free on every order, at every distance, with no threshold, and there is NO minimum order -- `minOrder: 0`. `freeAlways` is what the UI reads to say the first part out loud rather than silently charging nothing. The minimum-order arithmetic is still in domain.js and still tested, because switching one back on should be this number and nothing else."
+   },
+   "demo" : false,
+   "demoNote" : "OFF. While true, app/seed.js drops a few INVENTED orders onto the next window, but only on a device that has never been used -- so the Store board is not empty the first time someone is shown this. Turned off so the app starts genuinely blank. Flip it back to true and clear the browser data (Settings has a button) to get the demo world again.",
+   "id" : "depot",
+   "ll" : [
+      19.2382,
+      72.8513
+   ],
+   "llSource" : "A point on Devidas Road, confirmed by reverse geocoding (Nominatim returns `Devidas Road ... 400103`, matching the written address on street and postcode). Accurate to 200-300 m. Only used to show the shop's own location now that the delivery route has been parked.",
+   "name" : {
+      "en" : "Milan's Super Shoppe",
+      "hi" : "मिलन सुपर शॉपी",
+      "mr" : "मिलन सुपर शॉपी"
+   },
+   "note" : "EVERYTHING THE SHOPKEEPER OWNS, in one file. Name, address, phone, UPI, and what delivery costs. Nothing here needs a code change. It is JSON rather than config.js so the Perl checks can read it too.",
+   "phone" : "+918169022727",
+   "phoneLocal" : "8169022727",
+   "pin" : "400103",
+   "placeholder" : false,
+   "upi" : {
+      "demo" : true,
+      "note" : "A DELIBERATELY UNRESOLVABLE id, so the pay button and QR can be shown in a demo with no chance of money moving. `example` is not a real UPI handle -- no payment provider owns it -- so a UPI app opens, fails to resolve the id and stops. Money cannot reach a stranger, which was the only thing that made a dummy id risky. While `demo` is true the app prints a visible DEMO strip across the pay block in all three languages, so nobody tries to pay it in earnest. TO GO LIVE: put the shop's real UPI id here (e.g. 8169022727@ybl or milansupershoppe@okaxis), set `demo` to false, and the strip disappears by itself.",
+      "payeeName" : "Milan's Super Shoppe (demo)",
+      "vpa" : "demo.not.real@example"
+   }
+}
