@@ -614,6 +614,40 @@ rule names a colour — `tokens.pl` enforces both halves of that.
 - The picking list is a **card list, never a `<table>`** — it is the one
   screen genuinely used on a phone while standing at a shelf.
 
+### Two shapes for the same products
+
+**Browsing is a grid of cards led by a big photograph. The cart is
+rows.** `productList(list, grid)` picks between them and both read the
+same catalogue.
+
+The reason is what the customer is doing. On a category screen they
+are looking for the packet they already know by sight, and a 64px
+thumbnail in a vertical list makes them read brand names instead. In
+the cart the question is what you have and what it costs -- the
+pictures are only confirmation there, and a grid would push the total
+and the button off the screen.
+
+Three details that each took seeing it drawn:
+
+- **No white backdrop on a card that is already white.** The
+  photograph became an invisible region with a packet floating in it.
+  Dropping it lets the tile's `--sunk` show through the letterboxing,
+  which frames every shot in a soft grey well and makes a row of
+  differently shaped packets look like one set. The cart's rows KEEP
+  the backdrop: at 64px a grey edge reads as a smudge.
+- **The glyph has to get out of the way.** It and the two-letter
+  monogram were only ever hidden by that white backdrop, so removing
+  it put "AA" back in the corner of the Aashirvaad packet it had been
+  standing in for. `onload` now marks the tile as well as the image,
+  and `.ptile.shot` hides what the photograph replaced.
+- **`margin-top:auto` on the price row.** Cards in a row then agree on
+  where the button is, however long their names run.
+
+The Add control is a filled `--leaf-wash` with the accent's own ink
+(7.53 light, 8.42 dark) rather than a quiet outline -- but still not a
+solid green block, because twelve of those in a grid shout over the
+products they are selling.
+
 ### The header is a filled band
 
 The header used to be `--card`, so the app opened on three shades of

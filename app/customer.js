@@ -67,8 +67,14 @@ const ptile = (p) =>
       // categories rather than products. Reliability is worth more
       // than that here, because an image nobody ever sees is worse
       // than one fetched slightly early.
+      // onload marks the TILE as well as the image, so the glyph and
+      // the monogram under it can be hidden. They were covered by the
+      // photograph's white backdrop before; on the browsing grid that
+      // backdrop is gone, and "AA" reappeared in the corner of the
+      // Aashirvaad packet it was only ever standing in for.
       ? '<img class="pshot" src="./img/' + esc(p.id) + '.jpg" alt=""'
-        + ' decoding="async" onload="this.classList.add(\'on\')"'
+        + ' decoding="async"'
+        + ' onload="this.classList.add(\'on\');this.parentNode.classList.add(\'shot\')"'
         + ' onerror="this.remove()">'
       : '')
   + '</span>';
@@ -116,10 +122,32 @@ async function qtyMap(){
   return m;
 }
 
-async function productList(list){
+// Two shapes for the same products, chosen by where they are.
+//
+// BROWSING is a grid of cards with a big photograph: that is what a
+// customer is doing on a category screen -- looking for the packet
+// they already know by sight -- and a 64px thumbnail in a vertical
+// list makes them read brand names instead. The CART stays rows,
+// because there the question is what you have and what it costs, the
+// pictures are only confirmation, and a grid would push the total and
+// the button off the screen.
+async function productList(list, grid){
   const q = await qtyMap();
   if (!list.length) return '';
-  return '<ul class="plist">' + list.map((p) => productRow(p, q[p.id] || 0)).join('') + '</ul>';
+  const one = grid ? productCard : productRow;
+  return '<ul class="' + (grid ? 'pgrid' : 'plist') + '">'
+    + list.map((p) => one(p, q[p.id] || 0)).join('') + '</ul>';
+}
+
+function productCard(p, qty){
+  return '<li class="pcard">' + ptile(p)
+    + '<span class="pname">' + esc(pname(p)) + '</span>'
+    + '<span class="ppack hint">' + esc(packLabel(p.pack, t())) + '</span>'
+    + (p.stock > 0 && p.stock <= 5
+        ? '<span class="plow">' + esc(f(t().lastFew, { n: p.stock })) + '</span>' : '')
+    + '<span class="pbuy"><b class="mono">' + esc(rupees(p.price)) + '</b>'
+    +   stepper(p, qty) + '</span>'
+    + '</li>';
 }
 
 // A line of what was ordered, for the confirmation and tracking
@@ -258,7 +286,7 @@ registerScreen('cat', async () => {
   const cats = await catalog.categories();
   const cat = cats.find((c) => c.id === S.catId) || cats[0];
   const list = await catalog.byCat(cat.id);
-  mount(box, h1(cname(cat)) + sub(f(t().nItems, { n: list.length })) + await productList(list));
+  mount(box, h1(cname(cat)) + sub(f(t().nItems, { n: list.length })) + await productList(list, true));
   wireSteppers(box);
 });
 
@@ -285,7 +313,7 @@ registerScreen('find', async () => {
   const draw = async () => {
     const list = await catalog.search(S.q, getLang());
     res.innerHTML = list.length
-      ? sub(f(c.nItems, { n: list.length })) + await productList(list)
+      ? sub(f(c.nItems, { n: list.length })) + await productList(list, true)
       : empty(f(c.noResults, { s: S.q }), c.noResultsSub);
     wireSteppers(res);
   };

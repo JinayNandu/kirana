@@ -358,10 +358,67 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 
 /* --- product list ---------------------------------------------------- */
 .plist{list-style:none; margin:0; padding:0}
+/* 64px, matching .ptile. It said 52 from when the tile was that size
+   and the photograph had been quietly overflowing its own column. */
 .prow{
-  display:grid; grid-template-columns:52px 1fr auto; gap:var(--s3);
+  display:grid; grid-template-columns:64px 1fr auto; gap:var(--s3);
   align-items:center; padding:var(--s3) 0; border-bottom:1px solid var(--edge);
 }
+
+/* --- browsing: a grid of cards, each led by its photograph --------- */
+.pgrid{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:var(--s3); margin:0 0 var(--s4); padding:0; list-style:none;
+}
+@media (min-width:460px){ .pgrid{grid-template-columns:repeat(3,1fr)} }
+.pcard{
+  display:flex; flex-direction:column; gap:2px;
+  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
+  padding:var(--s2); box-shadow:var(--sh-card);
+}
+/* The photograph fills the card's width and stays square, so a row of
+   them lines up whatever shape the packets are. */
+.pcard .ptile{
+  width:100%; height:auto; aspect-ratio:1 / 1;
+  border-radius:var(--r1); margin-bottom:var(--s2);
+}
+.pcard .ptile svg{width:34px; height:34px}
+/* No white backdrop on a card that is ALREADY white: the photograph
+   became an invisible region with a packet floating in it. Dropping it
+   lets the tile's --sunk show through the letterboxing instead, which
+   frames each shot in a soft grey well and makes a row of differently
+   shaped packets look like one set. In the cart's rows the backdrop
+   stays, because there the tile is small and a grey edge round a 64px
+   thumbnail reads as a smudge. */
+.pcard .pshot.on{background:transparent}
+/* Once a real photograph has arrived, the drawing it was standing in
+   for gets out of the way. */
+.ptile.shot svg, .ptile.shot .pmono{visibility:hidden}
+.pcard .pname{
+  font-weight:600; font-size:13px; line-height:1.3;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden; min-height:2.6em;
+}
+.pcard .ppack{font-size:12px}
+.pcard .plow{font-size:11px; color:var(--spice-ink)}
+/* margin-top:auto pins the price row to the bottom, so cards in a row
+   agree on where the button is however long their names run. */
+.pcard .pbuy{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s1); margin-top:auto; padding-top:var(--s2);
+}
+.pcard .pbuy b{font-size:15px}
+/* The one thing on the card you are meant to press, so it stops being
+   a quiet outline: a filled wash, a real border and the accent's own
+   ink. Still not a solid green block -- twelve of those in a grid
+   shout over the products they are selling. */
+.pcard .addb{
+  padding:5px 14px; min-height:34px; font-weight:700;
+  background:var(--leaf-wash); border-color:var(--leaf); color:var(--leaf-ink);
+}
+.pcard .addb:active{background:var(--leaf); color:var(--on-leaf)}
+.pcard .step button{width:30px; height:32px}
+.pcard .step b{min-width:18px; font-size:14px}
 .ptile{
   /* 64, not the 52 this was when it held a drawn glyph. A line glyph
      reads fine small because it is three strokes; a photograph of a
