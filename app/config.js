@@ -41,3 +41,22 @@ export const MAP = {
   sriJs:  'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=',
   sriCss: 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=',
 };
+
+// ---------------------------------------------------------------------
+//  Supabase -- the shared database
+//
+//  BOTH OF THESE ARE PUBLISHABLE and belong in client code. The anon
+//  key identifies the project and nothing else; what protects the data
+//  is the row-level rules in db/schema.sql, which run on the server
+//  where nobody can edit them. A key in a browser is only a secret if
+//  the server trusts it, and this one is not trusted.
+//
+//  LEAVE `url` EMPTY and the whole app runs in this browser on
+//  backend-local.js, exactly as it did before -- which is what keeps
+//  `perl tools/serve.pl 8110 app` working with no project at all, and
+//  what makes going live a two-line edit here rather than a rewrite.
+// ---------------------------------------------------------------------
+export const SUPABASE = {
+  url: '',
+  key: '',
+};

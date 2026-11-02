@@ -9,7 +9,7 @@
 // =====================================================================
 
 import { boot, setShop } from './ui.js';
-import { ready } from './store.js';
+import { ready, begin, shared } from './store.js';
 import { prime } from './lock.js';
 import './customer.js';
 import './shop.js';
@@ -35,6 +35,19 @@ seedIfEmpty()
     let d = null;
     try { d = await ready(); }
     catch (e) { console.warn('shop data unavailable', e); }
+
+    // A session BEFORE the first query. Every visitor gets one
+    // anonymously, so auth.uid() is never null and every order and
+    // address has an owner -- nobody is asked to sign in to buy
+    // groceries. A login wall in front of a shop is how a shop
+    // loses the customer at the door.
+    //
+    // A failure here is NOT fatal and must not be: the app still
+    // browses, and saying so beats a blank screen.
+    if (shared()){
+      try { await begin(); }
+      catch (e) { console.error('no session -- running without the database', e); }
+    }
 
     await prime(d && d.shop);
     boot();
