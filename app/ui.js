@@ -543,14 +543,24 @@ export function boot(){
   const door = storeDoor();
   let r = 'customer';
   try { r = sessionStorage.getItem('kirana.role') || 'customer'; } catch {}
-  // Arriving ON the staff link goes to the board, which means the
-  // gate opens -- that is the whole point of the link. Otherwise
-  // restore whatever this tab was last on, and never the Store view
-  // on a device that has never been given the link.
-  if (door.asked) r = 'shop';
-  else if (!door.open) r = 'customer';
-  // firstRun false on the staff link, so setRole() opens the code
-  // box instead of falling back to the storefront quietly.
-  setRole(HOME[r] ? r : 'customer', !door.asked);
+  if (!door.open) r = 'customer';
+
+  // ⚠️ A SCREEN IS ALWAYS RENDERED FIRST, and the gate goes on top.
+  //
+  // setRole('shop') bounces straight to the gate and RETURNS -- it
+  // renders nothing, because normally there is already a screen
+  // underneath to put the code box over. At boot there is not. The
+  // staff link therefore opened a code box floating on a blank
+  // page, and closing it left no app at all: every section hidden,
+  // nothing to go back to.
+  //
+  // So: a device already through the gate goes to the board. One
+  // that is not gets the STOREFRONT, and then the gate over it --
+  // which is also the kinder failure, because closing the code box
+  // leaves the shopkeeper looking at his own shop rather than at
+  // nothing.
+  if (door.asked) r = passed() ? 'shop' : 'customer';
+  setRole(HOME[r] ? r : 'customer', true);
+  if (door.asked && !passed()) openLock();
   paint();
 }
