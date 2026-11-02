@@ -10,6 +10,7 @@
 
 import { boot, setShop } from './ui.js';
 import { ready } from './store.js';
+import { prime } from './lock.js';
 import './customer.js';
 import './shop.js';
 import './settings.js';
@@ -22,9 +23,20 @@ seedIfEmpty()
   .then((r) => { if (r.seeded) console.info('seeded ' + r.seeded + ' demo orders'); })
   .catch((e) => console.warn('seed failed', e))
   .finally(async () => {
+    // The shop data has to be in BEFORE the header goes live, because
+    // it carries the Store code -- a role switch that works for the
+    // moment before it lands is a gate with a hole in it. This costs
+    // nothing by the time it runs: ready() is memoised and
+    // seedIfEmpty() has already awaited it.
+    //
+    // If it fails outright the gate is off, and that is the right way
+    // round: without this data there is no catalogue, no shop name
+    // and no orders, so what lies behind the gate is an empty screen.
+    let d = null;
+    try { d = await ready(); }
+    catch (e) { console.warn('shop data unavailable', e); }
+
+    await prime(d && d.shop);
     boot();
-    // Name the shop in the header once its data is in. After boot, so
-    // the app is on screen rather than waiting on a fetch.
-    try { const d = await ready(); setShop(d.shop); }
-    catch (e) { console.warn('shop name unavailable', e); }
+    if (d) setShop(d.shop);
   });

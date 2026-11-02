@@ -11,6 +11,7 @@
 
 import { T, TXT, t, setLang, getLang, bootLang, LANGS, LANG_NAMES } from './i18n.js';
 import { icon } from './icons.js';
+import { gated, passed, stuck, tryCode, waiting, forget } from './lock.js';
 
 export const $ = (id) => document.getElementById(id);
 
@@ -113,6 +114,10 @@ function parkSync(){
 
 addEventListener('popstate', () => {
   if (ownPop){ ownPop = false; return; }   // our own spend, not the user's
+  // A gate standing over a screen takes the back press. Without
+  // this the screen behind it changes while the gate stays up, which
+  // is the one thing a modal must never allow.
+  if (lockOpen){ closeLock(); if (parked) history.pushState({ k: 1 }, ''); return; }
   parked = false;
   goBack();
 });
@@ -126,6 +131,19 @@ addEventListener('popstate', () => {
 // ---------------------------------------------------------------------
 export function setRole(r, firstRun){
   if (!HOME[r]) return;
+
+  // The Store view is behind a code. The check sits HERE, on the one
+  // road into the role, rather than on each of its four screens --
+  // a gate per screen is a gate somebody forgets to add to the fifth.
+  //
+  // On a reload this is restoring a role, not answering a tap, so it
+  // falls back to the storefront quietly instead of opening a gate
+  // over a page nobody has asked anything of yet.
+  if (r === 'shop' && !passed()){
+    if (firstRun){ setRole('customer', true); return; }
+    openLock();
+    return;
+  }
   if (!firstRun) CURRENT[role] = current;
   role = r;
   document.body.dataset.role = r;
@@ -170,6 +188,164 @@ function drawTabs(){
 }
 
 // ---------------------------------------------------------------------
+//  The Store gate
+//
+//  An overlay, deliberately not a <section id="s-*">. A screen would
+//  join the back stack, and a lock you can reach by pressing Back is
+//  not a lock.
+//
+//  Nothing in here rebuilds the box's markup. The code field is inside
+//  it, and an input must never sit in a region its own handler
+//  repaints -- that is what cost this app its search keyboard. Only
+//  textContent is written, into nodes that already exist.
+// ---------------------------------------------------------------------
+let lockOpen = false;
+let waitTimer = null;
+
+export const isLockOpen = () => lockOpen;
+
+// The padlock beside "Store" in the header. Shown while this device
+// is outside the gate, gone the moment it is through -- and it stays
+// gone after a switch back to the storefront, because that device is
+// still through.
+function markLocked(){
+  if (gated() && !passed()) document.body.dataset.locked = '1';
+  else delete document.body.dataset.locked;
+}
+
+function lockErr(msg){
+  const el = $('lockerr');
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+
+export function drawLock(){
+  if (!lockOpen) return;
+  const c = t();
+  $('lockic').innerHTML = icon('lock');
+  $('lockh').textContent = c.lockTitle;
+  $('locklab').textContent = c.lockLabel;
+  $('lockgo').textContent = c.lockGo;
+  $('lockx').textContent = c.close;
+
+  // Served over plain http, where crypto.subtle does not exist and no
+  // code can be checked at all. Say that, rather than showing a box
+  // that cannot work -- "it does nothing when I type the code" is
+  // otherwise an unanswerable complaint.
+  const dead = stuck();
+  $('locksub').textContent = dead ? c.lockStuck : c.lockSub;
+  $('lockpin').hidden = dead;
+  $('locklab').hidden = dead;
+  $('lockgo').hidden = dead;
+  if (dead) lockErr('');
+}
+
+function openLock(){
+  lockOpen = true;
+  $('lock').hidden = false;
+  $('lockpin').value = '';
+  lockErr('');
+  drawLock();
+  countdown();
+  if (!stuck()) setTimeout(() => $('lockpin').focus(), 30);
+}
+
+export function closeLock(){
+  lockOpen = false;
+  clearTimeout(waitTimer);
+  $('lock').hidden = true;
+  $('lockpin').value = '';
+  lockErr('');
+}
+
+// While the cool-off is running the button is dead and says how long
+// is left. A disabled button with no reason on it reads as a bug.
+function countdown(){
+  clearTimeout(waitTimer);
+  const left = waiting();
+  const go = $('lockgo');
+  if (!left){
+    go.disabled = false;
+    go.textContent = t().lockGo;
+    return;
+  }
+  go.disabled = true;
+  go.textContent = t().lockWait.replace('{n}', String(Math.ceil(left / 1000)));
+  waitTimer = setTimeout(countdown, 1000);
+}
+
+async function submitLock(){
+  const c = t();
+  const field = $('lockpin');
+  const code = (field.value || '').replace(/\D/g, '');
+  if (waiting()) { lockErr(c.lockTooMany); countdown(); return; }
+  if (code.length !== 6){ lockErr(c.lockShort); return; }
+
+  // The derivation is deliberately slow, so the button has to say it
+  // is working or the first tap reads as nothing happening.
+  const go = $('lockgo');
+  go.disabled = true;
+  go.textContent = c.lockBusy;
+  lockErr('');
+
+  const r = await tryCode(code);
+
+  if (r === 'ok'){
+    closeLock();
+    markLocked();
+    setRole('shop');
+    toast(c.lockOpened);
+    return;
+  }
+  field.value = '';
+  if (r === 'wait'){ lockErr(c.lockTooMany); countdown(); return; }
+  if (r === 'stuck'){ drawLock(); return; }
+  lockErr(c.lockWrong);
+  countdown();
+  field.focus();
+}
+
+function wireLock(){
+  $('lockgo').onclick = submitLock;
+  $('lockx').onclick = () => closeLock();
+
+  // Tapping the dimmed area behind the box means "not this" -- but a
+  // tap that STARTED inside the box and drifted out while selecting
+  // does not, which is why this tests the target rather than using a
+  // click handler on the backdrop alone.
+  $('lock').onmousedown = (e) => { if (e.target === $('lock')) closeLock(); };
+
+  const field = $('lockpin');
+  field.oninput = () => {
+    const clean = field.value.replace(/\D/g, '').slice(0, 6);
+    if (clean !== field.value) field.value = clean;
+    // Clearing the error on each keystroke is right EXCEPT during
+    // the cool-off, where it would leave a dead button with nothing
+    // beside it saying why.
+    lockErr(waiting() ? t().lockTooMany : '');
+    // Six digits is the whole code, so there is nothing left to
+    // decide -- waiting for a button press here is one tap of
+    // ceremony on something typed once in a device's life.
+    if (clean.length === 6 && !waiting()) submitLock();
+  };
+  field.onkeydown = (e) => { if (e.key === 'Enter') submitLock(); };
+
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lockOpen) closeLock();
+  });
+}
+
+// Settings calls this. Clearing the token is the only "sign out"
+// there is, and it must drop the role as well -- leaving the Store
+// view on screen after locking it would make the button a lie.
+export function lockStore(){
+  forget();
+  markLocked();
+  setRole('customer');
+  toast(t().lockNow);
+}
+
+// ---------------------------------------------------------------------
 //  Toast
 // ---------------------------------------------------------------------
 let toastTimer = null;
@@ -208,6 +384,7 @@ export function paint(){
   const bs = $('l-brandsub'); if (bs) bs.textContent = sub2;
   document.title = name;
   drawTabs();
+  drawLock();
   repaint();
 }
 
@@ -243,6 +420,9 @@ export function boot(){
   // One delegated handler per box that CONTAINS its targets. A handler
   // bound to a sibling never fires and the feature is silently dead.
   $('backbtn').onclick = () => goBack();
+
+  wireLock();
+  markLocked();
 
   $('roleseg').onclick = (e) => {
     const b = e.target.closest('button[data-role]');

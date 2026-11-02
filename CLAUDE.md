@@ -23,7 +23,7 @@ Two roles in one page, switched from the header:
 | Role | What it is for |
 |---|---|
 | **Shop** | the customer storefront — browse, basket, coupon, pick a window, place the order, pay |
-| **Store** | the counter — orders by window, picking lists, **what to load**, mark paid and delivered |
+| **Store** | the counter — orders by window, picking lists, **what to load**, mark paid and delivered. **Behind a six-digit code**, so a customer who taps it does not land in the shop's paperwork |
 
 There was a third, **Tempo**, for the driver — a stop list, cash to
 collect, mark delivered. It is gone on the owner's call, along with the
@@ -79,6 +79,7 @@ app/
   store.js          the facade; ONE import line is the Supabase swap
   backend-local.js  localStorage + cross-tab storage events
   customer.js shop.js settings.js
+  lock.js           PURE -- the code that opens the Store view
   pay.js            UPI link + QR. Takes no money -- see below.
   seed.js           demo orders, on a device that has never been used
   icons.js          20 pack glyphs + interface icons
@@ -94,6 +95,7 @@ tools/
   serve.pl          static server, both loopback families
   pricelist.pl      prints the catalogue as an editable price list
   setprice.pl       reads that list back and applies the corrections
+  setpin.pl         sets that code. Writes a hash, never the code
   check.pl          runs all six checks
   balance.pl i18n.pl data.pl slots.pl tokens.pl money.pl
 parked/
@@ -333,6 +335,141 @@ box say what it is, which is the job the placeholder was doing badly.
 one. OSM returns whatever building it has nearest, which is a real
 place but not necessarily YOUR landmark -- and the whole point of that
 field is that the customer knows something the map does not.
+
+### The Store view is behind a code
+
+Tapping **Store** used to be all it took to reach the board, the
+picking lists, every customer's address and the day's money. Now it
+asks for a six-digit code.
+
+**The check sits on `setRole`, not on the four Store screens.** One
+road into the role means one gate; a gate per screen is a gate
+somebody forgets to add to the fifth.
+
+**`lock.js` is pure, like `domain.js`** -- no DOM, no `ui.js` import.
+`ui.js` owns the gate screen and calls in to ask whether it has to
+draw one, so the import graph stays a tree.
+
+#### What it is, said plainly
+
+It is a lock on a door, and it is worth having: it stops the thing
+that actually happens, which is a customer tapping Store out of
+curiosity and landing in the shop's own paperwork.
+
+It is **not** a safe, and three things are true about that:
+
+- Every line of this app is served to whoever opens it, so the
+  mechanism is public by construction. What is not public is the code.
+- Orders live in this browser's localStorage, so anyone who can open a
+  developer console on a device can read them without going near the
+  gate. Today that is only ever that device's OWN orders -- there is
+  nothing of anybody else's on a customer's phone to reach.
+- ⚠️ **The day the Supabase swap happens that stops being true**,
+  and a check running in the browser becomes the wrong place for it
+  entirely. The server has to refuse to send a stranger the orders at
+  all. This gate then becomes the UI in front of that, not the thing
+  holding the door.
+
+#### Why the code is not written in shop.json
+
+`shop.json` is fetched by the page, so a code written in it plainly
+would be a key left in the lock. What is published instead is
+**PBKDF2-SHA256 of the code**, which runs one way only.
+
+One derivation produces 64 bytes and both halves are used:
+
+| | | |
+|---|---|---|
+| first 32 | `proof` | published. Verifies a typed code. |
+| last 32 | `token` | **never published.** Kept on the device that unlocked. |
+
+`seal` is SHA-256 of the token, and is what a later visit checks the
+stored token against. That split is the whole reason there are two
+halves: **if the unlock flag were a boolean, or anything derivable
+from the published file, it could be forged by typing one line into a
+console.** This way the only road to a valid token is the code.
+
+600,000 iterations, which `tools/setpin.pl` writes into the file
+rather than hardcoding, so raising it later is a re-run and nothing
+else. Measured at ~600 ms per attempt in Chrome on this laptop, so
+roughly 1-2 s on a cheap phone -- paid once per device, behind a
+button that says *Checking...*.
+
+⚠️ **Be honest about what that count buys.** A six-digit code is
+a million possibilities, and dedicated hardware running PBKDF2-SHA256
+gets through a million guesses in minutes. No iteration count fixes
+that for six digits. What it does buy is that the code cannot simply
+be **read** out of the file, which is the thing that would otherwise
+happen to every copy of this app the moment somebody opened developer
+tools.
+
+#### Changing the code
+
+```bash
+perl tools/setpin.pl 418306      # then commit and push
+perl tools/setpin.pl --off       # remove the gate entirely
+```
+
+**The code is nowhere in this repository and cannot be recovered from
+it** -- not from `shop.json`, not from here. If it is forgotten, set a
+new one. It is told to the shopkeeper out of band, and writing it into
+any file in this repo would undo the entire point, since the
+repository is public.
+
+⚠️ **The shopkeeper cannot change it himself.** It is a command
+plus a push, the same shape as correcting a price. That is the
+accepted limitation today; an in-app change would only ever be
+per-device, which is worse than useless -- changed on his phone, still
+the old one on his tablet.
+
+`setpin.pl` refuses `000000`, `123456` and four others by name. A code
+anybody would try first is not a code.
+
+#### The three edges, each tested
+
+- **Five wrong tries cost a minute**, and the button says how long is
+  left. Not about compute -- the derivation is already slow -- but
+  about somebody standing at the counter with the shopkeeper's phone
+  working through 1234, 0000, 1111. A correct code during the cool-off
+  is still refused. Typing during it does not wipe the message saying
+  why, which it did at first: a dead button with nothing beside it
+  reads as a bug.
+- **No `crypto.subtle`, no gate opening.** It exists only in a secure
+  context -- https, or localhost -- and over plain http on a LAN it is
+  simply undefined. The gate then shows no code box at all, says why,
+  and **stays shut**. Failing open there would be a lock that a wrong
+  URL removes; failing shut with no explanation would be "the code box
+  does nothing", which is unanswerable.
+- **No code set at all is a supported configuration.** With no `staff`
+  block the app is exactly what it was: no padlock, no gate, straight
+  into the Store view. `data.pl` says so in a loud note rather than
+  failing, because a check that fails on a supported setup is a check
+  people learn to ignore.
+
+#### Smaller decisions that each took seeing it
+
+- **The gate is an overlay, not a `<section id="s-*">`.** A screen
+  would join the back stack, and a lock you can reach by pressing Back
+  is not a lock. The back gesture instead closes the gate and leaves
+  the screen underneath exactly where it was.
+- **The padlock beside "Store" is driven by `data-locked` on the body,
+  not by which role is showing.** A device that has been through the
+  gate and switched back to the storefront is still through it, and a
+  padlock back on the button would say otherwise.
+- **Six digits auto-submits.** There is nothing left to decide at the
+  sixth, and a button press there is ceremony on something typed once
+  in a device's life.
+- **"Store code", not "Shop code".** *Shop* in this app is the
+  customer's half, so "shop code" named the opposite of what it is.
+- **Locking from Settings drops the role too.** Leaving the board on
+  screen after locking it would make the button a lie. The control is
+  drawn only in the Store view on a device that is through the gate --
+  on the storefront it would advertise a door to the people it is shut
+  against.
+- **One derivation proves two implementations agree.** `setpin.pl` is
+  Perl and `lock.js` is WebCrypto, and no Perl check can compare them.
+  Typing the code into a browser is what proves it, and that is the
+  one thing here that has to be done by hand.
 
 ## Delivery is free, everywhere
 
@@ -869,7 +1006,7 @@ otherwise have to sit and wait for.
 |---|---|
 | `balance.pl` | unbalanced brackets and strings. **Found the real one**: a `mount(` that was never closed. Neutralises regex literals, or `/[&<>"]/g` pairs its quote with the next string. |
 | `i18n.pl` | en/mr/hi key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail., and **double-encoded Devanagari** -- see below. |
-| `data.pl` | ids, categories, whole rupees, `price <= mrp`, all three names present, the delivery windows not overlapping, a demo UPI id that cannot resolve, every pairing naming a product that still exists, and every product having a pairing of its own |
+| `data.pl` | ids, categories, whole rupees, `price <= mrp`, all three names present, the delivery windows not overlapping, a demo UPI id that cannot resolve, every pairing naming a product that still exists, every product having a pairing of its own, and the shape of the Store code -- including a **loud failure if the code itself ever gets written into `shop.json`**, which is served to every visitor |
 | `slots.pl` | the run state machine across a whole day, **including 00:15 IST**; also greps for `toISOString` outside `domain.js` |
 | `tokens.pl` | both palettes define the same colour set; no literal colour in a component rule |
 | `money.pl` | 500 random baskets; the minimum-order-on-items case against a synthetic minimum, since the shop now has none; and 200 coupon baskets for whole-rupee, once-on-the-total rounding |

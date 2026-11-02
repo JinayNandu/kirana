@@ -40,6 +40,13 @@
    "phoneLocal" : "8169022727",
    "pin" : "400103",
    "placeholder" : false,
+   "staff" : {
+      "iterations" : 600000,
+      "note" : "The code that opens the Store view. The code ITSELF is not here and cannot be recovered from this file -- `proof` is PBKDF2-SHA256 of it (600000 iterations), which only runs one way. To change the code: perl tools/setpin.pl <6 digits>, then commit and push. To remove the gate and let anyone open the Store view: perl tools/setpin.pl --off. Forgotten codes cannot be looked up; set a new one.",
+      "proof" : "7d8888397ddaf96d1a245263042407340470dc81b9b4f79cfcc1aec820f53423",
+      "salt" : "d026f2c84b255784b82156f8f24f1afe",
+      "seal" : "a610c5116c6c478b65b13004a74eda434d563eabfeb0b48f3182bf7ee924a54e"
+   },
    "upi" : {
       "demo" : true,
       "note" : "A DELIBERATELY UNRESOLVABLE id, so the pay button and QR can be shown in a demo with no chance of money moving. `example` is not a real UPI handle -- no payment provider owns it -- so a UPI app opens, fails to resolve the id and stops. Money cannot reach a stranger, which was the only thing that made a dummy id risky. While `demo` is true the app prints a visible DEMO strip across the pay block in all three languages, so nobody tries to pay it in earnest. TO GO LIVE: put the shop's real UPI id here (e.g. 8169022727@ybl or milansupershoppe@okaxis), set `demo` to false, and the strip disappears by itself.",

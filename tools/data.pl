@@ -107,6 +107,47 @@ if ($shop->{demo}) {
   print "  note  demo orders are seeded on a fresh device (shop.json demo:true)\n";
 }
 
+# --- the code that opens the Store view -------------------------------
+# What this can check is the SHAPE. Whether app/lock.js derives the
+# same bytes as tools/setpin.pl cannot be checked from Perl, because
+# one of them is WebCrypto -- that is proved by typing the code into a
+# browser, and it is the one thing here that has to be done by hand.
+if (my $st = $shop->{staff}) {
+  my %shape = (
+    salt   => qr/^[0-9a-f]{32}$/,
+    proof  => qr/^[0-9a-f]{64}$/,
+    seal   => qr/^[0-9a-f]{64}$/,
+  );
+  for my $k (sort keys %shape) {
+    my $v = $st->{$k} // '';
+    bad("staff.$k is missing or malformed -- re-run tools/setpin.pl")
+      unless $v =~ $shape{$k};
+  }
+  my $it = $st->{iterations} // 0;
+  # Below this the derivation stops being slow, and a six-digit code
+  # has only a million possibilities -- the cost per guess IS the
+  # protection.
+  bad("staff.iterations is $it -- too few to be worth anything; re-run tools/setpin.pl")
+    unless $it =~ /^\d+$/ && $it >= 100000;
+  bad('staff.proof and staff.seal are the same value -- the file is wrong')
+    if ($st->{proof} // 'a') eq ($st->{seal} // 'b');
+
+  # The one mistake that would undo all of it: somebody writing the
+  # code into the file so it is not forgotten. shop.json is fetched by
+  # every visitor.
+  for my $k (sort keys %$st) {
+    next if $k =~ /^(salt|proof|seal|iterations|note)$/;
+    bad("staff.$k is not part of this -- if it is the code itself, DELETE it: "
+      . 'shop.json is served to everyone who opens the app');
+  }
+  ok('the Store view is behind a code, and the code is not in the file')
+    unless $fails;
+} else {
+  print "  note  NO code is set -- anyone who taps Store sees the board,\n";
+  print "        the picking lists and every order. Set one with:\n";
+  print "        perl tools/setpin.pl <6 digits>\n";
+}
+
 # --- delivery windows -------------------------------------------------
 my $n = 0;
 for my $s (@{ $plan->{slots} }) {
