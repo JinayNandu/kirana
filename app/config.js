@@ -45,16 +45,25 @@ export const MAP = {
 // ---------------------------------------------------------------------
 //  Supabase -- the shared database
 //
-//  BOTH OF THESE ARE PUBLISHABLE and belong in client code. The anon
-//  key identifies the project and nothing else; what protects the data
-//  is the row-level rules in db/schema.sql, which run on the server
-//  where nobody can edit them. A key in a browser is only a secret if
-//  the server trusts it, and this one is not trusted.
+//  BOTH OF THESE ARE PUBLISHABLE and belong in client code. The
+//  publishable key (sb_publishable_..., or a legacy anon key on an
+//  older project) identifies the project and nothing else; what
+//  protects the data is the row-level rules in db/schema.sql, which
+//  run on the server where nobody can edit them. A key in a browser
+//  is only a secret if the server trusts it, and this one is not
+//  trusted.
 //
 //  LEAVE `url` EMPTY and the whole app runs in this browser on
 //  backend-local.js, exactly as it did before -- which is what keeps
 //  `perl tools/serve.pl 8110 app` working with no project at all, and
 //  what makes going live a two-line edit here rather than a rewrite.
+//
+//  NEVER put the SECRET key here (sb_secret_..., or the legacy
+//  service_role). It carries BYPASSRLS -- it ignores every rule in
+//  db/schema.sql -- so in a browser it would hand every customer's
+//  address and phone number to anyone who opened developer tools.
+//
+//  Setup, step by step: db/SETUP.md
 // ---------------------------------------------------------------------
 export const SUPABASE = {
   url: '',
