@@ -12,7 +12,7 @@
       "name": { "en": "Milk, Bread & Eggs", "mr": "दूध, ब्रेड आणि अंडी", "hi": "दूध, ब्रेड और अंडे" } },
     { "id": "tea",     "order": 6,  "hero": "p-tatatea500", "tile": "tin",
       "name": { "en": "Tea, Coffee & Health", "mr": "चहा, कॉफी आणि हेल्थ", "hi": "चाय, कॉफ़ी और हेल्थ" } },
-    { "id": "fresh",   "order": 7,  "hero": "p-onion1", "tile": "leaf",
+    { "id": "fresh",   "order": 7,  "hero": "p-tomato1", "tile": "leaf",
       "name": { "en": "Fruit & Vegetables", "mr": "फळे आणि भाजीपाला", "hi": "फल और सब्ज़ियाँ" } },
     { "id": "care",    "order": 8,  "hero": "p-colgate200", "tile": "soap",
       "name": { "en": "Soap & Personal Care", "mr": "साबण आणि पर्सनल केअर", "hi": "साबुन और पर्सनल केयर" } },

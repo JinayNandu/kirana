@@ -70,6 +70,12 @@
          "matched" : "Simply Salted",
          "source" : "world.openfoodfacts.org"
       },
+      "p-banana12" : {
+         "bytes" : 18241,
+         "matched" : "File:Bananas (white background).jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Bananas_(white_background).jpg",
+         "source" : "commons.wikimedia.org"
+      },
       "p-bhujia200" : {
          "brands" : "Haldiram's",
          "bytes" : 37079,
@@ -139,6 +145,12 @@
          "code" : "8902167000812",
          "matched" : "CHANA MASALA mdh",
          "source" : "world.openfoodfacts.org"
+      },
+      "p-chilli250" : {
+         "bytes" : 36930,
+         "matched" : "File:Green Chilly.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Green_Chilly.jpg",
+         "source" : "commons.wikimedia.org"
       },
       "p-clinicplus175" : {
          "brands" : "Clinic Plus, hul",
@@ -258,9 +270,9 @@
          "source" : "world.openfoodfacts.org"
       },
       "p-ginger250" : {
-         "bytes" : 42990,
-         "matched" : "File:Ginger Root (179871501).jpeg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Ginger_Root_(179871501).jpeg",
+         "bytes" : 57062,
+         "matched" : "File:Ginger 2.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Ginger_2.jpg",
          "source" : "commons.wikimedia.org"
       },
       "p-gm-everest100" : {
@@ -409,6 +421,12 @@
          "matched" : "Britannia Vita Marie Gold Biscuits",
          "source" : "world.openfoodfacts.org"
       },
+      "p-matchbox10" : {
+         "bytes" : 19248,
+         "matched" : "File:Box of matches.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Box_of_matches.jpg",
+         "source" : "commons.wikimedia.org"
+      },
       "p-mirch-mdh100" : {
          "brands" : "MDH",
          "bytes" : 25356,
@@ -533,6 +551,12 @@
          "page" : "https://commons.wikimedia.org/wiki/File:Poha.jpg",
          "source" : "commons.wikimedia.org"
       },
+      "p-potato1" : {
+         "bytes" : 77918,
+         "matched" : "File:Potatoes 2.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Potatoes_2.jpg",
+         "source" : "commons.wikimedia.org"
+      },
       "p-real1l" : {
          "brands" : "Real",
          "bytes" : 20996,
@@ -609,6 +633,12 @@
          "matched" : "Sting Energy",
          "source" : "world.openfoodfacts.org"
       },
+      "p-sugar1" : {
+         "bytes" : 50324,
+         "matched" : "File:Bowl of white sugar without background.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Bowl_of_white_sugar_without_background.jpg",
+         "source" : "commons.wikimedia.org"
+      },
       "p-sunsilk180" : {
          "brands" : null,
          "bytes" : 21551,
@@ -643,6 +673,12 @@
          "code" : "8901052010615",
          "matched" : "Premium",
          "source" : "world.openfoodfacts.org"
+      },
+      "p-tomato1" : {
+         "bytes" : 28782,
+         "matched" : "File:Red tomatoes. img 05.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Red_tomatoes._img_05.jpg",
+         "source" : "commons.wikimedia.org"
       },
       "p-vimbar300" : {
          "brands" : "Henkel, Hindustan Unilever Ltd. (HUL), Vim",
