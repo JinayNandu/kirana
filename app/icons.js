@@ -35,6 +35,8 @@ const P = {
   jar:     '<path d="M7 9h10v10a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3z"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 6h6l1 3H8z"/>',
   tin:     '<rect x="5" y="6" width="14" height="15" rx="1.5"/><path d="M5 10h14"/><path d="M9 3h6v3H9z"/>',
   tube:    '<path d="M8 8h8v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z"/><path d="M8 8c0-1.6 1-3 2-3h4c1 0 2 1.4 2 3"/><rect x="10" y="2" width="4" height="3" rx="1"/>',
+  jug:     '<path d="M8 8h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z"/><path d="M16 11h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M9.5 8V5h3v3"/>',
+  plugin:  '<path d="M9 10.5h6V19a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/><path d="M10 10.5V7.5h4v3"/><path d="M10.6 7.5V4.2M13.4 7.5V4.2"/>',
   soap:    '<rect x="3" y="8" width="18" height="10" rx="4"/><path d="M8 11.5c1.5-1 3-1 4.5 0"/>',
   spray:   '<path d="M9 9h7v13H9z" /><path d="M9 9V6h4V4h4"/><path d="M20 6h.01M20 9h.01M22 7.5h.01"/>',
   loaf:    '<path d="M4 12a4 4 0 0 1 4-4h8a4 4 0 0 1 0 8v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 8c0-1.5 1-2.5 2-2.5M12 8c0-1.5 1-2.5 2-2.5"/>',
@@ -79,7 +81,7 @@ const P = {
 // existing, from the very file the check was reading names out of.
 export const TILES = ['bottle','carton','can','packet','pouch','sack','biscuit',
   'box','jar','tin','tube','soap','spray','loaf','leaf','fruit','egg','grain',
-  'roll','bag','banana','potato','tomato','chilli','candle'];
+  'roll','bag','banana','potato','tomato','chilli','candle','jug','plugin'];
 
 export function icon(name, cls){
   const body = P[name] || P.box;

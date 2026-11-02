@@ -166,6 +166,13 @@
          "matched" : "close up tootpaste (r) red hot 20g",
          "source" : "world.openbeautyfacts.org"
       },
+      "p-coke750" : {
+         "bytes" : 14186,
+         "code" : "3948764012273",
+         "matched" : "Coca cola Soft Drink 750ml",
+         "page" : "https://world.openfoodfacts.org/product/3948764012273",
+         "source" : "world.openfoodfacts.org"
+      },
       "p-colgate200" : {
          "brands" : "Colgate",
          "bytes" : 47549,
@@ -179,6 +186,12 @@
          "code" : "8901030803642",
          "matched" : "Fabric Conditioner",
          "source" : "world.openproductsfacts.org"
+      },
+      "p-coriander1" : {
+         "bytes" : 63557,
+         "matched" : "File:Bunches of coriander leaves.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Bunches_of_coriander_leaves.jpg",
+         "source" : "commons.wikimedia.org"
       },
       "p-cornflakes475" : {
          "brands" : "KELLOGG S PRODUITS ALIMENT SAS",
@@ -392,6 +405,13 @@
          "code" : "8901030813252",
          "matched" : "Lifebuoy Total 10 Handwash",
          "source" : "world.openbeautyfacts.org"
+      },
+      "p-limca750" : {
+         "bytes" : 11157,
+         "code" : "8901764052279",
+         "matched" : "Limca lime lemon drink 750ml",
+         "page" : "https://world.openfoodfacts.org/product/8901764052279",
+         "source" : "world.openfoodfacts.org"
       },
       "p-maaza600" : {
          "brands" : "Coca cola, Maaza",
@@ -672,6 +692,13 @@
          "bytes" : 29783,
          "code" : "8901052010615",
          "matched" : "Premium",
+         "source" : "world.openfoodfacts.org"
+      },
+      "p-thumsup750" : {
+         "bytes" : 19017,
+         "code" : "8901764042911",
+         "matched" : "Thums up",
+         "page" : "https://world.openfoodfacts.org/product/8901764042911",
          "source" : "world.openfoodfacts.org"
       },
       "p-tomato1" : {

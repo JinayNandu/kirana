@@ -2461,7 +2461,7 @@
             "फरशी",
             "फ़र्श"
          ],
-         "tile" : "bottle"
+         "tile" : "jug"
       },
       {
          "brand" : "Colin",
@@ -2556,7 +2556,7 @@
             "डास",
             "मच्छर"
          ],
-         "tile" : "bottle"
+         "tile" : "plugin"
       },
       {
          "brand" : "Pampers",

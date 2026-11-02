@@ -1,7 +1,10 @@
 #!/usr/bin/perl
-# Pack shots for the LOOSE GOODS -- the products with no packet.
+# Pack shots that getimages.pl could not match on its own -- the loose
+# goods, which have no barcode, and the handful of packeted ones its
+# scorer was not confident enough about.
 #
-#   perl tools/produce.pl fetch           fill app/_cand with candidates
+#   perl tools/produce.pl fetch [ids]     loose goods, from Wikimedia Commons
+#   perl tools/produce.pl shelf [ids]     packeted goods, from Open Facts
 #   perl tools/produce.pl keep <id> <n>   install candidate n for that id
 #   perl tools/produce.pl clean           throw the candidates away
 #
@@ -52,6 +55,36 @@ my %TERMS = (
   'p-candles6'    => 'white candles white background -drawing -flame',
   'p-matchbox10'  => 'safety matches box -drawing -label -collection',
   'p-ginger250'   => 'ginger root white background -drawing -plant',
+  'p-coriander1'  => 'coriander leaves bunch -plant -field -drawing',
+);
+
+# PACKETED goods that getimages.pl left on a glyph. It scores a search
+# result and rejects anything it is not confident about, which is the
+# right default for a run over 115 products and the wrong one for the
+# handful left over -- a probe of these eleven found good Indian rows
+# sitting under all of them:
+#
+#   Thums Up     8901764042911, brand recorded as "Thums up"
+#   Limca        8901764052538
+#   Lizol        8901396144137
+#   Vim          8901030889875, "Vim liquid gel"
+#   Good Knight  8901023023002, a Flash Vaporiser rather than our
+#                Activ+ refill -- a different VARIANT of the right
+#                brand, which the shelf carries too
+#
+# and genuinely nothing under the others. Colin returns a video game
+# (Colin McRae Dirt 2), Exo a French schoolbook, and Origami nothing
+# whatever. Those stay drawn.
+my %SHELF = (
+  'p-thumsup750'   => ['world.openfoodfacts.org',     'Thums Up'],
+  'p-coke750'      => ['world.openfoodfacts.org',     'Coca Cola India'],
+  'p-limca750'     => ['world.openfoodfacts.org',     'Limca'],
+  'p-chaimasala50' => ['world.openfoodfacts.org',     'Tata Sampann'],
+  'p-vimgel750'    => ['world.openproductsfacts.org', 'Vim liquid gel'],
+  'p-lizol975'     => ['world.openproductsfacts.org', 'Lizol'],
+  'p-goodknight45' => ['world.openproductsfacts.org', 'Good Knight'],
+  'p-colin500'     => ['world.openproductsfacts.org', 'Colin glass cleaner'],
+  'p-exo700'       => ['world.openproductsfacts.org', 'Exo dishwash'],
 );
 
 sub esc_q { my $s = shift; $s =~ s/([^A-Za-z0-9_.~-])/sprintf('%%%02X', ord $1)/ge; $s }
@@ -124,11 +157,78 @@ sub fetch_all {
       if ($magic ne "\xff\xd8\xff") { unlink $out; $n--; next; }
       push @{ $found{$id} }, {
         n => $n,
+        source => 'commons.wikimedia.org',
         title => ($p->{title} // ''),
         page  => ($ii->{descriptionurl} // ''),
       };
     }
     printf "  %-16s %d candidates  (%s)\n", $id, $n, $term;
+  }
+
+  open my $o, '>:raw', $CAND . 'index.json' or die "index: $!\n";
+  print $o JSON::PP->new->utf8->pretty->canonical->encode(\%found); close $o;
+  print "\ncandidates in app/_cand/ -- look at them, then:\n";
+  print "  perl tools/produce.pl keep <id> <n>\n";
+}
+
+# Download one candidate and record it, or say why it did not count.
+# Shared by both fetchers so the PNG guard cannot be in one and not
+# the other -- which is exactly how a guard stops being a guard.
+sub stage {
+  my ($id, $n, $url, $meta) = @_;
+  my $out = sprintf '%s%s__%d.jpg', $CAND, $id, $n;
+  my $rc = system('curl', '-s', '-f', '-o', $out, '--max-time', '30', '-A', $UA, $url);
+  if ($rc != 0 || !-s $out) { unlink $out; return 0 }
+  open my $chk, '<:raw', $out or die;
+  read $chk, my $magic, 3; close $chk;
+  if ($magic ne "\xff\xd8\xff") { unlink $out; return 0 }
+  $meta->{n} = $n;
+  return 1;
+}
+
+# The same "several candidates, a person chooses" shape as fetch_all,
+# pointed at the Open Facts databases instead of Commons.
+sub shelf_fetch {
+  my @only = @_;
+  my %want = map { $_ => 1 } @only;
+  for my $id (@only){ die "$id is not in %SHELF\n" unless $SHELF{$id} }
+  mkdir $CAND unless -d $CAND;
+  unlink(map { glob($CAND . $_ . '__*.jpg') } (@only ? @only : keys %SHELF));
+
+  my %found;
+  if (-s $CAND . 'index.json'){
+    open my $f, '<:raw', $CAND . 'index.json' or die;
+    %found = %{ JSON::PP->new->utf8->decode(do { local $/; <$f> }) }; close $f;
+    delete $found{$_} for (@only ? @only : keys %SHELF);
+  }
+
+  for my $id (sort keys %SHELF) {
+    next if @only && !$want{$id};
+    my ($host, $q) = @{ $SHELF{$id} };
+    my $url = "https://$host/cgi/search.pl?search_terms=" . esc_q($q)
+      . '&search_simple=1&action=process&json=1&page_size=10'
+      . '&fields=code,product_name,brands,image_front_small_url';
+    my $body = get($url);
+    my $r = $body ? eval { JSON::PP->new->utf8->decode($body) } : undef;
+    unless ($r && $r->{products}) { printf "  %-16s nothing came back\n", $id; next }
+
+    my $n = 0;
+    for my $p (@{ $r->{products} }) {
+      last if $n >= 6;
+      my $src = $p->{image_front_small_url} // '';
+      next unless $src =~ /^https/;
+      (my $big = $src) =~ s/\.200\.jpg$/.400.jpg/;   # same image, one size up
+      my $meta = {
+        source  => $host,
+        title   => ($p->{product_name} // '(no name)'),
+        code    => ($p->{code} // ''),
+        page    => "https://$host/product/" . ($p->{code} // ''),
+      };
+      $n++;
+      unless (stage($id, $n, $big, $meta) || stage($id, $n, $src, $meta)) { $n--; next }
+      push @{ $found{$id} }, $meta;
+    }
+    printf "  %-16s %d candidates  (%s on %s)\n", $id, $n, $q, $host;
   }
 
   open my $o, '>:raw', $CAND . 'index.json' or die "index: $!\n";
@@ -154,10 +254,14 @@ sub keep {
   my $pf = $APP . 'data/images.json';
   open my $p, '<:raw', $pf or die "$pf: $!\n";
   my $prov = JSON::PP->new->utf8->decode(do { local $/; <$p> }); close $p;
+  # Whichever database this candidate actually came from. Writing
+  # Commons here regardless would put the wrong credit in the file
+  # that Settings reads its attribution out of.
   $prov->{images}{$id} = {
-    source  => 'commons.wikimedia.org',
+    source  => ($meta->{source} // 'commons.wikimedia.org'),
     matched => $meta->{title},
     page    => $meta->{page},
+    ($meta->{code} ? (code => $meta->{code}) : ()),
     bytes   => length($bytes),
   };
   open my $q, '>:raw', $pf or die; print $q JSON::PP->new->utf8->pretty->canonical->encode($prov); close $q;
@@ -167,6 +271,7 @@ sub keep {
 
 my $cmd = shift // '';
 if    ($cmd eq 'fetch') { fetch_all(@ARGV) }
+elsif ($cmd eq 'shelf') { shelf_fetch(@ARGV) }
 elsif ($cmd eq 'keep')  { keep(@ARGV) }
 elsif ($cmd eq 'clean') { unlink glob($CAND . '*'); rmdir $CAND; print "candidates gone\n" }
-else { print "usage: produce.pl fetch | keep <id> <n> | clean\n"; exit 1 }
+else { print "usage: produce.pl fetch [ids] | shelf [ids] | keep <id> <n> | clean\n"; exit 1 }
