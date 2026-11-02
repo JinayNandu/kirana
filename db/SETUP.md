@@ -124,24 +124,57 @@ Gmail's own SMTP works as a fallback — `smtp.gmail.com`, port 587,
 your address, and an **app password** (needs 2-step verification on
 the Google account). About 500 a day, which this shop will not reach.
 
-## 5. Make the email carry a code, not a link — 1 min
+## 5. Make the email carry a code, not a link — 2 min
 
-Now that SMTP is set, the template unlocks.
+Now that SMTP is set, the templates unlock.
 
-[Authentication → Emails → Magic link or OTP](https://supabase.com/dashboard/project/_/auth/templates)
-→ **Source**, and replace the body with something like:
+⚠️ **There are TWO of them to edit, and editing one is why no code
+arrives.** Which template Supabase sends is decided by which call the
+app made, and this app makes both:
+
+| what the customer is doing | the call | the template |
+|---|---|---|
+| signing in for the first time, on the phone they have been browsing on | `updateUser({ email })` | **Change Email Address** |
+| signing in again on a second phone, or after signing out | `signInWithOtp()` | **Magic Link / OTP** |
+
+The first one is the common case and the surprising one. Every
+visitor to this app already has a session, anonymously, from their
+first tap — that is what lets them save an address and order without
+signing in. Signing in therefore does not *create* a user, it attaches
+an email to the one they already are, so that the addresses they have
+already saved stay theirs. Supabase calls that an email change, and
+sends the **Change Email Address** template.
+
+So edit **both**, at
+[Authentication → Emails](https://supabase.com/dashboard/project/_/auth/templates),
+each one's **Source** tab, with the same body:
 
 ```html
-<h2>Milan's Super Shoppe</h2>
-<p>Your code is <strong>{{ .Token }}</strong></p>
+<h2>Your sign-in code</h2>
+<p><strong>{{ .Token }}</strong></p>
 <p>It expires in an hour. If you did not ask for it, ignore this.</p>
 ```
 
-Subject: `Your code for Milan's Super Shoppe`.
+Subject: `Your sign-in code`.
 
-⚠️ **`{{ .ConfirmationURL }}` must not be left in the body.** One
-variable decides which kind of email goes out, and a body carrying
-both sends the link.
+⚠️ **`{{ .ConfirmationURL }}` must not be left in either body.** That
+one variable is what decides whether the mail carries a link or a
+code, and a body holding both sends the link. A link is the wrong
+answer on a phone: it opens in whatever browser the mail app hands it
+to, often an in-app one that is not where the basket is, and signs the
+customer in somewhere they are not standing.
+
+⚠️ **Turn OFF "Secure email change"** at
+[Authentication → Sign In / Providers → Email](https://supabase.com/dashboard/project/_/auth/providers).
+With it on, an email change generates **two** codes — one to the old
+address and one to the new — and expects both. Nobody signing into
+this app has an old address, so the second code is never needed; off
+is one less thing that can half-happen.
+
+**The body deliberately does not name the shop.** One Supabase project
+has one sender and one set of templates, so the moment there are two
+shops this mail cannot speak for either. It is a code for the
+platform. See `db/MULTISTORE.md`.
 
 ## 6. Copy two values — 1 min
 
