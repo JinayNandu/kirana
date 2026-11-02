@@ -26,7 +26,7 @@ export const mount = (el, html) => { if (el) el.innerHTML = html; };
 //  Screens
 // ---------------------------------------------------------------------
 export const SCREENS = [
-  'shop', 'cat', 'find', 'cart', 'slot', 'addr', 'done', 'track', 'orders',
+  'shop', 'cat', 'find', 'cart', 'slot', 'addr', 'aedit', 'done', 'track', 'orders',
   'board', 'run', 'pick', 'load',
   'set',
 ];

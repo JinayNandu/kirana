@@ -94,7 +94,7 @@ export const ready = () => DATA;
 const K = {
   cart: 'kirana.cart', orders: 'kirana.orders',
   runs: 'kirana.runs', profile: 'kirana.profile', seq: 'kirana.seq',
-  coupon: 'kirana.coupon',
+  coupon: 'kirana.coupon', places: 'kirana.places',
 };
 const REV = { cart: 'kirana.rev.cart', orders: 'kirana.rev.orders', runs: 'kirana.rev.runs' };
 
@@ -476,6 +476,77 @@ export const runs = {
       else cash += o.grand;
     }
     return { orders: list.length, items, cash, paidTotal, paidCount, byStatus };
+  },
+};
+
+// ---------------------------------------------------------------------
+//  places -- the address book
+//
+//  SEVERAL addresses per person, each carrying its OWN name and phone,
+//  because "where does it go" and "who takes it in" are two questions
+//  and the app was asking one. Groceries to the flat go to you;
+//  groceries to your mother's go to her, and the number the driver
+//  rings has to be hers or the delivery fails at the door.
+//
+//  AN ORDER NEVER REFERENCES ONE OF THESE. place() copies the fields
+//  into the order, which is the same rule as the price on a cart line
+//  and for the same reason: an address edited or deleted next month
+//  must not rewrite where last week's order went.
+// ---------------------------------------------------------------------
+export const places = {
+  async list(){
+    // Default first, then newest. The one used most should not move
+    // around the screen between visits.
+    return clone(read(K.places, []).slice().sort((a, b) =>
+      (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0)
+      || String(b.at || '').localeCompare(String(a.at || ''))));
+  },
+
+  async get(id){
+    return clone(read(K.places, []).find((a) => a.id === id) || null);
+  },
+
+  async save(a){
+    const all = read(K.places, []);
+    const now = new Date().toISOString();
+    let row;
+    if (a.id){
+      const i = all.findIndex((x) => x.id === a.id);
+      if (i < 0) throw new Error('NO_SUCH_ADDRESS');
+      row = { ...all[i], ...a };
+      all[i] = row;
+    } else {
+      // Ids are minted by the backend and never by the UI -- the
+      // third of the four rules that keep the Supabase swap to one
+      // import line.
+      row = {
+        ...a,
+        id: 'adr-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        at: now,
+      };
+      // The first address saved is the default. There is nothing to
+      // choose between when there is one.
+      if (!all.length) row.isDefault = true;
+      all.push(row);
+    }
+    if (row.isDefault) for (const x of all) if (x.id !== row.id) x.isDefault = false;
+    write(K.places, all);
+    return clone(row);
+  },
+
+  async remove(id){
+    const all = read(K.places, []).filter((a) => a.id !== id);
+    // Deleting the default promotes the next one rather than leaving
+    // the book with nothing chosen, which would show an order screen
+    // with no address selected and no way to tell why.
+    if (all.length && !all.some((a) => a.isDefault)) all[0].isDefault = true;
+    write(K.places, all);
+  },
+
+  async setDefault(id){
+    const all = read(K.places, []);
+    for (const a of all) a.isDefault = (a.id === id);
+    write(K.places, all);
   },
 };
 

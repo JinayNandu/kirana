@@ -10,20 +10,20 @@
 // =====================================================================
 
 import {
-  $, esc, mount, show, registerScreen, repaint, onLeave, toast,
+  $, esc, mount, show, goBack, registerScreen, repaint, onLeave, toast,
   setCartCount, clearNav, h1, sub, empty,
 } from './ui.js';
 import { t, f, getLang } from './i18n.js';
 import { icon } from './icons.js';
-import { ready, catalog, cart, runs, orders, profile, live } from './store.js';
+import { ready, catalog, cart, runs, orders, profile, places, live } from './store.js';
 import { payBlock, drawQR, wirePay } from './pay.js';
-import { why as geoWhy, detect as geoDetect } from './geo.js';
 import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
   minsToCutoff, fmtSoon, windowOf, ORDER_TONE,
 } from './domain.js';
 
-const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false };
+const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
+            addrId: null, editId: null };
 
 // Brand plus name, with two exceptions. Loose goods carry brand
 // "Shop", where "Shop Onion" would be daft; and some products ARE
@@ -481,171 +481,247 @@ registerScreen('slot', async () => {
 // ---------------------------------------------------------------------
 //  s-addr -- free text, because the shop delivers wherever you are.
 // ---------------------------------------------------------------------
+// =====================================================================
+//  The address book
+//
+//  One screen does two jobs, because it is the same list either way:
+//  mid-order it is "where should this go", and from Settings it is
+//  "the addresses I have saved". `S.runId` is the difference, and the
+//  only thing it changes is whether there is a Place order button at
+//  the bottom.
+//
+//  THE LOCATION BUTTON IS GONE. It worked -- it reverse-geocoded, it
+//  filled the street, it refused to guess the suburb -- and it was
+//  still wrong to ship. OSM's idea of where you are in Borivali is
+//  200-300 m out and it labels half the ward Dahisar, so the street it
+//  offered was often not the customer's street. A field that is filled
+//  in and wrong is worse than one that is empty, because nobody
+//  re-reads a box that already has words in it. geo.js is in parked/
+//  with the rest of the measurements, not deleted.
+// =====================================================================
+
+// No placeholders. Grey example text inside a box reads as a value
+// that is already there, and the label above is doing that job
+// properly.
+const afield = (id, label, req, val, type, hint) =>
+  '<div class="fset">' + lbl(id, label, req)
+  + '<input id="' + esc(id) + '" class="field"'
+  + (type ? ' type="' + esc(type) + '"' : '')
+  + ' value="' + esc(val || '') + '">'
+  + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '')
+  + '</div>';
+
+const addrForm = (a, c) =>
+  afield('flabel', c.addrLabel, false, a.label, 'text', c.addrLabelHint)
+  + afield('fname',  c.fWho,      true,  a.name,  'text')
+  + afield('fphone', c.fPhone,    true,  a.phone, 'tel')
+  + afield('fflat',  c.fFlat,     true,  a.flat)
+  + afield('fsoc',   c.fSociety,  true,  a.society)
+  + afield('farea',  c.fArea,     true,  a.area)
+  + afield('fmark',  c.fLandmark, false, a.landmark);
+
+// The address, or null having already put the reason on screen.
+function readAddrForm(c){
+  const v = (id) => $(id).value.trim();
+  const got = {
+    label: v('flabel'),
+    name: v('fname'), phone: v('fphone').replace(/\D/g, ''),
+    flat: v('fflat'), society: v('fsoc'), area: v('farea'),
+    landmark: v('fmark'),
+  };
+  for (const [el, ok, msg] of [
+    ['fname',  got.name.length > 0,            c.errName],
+    ['fphone', /^[6-9]\d{9}$/.test(got.phone), c.errPhone],
+    ['fflat',  got.flat.length > 0,            c.errFlat],
+    ['fsoc',   got.society.length > 0,         c.errSociety],
+    ['farea',  got.area.length > 0,            c.errArea2],
+  ]){
+    $(el).classList.toggle('bad', !ok);
+    if (!ok){ fieldErr(el, msg); return null; }
+  }
+  $('aerr').hidden = true;
+  return got;
+}
+
+const addrLines = (a) =>
+  [a.flat, a.society, a.area, a.landmark].filter(Boolean).join(', ');
+
+// The label is what you called it; the name underneath is who takes
+// it in. An address with no label falls back to the name, so a card
+// is never headed by a blank.
+const addrCard = (a, chosen, c) =>
+  '<li class="aitem">'
+  + '<button type="button" class="acard" data-pick="' + esc(a.id) + '"'
+  +   ' aria-pressed="' + (chosen ? 'true' : 'false') + '">'
+  +   '<span class="atop"><span class="aname">' + esc(a.label || a.name) + '</span>'
+  +     (a.isDefault ? '<span class="apill">' + esc(c.addrDefault) + '</span>' : '')
+  +   '</span>'
+  +   '<span class="alines">' + esc(addrLines(a)) + '</span>'
+  +   '<span class="awho">' + esc(a.name) + ' · ' + esc(a.phone) + '</span>'
+  + '</button>'
+  + '<button type="button" class="alink" data-edit="' + esc(a.id) + '">'
+  +   esc(c.addrEdit) + '</button>'
+  + '</li>';
+
 registerScreen('addr', async () => {
   const c = t();
   const box = $('s-addr');
-  const me = (await profile.get()) || {};
+  const checkout = !!S.runId;
+  const book = await places.list();
 
-  const field = (id, label, req, ph, val, type) =>
-    '<div class="fset">' + lbl(id, label, req)
-    + '<input id="' + esc(id) + '" class="field"'
-    + (type ? ' type="' + esc(type) + '"' : '')
-    + (ph ? ' placeholder="' + esc(ph) + '"' : '')
-    + ' value="' + esc(val || '') + '"></div>';
+  // An empty book goes STRAIGHT to the form. A list with nothing in
+  // it, above a button that opens the form, is a screen whose entire
+  // contribution is one extra tap at the exact moment somebody is
+  // trying to place their first order.
+  if (!book.length){
+    const me = (await profile.get()) || {};
+    mount(box, h1(checkout ? c.addrTitle : c.addrBook)
+      + '<p class="sub">' + esc(checkout ? c.anywhere : c.addrNoneSub) + '</p>'
+      + addrForm({ name: me.name, phone: me.phone }, c)
+      + '<p id="aerr" class="ferr" hidden></p>'
+      + '<button type="button" class="btn" id="place">'
+        + esc(checkout ? c.placeOrder : c.addrSave) + '</button>');
 
-  mount(box, h1(c.addrTitle)
-    + '<p class="sub">' + esc(c.anywhere) + '</p>'
-    // Above the fields, not below them, because that is the order it
-    // is used in: tap this first, then fill in the parts no map can
-    // know. Underneath, it reads as an afterthought for a form you
-    // have already finished typing.
-    + '<div class="fset locbox">'
-    +   '<button type="button" class="btn ghost" id="useloc">'
-    +     icon('pin') + '<span>' + esc(c.useLoc) + '</span></button>'
-    +   '<p class="hint" id="lochint">' + esc(c.useLocHint) + '</p>'
-    + '</div>'
-    + field('fname',  c.fName,     true,  '',            me.name,  'text')
-    + field('fphone', c.fPhone,    true,  '',            me.phone, 'tel')
-    // No placeholders. Grey example text inside a box reads as a value
-    // that is already there -- especially next to the two fields the
-    // location button really does fill -- so half the form looked
-    // answered when it was empty. The labels above say what each one
-    // is, which is the job the placeholder was doing badly.
-    + field('fflat',  c.fFlat,     true,  '',  me.flat)
-    + field('fsoc',   c.fSociety,  true,  '',  me.society)
-    + field('farea',  c.fArea,     true,  '',  me.area)
-    + field('fmark',  c.fLandmark, false, '',  me.landmark)
+    $('place').onclick = async () => {
+      const got = readAddrForm(c);
+      if (!got) return;
+      const saved = await places.save({ ...got, isDefault: true });
+      await profile.save({ name: got.name, phone: got.phone });
+      S.addrId = saved.id;
+      if (!checkout){ toast(c.addrSaved); repaint(); return; }
+      await placeNow(saved, c);
+    };
+    return;
+  }
 
+  // Whatever was chosen last, unless it has since been deleted.
+  if (!S.addrId || !book.some((a) => a.id === S.addrId)){
+    S.addrId = (book.find((a) => a.isDefault) || book[0]).id;
+  }
+
+  mount(box, h1(checkout ? c.addrTitle : c.addrBook)
+    + '<p class="sub">' + esc(checkout ? c.anywhere : c.addrPickOne) + '</p>'
+    + '<ul class="abook" id="abook">'
+    +   book.map((a) => addrCard(a, checkout && a.id === S.addrId, c)).join('')
+    + '</ul>'
+    + '<button type="button" class="btn ghost" id="anew">' + esc(c.addrAdd) + '</button>'
     + '<p id="aerr" class="ferr" hidden></p>'
-    + '<button type="button" class="btn" id="place">' + esc(c.placeOrder) + '</button>');
+    + (checkout
+        ? '<button type="button" class="btn" id="place">' + esc(c.placeOrder) + '</button>'
+        : ''));
 
-  // Coordinates fill in the parts a map can know -- the street, and a
-  // named landmark if OSM has one. Flat, building, name and phone are
-  // not on any map and stay the customer's to type, which is why the
-  // button says what it will and will not do before it is pressed.
-  //
-  // The button is ALWAYS drawn, and says what is stopping it when
-  // something is. It was hidden where the embedding page forbids
-  // geolocation, which was tidy and wrong: the first person to go
-  // looking for the feature asked why it was missing. An absent
-  // control teaches nobody anything, and on a demo it looks like the
-  // feature was never built. So the check moved from render time to
-  // press time, where it has a sentence to put on the screen.
-  let gotLL = null;
-  const loc = $('useloc');
-  if (loc) loc.onclick = async () => {
-    const hint = $('lochint');
-
-    // Why it cannot run, before trying and failing with something
-    // vague. `blocked` is the one that matters here: the browser
-    // refuses geolocation to an embedded page, so this is what a
-    // preview says, and the same code needs no change at all once the
-    // app sits on the shop's own web address.
-    const stop = geoWhy();
-    if (stop !== 'ok'){
-      hint.textContent = stop === 'nosupport' ? c.locNoSupport : c.locBlocked;
-      hint.classList.add('ferr');
-      return;
-    }
-
-    loc.disabled = true;
-    loc.querySelector('span').textContent = c.useLocBusy;
-    hint.classList.remove('ferr');
-    hint.textContent = c.useLocHint;
-    try {
-      const g = await geoDetect();
-      gotLL = g.ll;
-
-      // Only ever fills an EMPTY field. Someone who has already typed
-      // their street should not have it replaced by the geocoder's
-      // idea of it, and that is doubly true here: OSM labels several
-      // points in Borivali West as Dahisar or Borivali East, because
-      // S.V. Road is the ward boundary and the geocoder snaps to it.
-      const fill = (id, val) => {
-        if (!val) return false;
-        const el = $(id);
-        if (el.value.trim()) return false;
-        el.value = val;
-        return true;
-      };
-      // The STREET and the postcode only -- never the suburb, and this
-      // is not caution, it is measured. Reverse-geocoding the shop's
-      // own coordinates returns "Dahisar West" for an address that is
-      // plainly Borivali West, because S.V. Road is the ward boundary
-      // and the geocoder snaps to it. A wrong locality on a delivery
-      // address is worse than an empty one the customer fills in, so a
-      // point with no street reports finding nothing rather than
-      // offering the suburb as a consolation.
-      // The street only. The landmark was filled too, from whatever
-      // building OSM had nearest -- which is a real place but not
-      // necessarily YOUR landmark, and a wrong one is worse than a
-      // blank, since the whole point of that field is that the
-      // customer knows something the map does not.
-      if (!g.street) throw new Error('nothing');
-      fill('farea', g.street);
-
-      hint.textContent = f(c.locFound,
-        { s: [g.street, g.postcode].filter(Boolean).join(', ') });
-    } catch (err){
-      const msg = {
-        denied: c.locDenied, unavailable: c.locUnavailable,
-        timeout: c.locTimeout, lookup: c.locLookup, nothing: c.locNothing,
-      }[err && err.message] || c.locUnavailable;
-      hint.textContent = msg;
-      hint.classList.add('ferr');
-    } finally {
-      loc.disabled = false;
-      loc.querySelector('span').textContent = c.useLoc;
-    }
+  $('abook').onclick = (e) => {
+    // Edit is tested first: it sits inside the card's box, so a tap on
+    // it is also a tap on the card, and whichever is asked about first
+    // wins.
+    const ed = e.target.closest('button[data-edit]');
+    if (ed){ S.editId = ed.dataset.edit; show('aedit'); return; }
+    const pick = e.target.closest('button[data-pick]');
+    if (pick && checkout){ S.addrId = pick.dataset.pick; repaint(); }
   };
+  $('anew').onclick = () => { S.editId = null; show('aedit'); };
 
-  $('place').onclick = async () => {
-    const v = (id) => $(id).value.trim();
-    const name = v('fname'), phone = v('fphone').replace(/\D/g, '');
-    const flat = v('fflat'), society = v('fsoc'), area = v('farea');
-
-    for (const [el, ok, msg] of [
-      ['fname', name.length > 0,             c.errName],
-      ['fphone', /^[6-9]\d{9}$/.test(phone), c.errPhone],
-      ['fflat', flat.length > 0,             c.errFlat],
-      ['fsoc',  society.length > 0,          c.errSociety],
-      ['farea', area.length > 0,             c.errArea2],
-    ]){
-      $(el).classList.toggle('bad', !ok);
-      if (!ok){ fieldErr(el, msg); return; }
-    }
-    $('aerr').hidden = true;
-
-    try {
-      const o = await orders.place({
-        runId: S.runId, name, phone, flat, society, area,
-        landmark: v('fmark'),
-        // `customer.ll` has been in the order shape all along, always
-        // null since the first location button was removed. It carries
-        // coordinates again when the customer offered them -- the
-        // Store screens already handle either.
-        ll: gotLL,
-      });
-      S.orderId = o.id;
-      clearNav();
-      show('done', false);
-    } catch (err){
-      const msg = String(err.message);
-      if (msg.indexOf('RUN_CLOSED') === 0 || msg.indexOf('RUN_FULL') === 0){
-        const nxt = (await runs.bookable()).filter((r) => !r.full)[0];
-        $('aerr').textContent = nxt
-          ? f(c.errRunClosed, { s: '', d: windowOf(nxt) }).replace(/\s+/g, ' ').trim()
-          : c.noneToday;
-        $('aerr').hidden = false;
-        S.runId = null;
-        setTimeout(() => show('slot', false), 1600);
-      } else {
-        $('aerr').textContent = msg;
-        $('aerr').hidden = false;
-      }
-    }
+  const go = $('place');
+  if (go) go.onclick = async () => {
+    const a = await places.get(S.addrId);
+    // Deleted in another tab between the draw and the tap.
+    if (!a){ S.addrId = null; repaint(); return; }
+    await placeNow(a, c);
   };
 });
+
+registerScreen('aedit', async () => {
+  const c = t();
+  const box = $('s-aedit');
+  const a = S.editId ? await places.get(S.editId) : null;
+  const me = (await profile.get()) || {};
+
+  mount(box, h1(a ? c.addrTitleEdit : c.addrTitleNew)
+    + addrForm(a || { name: me.name, phone: me.phone }, c)
+    // Offered only where it would change something. On the only
+    // address, or on the one already default, it is a switch that
+    // does nothing.
+    + (a && !a.isDefault
+        ? '<label class="arow"><input type="checkbox" id="fdef" class="cbx">'
+          + '<span>' + esc(c.addrSetDefault) + '</span></label>'
+        : '')
+    + '<p id="aerr" class="ferr" hidden></p>'
+    + '<button type="button" class="btn" id="asave">' + esc(c.addrSave) + '</button>'
+    + (a ? '<button type="button" class="btn ghost danger" id="adel">'
+           + esc(c.addrDelete) + '</button>' : ''));
+
+  $('asave').onclick = async () => {
+    const got = readAddrForm(c);
+    if (!got) return;
+    const def = $('fdef');
+    const saved = await places.save(a
+      ? { ...got, id: a.id, isDefault: a.isDefault || !!(def && def.checked) }
+      : got);
+    // Remembered as the defaults for the NEXT new address, not as the
+    // address itself -- the book is the address now.
+    await profile.save({ name: got.name, phone: got.phone });
+    S.addrId = saved.id;
+    toast(c.addrSaved);
+    goBack();
+  };
+
+  const del = $('adel');
+  if (del){
+    // Two taps, the same as Clear all data, because it cannot be
+    // undone and it sits directly under Save.
+    let armed = false;
+    del.onclick = async () => {
+      if (!armed){
+        armed = true;
+        del.textContent = c.addrDeleteConfirm;
+        del.classList.add('arm');
+        setTimeout(() => {
+          if (!armed) return;
+          armed = false;
+          del.textContent = c.addrDelete;
+          del.classList.remove('arm');
+        }, 4000);
+        return;
+      }
+      await places.remove(a.id);
+      if (S.addrId === a.id) S.addrId = null;
+      toast(c.addrDeleted);
+      goBack();
+    };
+  }
+});
+
+async function placeNow(a, c){
+  try {
+    const o = await orders.place({
+      runId: S.runId,
+      // COPIED, never referenced. An address edited or deleted next
+      // month must not rewrite where this order went.
+      name: a.name, phone: a.phone,
+      flat: a.flat, society: a.society, area: a.area,
+      landmark: a.landmark || '',
+      ll: a.ll || null,
+    });
+    S.orderId = o.id;
+    S.runId = null;
+    clearNav();
+    show('done', false);
+  } catch (err){
+    const msg = String(err.message);
+    if (msg.indexOf('RUN_CLOSED') === 0 || msg.indexOf('RUN_FULL') === 0){
+      const nxt = (await runs.bookable()).filter((r) => !r.full)[0];
+      $('aerr').textContent = nxt
+        ? f(c.errRunClosed, { s: '', d: windowOf(nxt) }).replace(/\s+/g, ' ').trim()
+        : c.noneToday;
+      $('aerr').hidden = false;
+      S.runId = null;
+      setTimeout(() => show('slot', false), 1600);
+    } else {
+      $('aerr').textContent = msg;
+      $('aerr').hidden = false;
+    }
+  }
+}
 
 function fieldErr(id, msg){
   const e = $('aerr');

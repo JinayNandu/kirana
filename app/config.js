@@ -31,11 +31,6 @@
 // Free and keyless means rate-limited and unsupported. One lookup per
 // button press is well inside acceptable use; an autocomplete that
 // fires per keystroke would not be, which is why this is on a button.
-export const GEO = {
-  reverseUrl: 'https://photon.komoot.io/reverse?lat={lat}&lon={lon}',
-  attribution: 'OpenStreetMap contributors (ODbL), via photon.komoot.io',
-  timeoutMs: 12000,
-};
 
 export const MAP = {
   tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',

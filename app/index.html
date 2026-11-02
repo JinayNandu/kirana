@@ -287,6 +287,35 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 }
 #toast[hidden]{display:none}
 
+/* --- the address book --------------------------------------------- */
+.abook{list-style:none; margin:0 0 var(--s4); padding:0; display:grid; gap:var(--s2)}
+.aitem{position:relative}
+.acard{
+  display:block; width:100%; text-align:left;
+  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
+  padding:var(--s3); padding-right:66px; box-shadow:var(--sh-card);
+}
+/* A wash rather than a tick mark. A chosen card has to be obvious at
+   a glance on a screen where the next tap places an order, and a
+   border alone is not -- it reads as a focus ring. */
+.acard[aria-pressed="true"]{border-color:var(--leaf); background:var(--leaf-wash)}
+.atop{display:flex; align-items:center; gap:var(--s2); margin-bottom:2px}
+.aname{font-weight:700; font-size:15px; color:var(--ink)}
+/* Plain small caps, no pill background: the card behind it changes
+   colour when it is chosen, and a tinted pill would disappear into
+   one of the two. */
+.apill{font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; color:var(--leaf-ink)}
+.alines{display:block; font-size:13px; color:var(--ink-soft); line-height:1.35}
+.awho{display:block; font-size:13px; color:var(--ink-dim); margin-top:4px}
+.alink{
+  position:absolute; top:6px; right:6px; min-height:36px; padding:6px 10px;
+  font-size:13px; font-weight:600; color:var(--leaf-ink);
+}
+.arow{display:flex; align-items:center; gap:var(--s2);
+  margin:var(--s3) 0 var(--s4); font-size:14px; color:var(--ink)}
+.cbx{width:20px; height:20px; accent-color:var(--leaf); margin:0; flex:none}
+
 /* --- the Store gate ------------------------------------------------ */
 /* Above the toast, because the toast is what says "Store view locked"
    as this opens, and a message about the gate must not sit on top of
@@ -761,6 +790,7 @@ body[data-locked] #roleseg .lk{display:inline-block}
   <section id="s-cart"   hidden></section>
   <section id="s-slot"   hidden></section>
   <section id="s-addr"   hidden></section>
+  <section id="s-aedit"  hidden></section>
   <section id="s-done"   hidden></section>
   <section id="s-track"  hidden></section>
   <section id="s-orders" hidden></section>

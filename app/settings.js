@@ -2,14 +2,12 @@
 //  settings.js -- language, and what this thing is.
 // =====================================================================
 
-import { $, esc, mount, registerScreen, langSeg, pickLang, h1,
+import { $, esc, mount, show, registerScreen, langSeg, pickLang, h1,
          theRole, lockStore } from './ui.js';
 import { gated, passed } from './lock.js';
 import { t, getLang } from './i18n.js';
 import { ready } from './store.js';
 import { icon } from './icons.js';
-import { GEO } from './config.js';
-import { status as geoStatus } from './geo.js';
 
 registerScreen('set', async () => {
   const c = t();
@@ -35,26 +33,18 @@ registerScreen('set', async () => {
     // read, which is the right weight for it.
     + '<p class="sub tiny">' + esc(c.photoCredit)
     +   ' <a href="https://openfoodfacts.org" target="_blank" rel="noopener">'
-    +   'openfoodfacts.org</a><br>' + esc(GEO.attribution) + '</p>'
+    +   'openfoodfacts.org</a></p>'
 
-    // Says plainly whether this device can share a location, so that
-    // "the location button did nothing" is answerable by looking
-    // rather than by guessing. It reports what the browser says, not
-    // what the app hopes.
-    + '<p class="sub tiny">' + esc(c.locStatus) + ': '
-    +   esc(geoStatus().why === 'ok' ? c.locOn : c.locOff) + '</p>'
-
-    // Locking is only offered where it means something -- in the
-    // Store view, on a device that is through the gate. Drawing it on
-    // the storefront would advertise a door to the people it is shut
-    // against, and drawing it on a device that never unlocked would
-    // be a button with nothing to undo.
-    + (theRole() === 'shop' && gated() && passed()
+    // The address book, reachable outside a checkout. Same screen as
+    // the one mid-order -- with no run picked it has no Place order
+    // button, which is the only difference between "where should this
+    // go" and "the addresses I have saved".
+    + (theRole() === 'customer'
         ? '<hr class="rule">'
-          + '<h2>' + esc(c.lockSetTitle) + '</h2>'
-          + '<p class="sub">' + esc(c.lockSetSub) + '</p>'
-          + '<button type="button" class="btn ghost" id="lockoff">'
-            + esc(c.lockSetBtn) + '</button>'
+          + '<h2>' + esc(c.addrBook) + '</h2>'
+          + '<p class="sub">' + esc(c.addrBookSub) + '</p>'
+          + '<button type="button" class="btn ghost" id="gobook">'
+            + esc(c.addrBookBtn) + '</button>'
         : '')
 
     // Everything this app knows lives in this browser, so a reset is
@@ -65,6 +55,9 @@ registerScreen('set', async () => {
     + '<p class="sub">' + esc(c.resetSub) + '</p>'
     + '<button type="button" class="btn ghost danger" id="wipe">'
       + esc(c.resetBtn) + '</button>');
+
+  const book = $('gobook');
+  if (book) book.onclick = () => show('addr');
 
   const off = $('lockoff');
   if (off) off.onclick = () => lockStore();

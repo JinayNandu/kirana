@@ -16,5 +16,5 @@ import * as backend from './backend-local.js';
 // import * as backend from './backend-supabase.js';   // <-- the swap
 
 export const {
-  ready, catalog, cart, runs, orders, profile, session, live,
+  ready, catalog, cart, runs, orders, profile, places, session, live,
 } = backend;
