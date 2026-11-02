@@ -60,7 +60,7 @@ sub pbkdf2 {
 
 my $code = shift @ARGV;
 unless (defined $code && length $code) {
-  die "usage: perl tools/setpin.pl <6-digit code>\n"
+  die "usage: perl tools/setpin.pl <code: 4-12 letters or digits>\n"
     . "       perl tools/setpin.pl --off\n";
 }
 
@@ -75,8 +75,19 @@ if ($code eq '--off') {
   exit 0;
 }
 
-die "The code must be exactly 6 digits -- got '$code'.\n"
-  unless $code =~ /\A[0-9]{6}\z/;
+# Trimmed and lowercased, and app/lock.js does EXACTLY the same to
+# whatever is typed. These two are a Perl script and a WebCrypto
+# call deriving from one string, and no check in this project can
+# compare them -- so if one of them ever stops normalising, the
+# symptom is a correct code being refused and nobody knowing why.
+# Lowercase because a phone capitalises the first letter of a word
+# by itself, and a shopkeeper should not be shut out of his own
+# shop by a keyboard he did not ask for.
+$code =~ s/\A\s+//; $code =~ s/\s+\z//;
+$code = lc $code;
+
+die "The code must be 4 to 12 letters or digits -- got '$code'.\n"
+  unless $code =~ /\A[a-z0-9]{4,12}\z/;
 
 # Six obvious ones, refused by name. A code anybody would try first
 # is not a code, and finding that out from a script beats finding it
@@ -84,6 +95,19 @@ die "The code must be exactly 6 digits -- got '$code'.\n"
 my %silly = map { $_ => 1 } qw(000000 111111 123456 654321 121212 999999);
 die "'$code' is one of the first things anyone would try. Pick another.\n"
   if $silly{$code};
+
+# A WORD is allowed and is not refused, because the owner may want
+# one he can remember while he is being shown the app. But it is
+# said out loud, once, where it cannot be missed: the site is public,
+# and a word anybody could guess from the shop sign is not a lock.
+if ($code !~ /\A[0-9]+\z/) {
+  print "\n  ** '$code' is a word, not a number. **\n\n";
+  print "  The app is on a public URL. Anyone who finds ?store and\n";
+  print "  guesses this opens the board -- every customer's name,\n";
+  print "  phone and address. Fine while the orders table is empty.\n";
+  print "  Change it before the first real order:\n";
+  print "      perl tools/setpin.pl <6 digits>\n\n";
+}
 
 # The salt is published, so it does not have to be unguessable -- only
 # unique to this shop, which is what stops one precomputed table

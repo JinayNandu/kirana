@@ -73,9 +73,9 @@
    "staff" : {
       "iterations" : 600000,
       "note" : "The code that opens the Store view. The code ITSELF is not here and cannot be recovered from this file -- `proof` is PBKDF2-SHA256 of it (600000 iterations), which only runs one way. To change the code: perl tools/setpin.pl <6 digits>, then commit and push. To remove the gate and let anyone open the Store view: perl tools/setpin.pl --off. Forgotten codes cannot be looked up; set a new one.",
-      "proof" : "7d8888397ddaf96d1a245263042407340470dc81b9b4f79cfcc1aec820f53423",
-      "salt" : "d026f2c84b255784b82156f8f24f1afe",
-      "seal" : "a610c5116c6c478b65b13004a74eda434d563eabfeb0b48f3182bf7ee924a54e"
+      "proof" : "a7a92de5c497f618f49fa38ad6467d0df93794142a9eb7ab8637718dc4b4dad2",
+      "salt" : "d4ce800c13c539da77b8714f06b36a71",
+      "seal" : "2464ad5afeaa40e75a6d247dd92d8358feeb313f3511e382a2e950d1513551a3"
    },
    "upi" : {
       "demo" : true,

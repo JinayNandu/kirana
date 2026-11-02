@@ -997,8 +997,11 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <h2 id="lockh"></h2>
     <p class="hint" id="locksub"></p>
     <label for="lockpin" id="locklab"></label>
-    <input id="lockpin" class="field" type="password" inputmode="numeric"
-           autocomplete="off" autocorrect="off" spellcheck="false" maxlength="6">
+    <!-- No inputmode="numeric": the code may be a word now. That costs
+         a digit code its number pad, which is the lesser loss -- a
+         letter typed on a number pad cannot be typed at all. -->
+    <input id="lockpin" class="field" type="password"
+           autocomplete="off" autocorrect="off" spellcheck="false" maxlength="12">
     <p class="ferr" id="lockerr" hidden></p>
     <div class="lockrow">
       <button type="button" class="btn spice" id="lockgo"></button>

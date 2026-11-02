@@ -144,6 +144,12 @@ export function waiting(){
   return left > 0 ? left : 0;
 }
 
+// Whitespace off each end, and down to lowercase. A phone
+// capitalises the first letter of a word on its own, and a code
+// refused because the keyboard helped is indistinguishable, from
+// the counter, from a code that is simply wrong.
+const tidy = (s) => String(s == null ? '' : s).trim().toLowerCase();
+
 // Resolves 'ok' | 'wrong' | 'wait' | 'stuck'.
 export async function tryCode(code){
   if (!staff) return 'ok';
@@ -151,7 +157,11 @@ export async function tryCode(code){
   if (waiting()) return 'wait';
 
   let got;
-  try { got = await derive(code, staff.salt, staff.iterations); }
+  // tidy() here and `lc` plus a trim in tools/setpin.pl, and they
+  // must stay the same thing. Nothing in this project can compare a
+  // Perl script with a WebCrypto call; typing the code into a
+  // browser is the only proof, and it is in CLAUDE.md as such.
+  try { got = await derive(tidy(code), staff.salt, staff.iterations); }
   catch { return 'stuck'; }
 
   if (got.proof !== staff.proof){

@@ -334,9 +334,15 @@ function countdown(){
 async function submitLock(){
   const c = t();
   const field = $('lockpin');
-  const code = (field.value || '').replace(/\D/g, '');
+  // Not stripped and not measured against six. The oninput handler
+  // threw letters away and this threw them away a second time, so a
+  // word code was refused twice over by two separate copies of the
+  // same assumption. lock.js trims and lowercases; the only thing
+  // worth refusing here is a box with nothing much in it, and 4 is
+  // the shortest tools/setpin.pl will write.
+  const code = field.value || '';
   if (waiting()) { lockErr(c.lockTooMany); countdown(); return; }
-  if (code.length !== 6){ lockErr(c.lockShort); return; }
+  if (code.trim().length < 4){ lockErr(c.lockShort); return; }
 
   // The derivation is deliberately slow, so the button has to say it
   // is working or the first tap reads as nothing happening.
@@ -374,16 +380,19 @@ function wireLock(){
 
   const field = $('lockpin');
   field.oninput = () => {
-    const clean = field.value.replace(/\D/g, '').slice(0, 6);
-    if (clean !== field.value) field.value = clean;
+    // This used to strip every non-digit as you typed, so a code that
+    // is a word vanished letter by letter under the caret. The code
+    // is trimmed and lowercased where it is CHECKED, in lock.js, so
+    // there is one place that decides what a typed code means.
     // Clearing the error on each keystroke is right EXCEPT during
     // the cool-off, where it would leave a dead button with nothing
     // beside it saying why.
     lockErr(waiting() ? t().lockTooMany : '');
-    // Six digits is the whole code, so there is nothing left to
-    // decide -- waiting for a button press here is one tap of
-    // ceremony on something typed once in a device's life.
-    if (clean.length === 6 && !waiting()) submitLock();
+    // A SIX-DIGIT code has nothing left to decide at the last digit,
+    // so it still submits itself -- one tap of ceremony saved on
+    // something typed once in a device's life. A word has no length
+    // anyone can know in advance, so it waits for the button.
+    if (/^\d{6}$/.test(field.value) && !waiting()) submitLock();
   };
   field.onkeydown = (e) => { if (e.key === 'Enter') submitLock(); };
 
