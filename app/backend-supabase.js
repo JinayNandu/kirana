@@ -132,7 +132,7 @@ export const session = {
     // mirrors this branch.
     if (u && u.is_anonymous){
       const { error } = await sb.auth.updateUser({ email });
-      if (!error) return { mode: 'link' };
+      if (!error) return { mode: 'upgrade' };
       // That address already belongs to somebody, which is not an
       // error here -- it is the ordinary case of a customer who
       // signed in once and has opened the app on a second phone.
@@ -151,7 +151,7 @@ export const session = {
       email, token,
       // 'email_change' confirms the address just attached to an
       // anonymous user; 'email' signs an existing one in.
-      type: mode === 'link' ? 'email_change' : 'email',
+      type: mode === 'upgrade' ? 'email_change' : 'email',
     });
     oops(error);
     bust();

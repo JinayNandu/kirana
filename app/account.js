@@ -107,7 +107,7 @@ function cardHide(){ cardOpen = false; $('acctcard').hidden = true; }
 //  index.html.
 // ---------------------------------------------------------------------
 let siOpen = false;
-let siMode = null;     // 'link' when upgrading an anonymous user, else 'signin'
+let siMode = null;     // 'upgrade' when an email is being attached, else 'signin'
 let siEmail = '';
 
 const siErr = (msg) => {
