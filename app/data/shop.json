@@ -1,6 +1,7 @@
 {
    "addr" : {
       "en" : "Shop 1, 2 & 3, Sagar Apartment, Devidas Cross Lane, Prem Nagar, Borivali West, Mumbai 400103",
+      "gu" : "દુકાન નં. 1, 2, 3, સાગર એપાર્ટમેન્ટ, દેવીદાસ ક્રોસ લેન, પ્રેમ નગર, બોરીવલી પશ્ચિમ, મુંબઈ 400103",
       "hi" : "दुकान नं. 1, 2, 3, सागर अपार्टमेंट, देवीदास क्रॉस लेन, प्रेम नगर, बोरीवली पश्चिम, मुंबई 400103",
       "mr" : "दुकान क्र. १, २, ३, सागर अपार्टमेंट, देवीदास क्रॉस लेन, प्रेम नगर, बोरिवली पश्चिम, मुंबई ४००१०३"
    },
@@ -49,6 +50,7 @@
    "llSource" : "A point on Devidas Road, confirmed by reverse geocoding (Nominatim returns `Devidas Road ... 400103`, matching the written address on street and postcode). Accurate to 200-300 m. Only used to show the shop's own location now that the delivery route has been parked.",
    "name" : {
       "en" : "Milan's Super Shoppe",
+      "gu" : "મિલન સુપર શોપી",
       "hi" : "मिलन सुपर शॉपी",
       "mr" : "मिलन सुपर शॉपी"
    },

@@ -12,6 +12,7 @@
 use strict;
 use warnings;
 use JSON::PP;
+use Encode qw(decode_utf8 FB_CROAK);
 
 my $here = $0; $here =~ s{[^/]+$}{};
 my $D = ($here || './') . '../app/data/';
@@ -47,7 +48,13 @@ my %TILES = do {
   map { $_ => 1 } @names;
 };
 my %UNITS = map { $_ => 1 } qw(g kg ml l pc pkt dozen);
-my @LANGS = qw(en mr hi);
+# The shop's OWN words -- its name, its address, its aisles -- are
+# translated in full. PRODUCT names are not: `pname()` falls back to
+# English, and a brand read in Latin script is what every grocery
+# app in India shows anyway. Translating 117 of them is worth doing
+# and is not worth blocking the language on.
+my @LANGS  = qw(en mr hi gu);
+my @PLANGS = qw(en mr hi);
 
 # --- the shop ---------------------------------------------------------
 for my $l (@LANGS) {
@@ -215,6 +222,50 @@ ok("$n delivery windows, none overlapping: "
   }
 }
 
+# --- double-encoded text in the DATA files ----------------------------
+#
+# i18n.pl has caught this in i18n.js since the day it ate 28 lines of
+# Marathi. shop.json and categories.json were never checked, and the
+# same mistake landed in them the moment a fourth language was added:
+# a script read the file into characters, assigned a literal that was
+# still bytes, and encoded the whole thing again. The shop's own name
+# came out as 'àª®àª¿àª²àª¨'.
+#
+# Same tell as in i18n.pl, and each script checked against its own
+# block -- Gujarati is not Devanagari.
+{
+  my %SCRIPT = (
+    mr => qr/[\x{0900}-\x{097F}]/,   # Devanagari
+    hi => qr/[\x{0900}-\x{097F}]/,
+    gu => qr/[\x{0A80}-\x{0AFF}]/,   # Gujarati
+  );
+  my $moji = 0;
+  my $look = sub {
+    my ($what, $l, $v) = @_;
+    return unless defined $v && exists $SCRIPT{$l};
+    # DECODE FIRST. Everything in this file is bytes, and every
+    # byte of UTF-8 Devanagari lands in 0x80..0xFF -- so testing
+    # the raw string says "Latin-1 found, no Devanagari found"
+    # about perfectly good text, every time.
+    my $c = eval { decode_utf8($v, FB_CROAK) };
+    return unless defined $c;
+    return unless $c =~ /[\x{00C0}-\x{00FF}]/ && $c !~ $SCRIPT{$l};
+    bad("$what ($l) is double-encoded -- '" . substr($v, 0, 24) . "...'");
+    $moji++;
+  };
+  for my $l (@LANGS) {
+    $look->('shop name', $l, $shop->{name}{$l});
+    $look->('shop address', $l, $shop->{addr}{$l});
+    for my $c (@{ $cats->{categories} }) {
+      $look->("category $c->{id}", $l, $c->{name}{$l});
+    }
+    for my $p (@{ $cat->{products} }) {
+      $look->("product $p->{id}", $l, $p->{name}{$l});
+    }
+  }
+  ok('no double-encoded text in shop, categories or catalogue') unless $moji;
+}
+
 # --- categories -------------------------------------------------------
 my %catid;
 for my $c (@{ $cats->{categories} }) {
@@ -242,7 +293,7 @@ for my $p (@{ $cat->{products} }) {
   #
   # Word boundaries matter here -- \begg matches "eggs" and does NOT
   # match "Deggi Mirch", which is a chilli powder and has to stay.
-  for my $l (@LANGS) {
+  for my $l (@PLANGS) {
     my $name = $p->{name}{$l} // '';
     bad("product $id is not vegetarian: its $l name says '$1'")
       if $name =~ /\b(eggs?|chicken|mutton|fish|prawns?|bacon|meat)\b/i
@@ -263,7 +314,7 @@ for my $p (@{ $cat->{products} }) {
   bad("product $id sells at $p->{price} ABOVE its MRP $p->{mrp}") if $p->{price} > $p->{mrp};
   bad("product $id stock is negative") if ($p->{stock} // 0) < 0;
 
-  for my $l (@LANGS) {
+  for my $l (@PLANGS) {
     bad("product $id has no $l name") unless ($p->{name}{$l} // '') =~ /\S/;
   }
   $untranslated++ if ($p->{name}{mr} // '') eq ($p->{name}{en} // '')

@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-# Key parity, duplicate keys and placeholder parity across en / mr / hi.
+# Key parity, duplicate keys and placeholder parity across every
+# language block in i18n.js -- currently en / hi / gu / mr.
 #
 #   perl tools/i18n.pl
 #
@@ -19,7 +20,7 @@ for my $raw (@lines) {
   my $line = $raw;
   $line =~ s{//.*$}{};                    # strip a trailing line comment
 
-  if (!$lang && $line =~ /^\s{2}(en|mr|hi):\s*\{/) { $lang = $1; $depth = 1; next }
+  if (!$lang && $line =~ /^\s{2}(en|mr|hi|gu):\s*\{/) { $lang = $1; $depth = 1; next }
   next unless $lang;
 
   # A key is an identifier at the start of a line or just after a
@@ -123,17 +124,29 @@ for my $l (grep { $_ ne 'en' } sort keys %T) {
 # nobody in this room can read well enough to notice. It happened, to
 # 28 lines, and every other check in here passed while it was true.
 #
-# The tell is unambiguous: a Marathi or Hindi string has no business
-# holding U+00C0..U+00FF, and real Devanagari never decodes to them.
-for my $l (qw(mr hi)) {
+# The tell is unambiguous: an Indian-language string has no business
+# holding U+00C0..U+00FF, and the real script never decodes to them.
+#
+# EACH LANGUAGE IS CHECKED AGAINST ITS OWN SCRIPT. Gujarati is not
+# Devanagari -- it is a different Unicode block entirely -- so a
+# single hardcoded Devanagari range would have declared every
+# correct Gujarati string with an em dash in it to be mojibake, and
+# a check that cries wolf is worse than no check.
+my %SCRIPT = (
+  mr => qr/[\x{0900}-\x{097F}]/,   # Devanagari
+  hi => qr/[\x{0900}-\x{097F}]/,
+  gu => qr/[\x{0A80}-\x{0AFF}]/,   # Gujarati
+);
+for my $l (sort keys %SCRIPT) {
+  next unless $T{$l};
   for my $k (sort keys %{ $T{$l} }) {
     my $v = $T{$l}{$k};
-    next unless $v =~ /[\x{00C0}-\x{00FF}]/ && $v !~ /[\x{0900}-\x{097F}]/;
+    next unless $v =~ /[\x{00C0}-\x{00FF}]/ && $v !~ $SCRIPT{$l};
     printf "MOJIBAKE   %s.%s is double-encoded -- '%s...'\n",
       $l, $k, substr($v, 0, 20);
     $bad = 1;
   }
 }
 
-print $bad ? "\nFAIL\n" : "\nall three languages agree\n";
+printf $bad ? "\nFAIL\n" : "\nall %d languages agree\n", scalar keys %T;
 exit($bad ? 1 : 0);

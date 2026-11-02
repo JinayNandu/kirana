@@ -74,7 +74,7 @@ app/
   index.html        one document: all CSS, 17 <section id="s-*">, role switch
   app.js            entry -- the only module that knows both roles
   ui.js             $, esc, show/goBack/teardown, per-role NAV, paint, boot
-  i18n.js           T = {en, mr, hi}, 187 keys each
+  i18n.js           T = {en, hi, gu, mr}, 270 keys each
   domain.js         PURE -- IST clock, window derivation, status tables, money
   store.js          the facade; ONE import line is the Supabase swap
   backend-local.js  localStorage + cross-tab storage events
@@ -1153,6 +1153,56 @@ upholstery, and Oil & Masala was a washed-out tin of ghee. They are
 photographed product in those three aisles side by side and choosing
 with eyes, not by scoring.
 
+## Four languages
+
+**English, हिंदी, ગુજરાતી, मराठी** — in that order, on every screen.
+
+The order is the shop's, not the alphabet's: Borivali West speaks all
+three, and whoever sits last on the row is the one who has to look
+hardest. 270 keys each, and `i18n.pl` fails if any block is missing
+one.
+
+**The shop's own words are translated in full** — its name, address
+and eleven aisle names. **Product names are not**, and that is a
+decision rather than an omission: `pname()` falls back to English, and
+a brand read in Latin script is what every grocery app in India shows
+anyway. 117 transliterations are worth doing and are not worth
+blocking a language on.
+
+⚠️ **Gujarati is not Devanagari.** It is a different Unicode block
+(U+0A80–U+0AFF), and the mojibake check hardcoded U+0900–U+097F. Left
+alone it would have called every correct Gujarati string with an em
+dash in it double-encoded — and a check that cries wolf is worse than
+no check. Each language is now tested against **its own** script.
+
+### The double-encode bug, twice more
+
+Adding a language is exactly when it happens, and it happened twice in
+one sitting.
+
+A script reads a JSON file with `->utf8->decode` (bytes to
+characters), assigns a literal that is still **bytes**, and writes with
+`->utf8->encode`. The text goes through UTF-8 twice. The shop's own
+name shipped as `àª®àª¿àª²àª¨`, and three product names had been
+sitting mangled since the Diwali sweets were added.
+
+Two things came out of it:
+
+- **`decode_utf8` the literal before assigning it**, so the value is in
+  the same alphabet as everything else in the structure before
+  JSON::PP encodes the lot once. Or edit the file as raw text and
+  never decode at all — which is what the i18n.js rule already says.
+- **`data.pl` now checks shop.json, categories.json and catalog.json
+  for it.** `i18n.pl` has guarded `i18n.js` since the day it ate 28
+  lines of Marathi; the data files were never guarded, and that is
+  precisely where it landed.
+
+⚠️ **That check must DECODE before it judges.** `data.pl` reads its
+JSON as bytes, and every byte of UTF-8 Devanagari sits in 0x80–0xFF —
+so testing the raw string reports "Latin-1 present, Devanagari absent"
+about perfectly good text, every time. The first version of this check
+failed all 273 strings, which is the same as failing none.
+
 ## Cross-tab sync — the demo
 
 Two windows side by side, customer left, Store right: place an order and
@@ -1210,7 +1260,7 @@ otherwise have to sit and wait for.
 | script | catches |
 |---|---|
 | `balance.pl` | unbalanced brackets and strings. **Found the real one**: a `mount(` that was never closed. Neutralises regex literals, or `/[&<>"]/g` pairs its quote with the next string. |
-| `i18n.pl` | en/mr/hi key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail., and **double-encoded Devanagari** -- see below. |
+| `i18n.pl` | en/hi/gu/mr key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail., and **double-encoded Devanagari** -- see below. |
 | `data.pl` | ids, categories, whole rupees, `price <= mrp`, all three names present, the delivery windows not overlapping, a demo UPI id that cannot resolve, every pairing naming a product that still exists, every product having a pairing of its own, and the shape of the Store code -- including a **loud failure if the code itself ever gets written into `shop.json`**, which is served to every visitor |
 | `slots.pl` | the run state machine across a whole day, **including 00:15 IST**; also greps for `toISOString` outside `domain.js` |
 | `tokens.pl` | every `var(--x)` is defined; no literal colour in a component rule; and it REFUSES TO RUN if a dark `:root` block reappears, because the checks that guarded a second palette were parked with it |
@@ -1242,7 +1292,7 @@ Two things came out of it:
   needles are ASCII and the values are already the UTF-8 bytes they
   should be, so nothing needs converting and nothing can be converted
   twice. Where a block must be found per language, find the ASCII key
-  three times in order -- en, mr, hi -- rather than matching on the
+  three times in order -- en, hi, gu, mr -- rather than matching on
   translated text.
 
 

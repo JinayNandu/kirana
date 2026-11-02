@@ -1,26 +1,26 @@
 {
   "categories": [
     { "id": "staples", "order": 1,  "hero": "p-atta-aash5", "tile": "sack",
-      "name": { "en": "Atta, Rice & Dal", "mr": "आटा, तांदूळ आणि डाळ", "hi": "आटा, चावल और दाल" } },
+      "name": { "en": "Atta, Rice & Dal", "mr": "आटा, तांदूळ आणि डाळ", "hi": "आटा, चावल और दाल", "gu": "લોટ, ચોખા અને દાળ" } },
     { "id": "masala",  "order": 2,  "hero": "p-oil-fort1", "tile": "jar",
-      "name": { "en": "Oil, Ghee & Masala", "mr": "तेल, तूप आणि मसाला", "hi": "तेल, घी और मसाला" } },
+      "name": { "en": "Oil, Ghee & Masala", "mr": "तेल, तूप आणि मसाला", "hi": "तेल, घी और मसाला", "gu": "તેલ, ઘી અને મસાલા" } },
     { "id": "snacks",  "order": 3,  "hero": "p-parleg250", "tile": "biscuit",
-      "name": { "en": "Snacks & Biscuits", "mr": "स्नॅक्स आणि बिस्किटे", "hi": "स्नैक्स और बिस्किट" } },
+      "name": { "en": "Snacks & Biscuits", "mr": "स्नॅक्स आणि बिस्किटे", "hi": "स्नैक्स और बिस्किट", "gu": "નાસ્તા અને બિસ્કિટ" } },
     { "id": "sweets",  "order": 4,  "hero": "p-soanpapdi500", "tile": "box",
-      "name": { "en": "Sweets & Chocolates", "mr": "मिठाई आणि चॉकलेट", "hi": "मिठाई और चॉकलेट" } },
+      "name": { "en": "Sweets & Chocolates", "mr": "मिठाई आणि चॉकलेट", "hi": "मिठाई और चॉकलेट", "gu": "મીઠાઈ અને ચોકલેટ" } },
     { "id": "drinks",  "order": 5,  "hero": "p-maaza600", "tile": "bottle",
-      "name": { "en": "Cold Drinks & Water", "mr": "थंड पेये आणि पाणी", "hi": "कोल्ड ड्रिंक और पानी" } },
+      "name": { "en": "Cold Drinks & Water", "mr": "थंड पेये आणि पाणी", "hi": "कोल्ड ड्रिंक और पानी", "gu": "ઠંડા પીણાં અને પાણી" } },
     { "id": "dairy",   "order": 6,  "hero": "p-amulbutter100", "tile": "carton",
-      "name": { "en": "Milk, Bread & Paneer", "mr": "दूध, ब्रेड आणि पनीर", "hi": "दूध, ब्रेड और पनीर" } },
+      "name": { "en": "Milk, Bread & Paneer", "mr": "दूध, ब्रेड आणि पनीर", "hi": "दूध, ब्रेड और पनीर", "gu": "દૂધ, બ્રેડ અને પનીર" } },
     { "id": "tea",     "order": 7,  "hero": "p-tatatea500", "tile": "tin",
-      "name": { "en": "Tea, Coffee & Health", "mr": "चहा, कॉफी आणि हेल्थ", "hi": "चाय, कॉफ़ी और हेल्थ" } },
+      "name": { "en": "Tea, Coffee & Health", "mr": "चहा, कॉफी आणि हेल्थ", "hi": "चाय, कॉफ़ी और हेल्थ", "gu": "ચા, કોફી અને હેલ્થ" } },
     { "id": "fresh",   "order": 8,  "hero": "p-tomato1", "tile": "leaf",
-      "name": { "en": "Fruit & Vegetables", "mr": "फळे आणि भाजीपाला", "hi": "फल और सब्ज़ियाँ" } },
+      "name": { "en": "Fruit & Vegetables", "mr": "फळे आणि भाजीपाला", "hi": "फल और सब्ज़ियाँ", "gu": "ફળ અને શાકભાજી" } },
     { "id": "care",    "order": 9,  "hero": "p-dove3", "tile": "soap",
-      "name": { "en": "Soap & Personal Care", "mr": "साबण आणि पर्सनल केअर", "hi": "साबुन और पर्सनल केयर" } },
+      "name": { "en": "Soap & Personal Care", "mr": "साबण आणि पर्सनल केअर", "hi": "साबुन और पर्सनल केयर", "gu": "સાબુ અને પર્સનલ કેર" } },
     { "id": "clean",   "order": 10,  "hero": "p-surf1", "tile": "spray",
-      "name": { "en": "Cleaning & Home", "mr": "साफसफाई आणि घर", "hi": "सफ़ाई और घर" } },
+      "name": { "en": "Cleaning & Home", "mr": "साफसफाई आणि घर", "hi": "सफ़ाई और घर", "gu": "સફાઈ અને ઘર" } },
     { "id": "baby",    "order": 11, "hero": "p-pampers-m56", "tile": "roll",
-      "name": { "en": "Baby & Everyday", "mr": "बेबी आणि रोजचे", "hi": "बेबी और रोज़मर्रा" } }
+      "name": { "en": "Baby & Everyday", "mr": "बेबी आणि रोजचे", "hi": "बेबी और रोज़मर्रा", "gu": "બાળક અને રોજિંદું" } }
   ]
 }
