@@ -65,6 +65,20 @@ export const MAP = {
 //
 //  Setup, step by step: db/SETUP.md
 // ---------------------------------------------------------------------
+// How many digits the sign-in code has.
+//
+// ⚠️ THIS MUST MATCH THE SUPABASE PROJECT. Authentication -> Sign In /
+// Providers -> Email -> Email OTP Length. Supabase ships 6 but allows
+// 6 to 10, and a project set to 8 against an app expecting 6 fails in
+// the worst way available: the box auto-submits after the sixth digit,
+// the server rejects two thirds of a code, and the customer is told
+// their code is wrong however carefully they type it.
+//
+// The wording in i18n.js says "six-digit" in all three languages, so
+// changing this means changing those too. Six is the right answer for
+// a shop -- it is the length everybody already knows from their bank.
+export const OTP_LEN = 6;
+
 export const SUPABASE = {
   url: 'https://pdcvdthlrvhtsnpfggsc.supabase.co',
   key: 'sb_publishable_25_o0iqXbQgrNVcbddAqTw_jl_764GO',

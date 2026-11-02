@@ -2,7 +2,7 @@
 //  settings.js -- language, and what this thing is.
 // =====================================================================
 
-import { $, esc, mount, show, registerScreen, langSeg, pickLang, h1,
+import { $, esc, mount, show, registerScreen, h1,
          theRole, lockStore, toast, repaint } from './ui.js';
 import { gated, passed } from './lock.js';
 import { t, getLang } from './i18n.js';
@@ -21,10 +21,10 @@ registerScreen('set', async () => {
   // Null on the local backend, where there is nobody to be.
   const me = shared() ? await session.whoami() : null;
 
+  // No language switch here any more. It is a row under the header
+  // on every screen, including this one, and two controls for the
+  // same thing within 100px of each other is one too many.
   mount(box, h1(c.setTitle)
-    + '<h2>' + esc(c.setLang) + '</h2>'
-    + langSeg()
-    + '<hr class="rule">'
     + '<h2>' + esc(c.setAbout) + '</h2>'
     + '<div class="card">'
     +   '<p><b>' + esc(store.name[getLang()] || store.name.en) + '</b></p>'
@@ -117,10 +117,5 @@ registerScreen('set', async () => {
     location.reload();
   };
 
-  const seg = $('langseg');
-  if (seg) seg.onclick = (e) => {
-    const b = e.target.closest('button[data-lang]');
-    if (b) pickLang(b.dataset.lang);
-  };
 });
 

@@ -25,6 +25,7 @@ import { $, esc, show, toast, repaint, onPaint,
 import { t } from './i18n.js';
 import { icon } from './icons.js';
 import { session, shared } from './store.js';
+import { OTP_LEN } from './config.js';
 
 // The answer to whoami(), held rather than re-asked. The pill redraws
 // on every language change and every screen paint; a network round
@@ -127,6 +128,7 @@ function siDraw(){
     : c.siSub;
   $('silab').textContent     = c.siEmail;
   $('sicodelab').textContent = c.siCode;
+  $('sicode').maxLength = OTP_LEN;
   $('sigo').textContent = onCode ? c.siVerify : c.siSend;
 }
 
@@ -185,7 +187,7 @@ async function siSubmit(){
   }
 
   const code = $('sicode').value.replace(/\D/g, '');
-  if (code.length !== 6){ siErr(c.siShortCode); return; }
+  if (code.length !== OTP_LEN){ siErr(c.siShortCode); return; }
   go.disabled = true;
   go.textContent = c.siVerifying;
   siErr('');
@@ -247,12 +249,13 @@ export function start(){
   }
   $('sicode').oninput = () => {
     const el = $('sicode');
-    const clean = el.value.replace(/\D/g, '').slice(0, 6);
+    const clean = el.value.replace(/\D/g, '').slice(0, OTP_LEN);
     if (clean !== el.value) el.value = clean;
     siErr('');
-    // Six digits is the whole code. Waiting for a button press after
-    // the last one is ceremony on something read off another screen.
-    if (clean.length === 6) siSubmit();
+    // A full code is the whole code. Waiting for a button press
+    // after the last digit is ceremony on something read off
+    // another screen.
+    if (clean.length === OTP_LEN) siSubmit();
   };
 
   registerOverlay(() => siOpen, siHide);

@@ -20,10 +20,6 @@
 
 export const LANGS = ['en', 'mr', 'hi'];
 export const LANG_NAMES = { en: 'English', mr: 'मराठी', hi: 'हिंदी' };
-// The header button is 36px wide, so it carries a short form. Each
-// is in its OWN script on purpose: somebody who cannot read the
-// language the app is currently in has to be able to find theirs.
-export const LANG_SHORT = { en: 'EN', mr: 'मरा', hi: 'हिं' };
 export const LOCALE = { en: 'en-IN', mr: 'mr-IN', hi: 'hi-IN' };
 
 export const T = {

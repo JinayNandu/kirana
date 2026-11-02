@@ -185,32 +185,20 @@ body[data-role="shop"]   #rolerule{background:var(--spice)}
 #hdr .seg button{color:var(--on-brand-dim)}
 #hdr .seg button[aria-pressed="true"]{background:var(--on-brand); color:var(--brand)}
 
-/* --- the language button ------------------------------------------ */
-/* It lives in the header and is therefore on every screen, which is
-   the whole requirement. Somebody who has landed in the wrong
-   language has to be able to leave it from wherever they are -- not
-   by finding Settings, whose name is written in the script they
-   cannot read. */
-#langbtn{
-  flex:none; min-width:38px; min-height:34px; padding:0 8px;
-  border-radius:var(--r2); background:var(--brand-well);
-  color:var(--on-brand); font-size:12px; font-weight:700;
+/* --- the language row ---------------------------------------------- */
+/* A row of its own under the header, so all three names are on every
+   screen with nothing to open. It is part of the green band rather
+   than a strip below it, because a second bar under the header would
+   read as a toolbar belonging to the page.
+   It inherits #hdr .seg, which already knows how to sit on green;
+   all this adds is three equal widths, so no language looks like the
+   main one and the two-letter codes can go. */
+#langrow{
+  max-width:580px; margin:0 auto;
+  padding:0 var(--gutter) var(--s2); display:flex;
 }
-#langbtn:active{opacity:.8}
-/* An overlay like the other two, so it cannot join the back stack and
-   the back gesture closes it instead of walking the screen behind. */
-#langpick .lockbox{text-align:left}
-.langlist{display:grid; gap:var(--s2); margin:var(--s3) 0 0}
-.langlist button{
-  display:flex; align-items:center; justify-content:space-between;
-  width:100%; min-height:52px; padding:0 var(--s3);
-  border:1px solid var(--edge); border-radius:var(--r2);
-  background:var(--card); color:var(--ink); font-size:16px; font-weight:600;
-}
-.langlist button[aria-pressed="true"]{
-  border-color:var(--leaf); background:var(--leaf-wash); color:var(--leaf-ink);
-}
-.langlist .ic{width:20px; height:20px}
+#langrow .seg{display:flex; width:100%}
+#langrow .seg button{flex:1; min-height:30px; font-size:12.5px}
 
 /* --- the account pill ---------------------------------------------- */
 /* Always up on the storefront, because what it offers -- an address
@@ -405,12 +393,12 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 /* Above the toast, because the toast is what says "Store view locked"
    as this opens, and a message about the gate must not sit on top of
    it. */
-#lock, #signin, #langpick, #acctcard{
+#lock, #signin, #acctcard{
   position:fixed; inset:0; z-index:60;
   display:flex; align-items:center; justify-content:center;
   padding:var(--s4); background:var(--scrim);
 }
-#lock[hidden], #signin[hidden], #langpick[hidden], #acctcard[hidden]{display:none}
+#lock[hidden], #signin[hidden], #acctcard[hidden]{display:none}
 .lockbox{
   background:var(--card); border-radius:var(--r2); box-shadow:var(--sh-lift);
   padding:var(--s5) var(--s4) var(--s4); width:100%; max-width:340px;
@@ -883,8 +871,8 @@ body[data-locked] #roleseg .lk{display:inline-block}
       <button type="button" data-role="customer" aria-pressed="true"><span id="l-rolecust">Shop</span></button>
       <button type="button" data-role="shop"     aria-pressed="false"><svg class="ic lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg><span id="l-roleshop">Store</span></button>
     </div>
-    <button id="langbtn" type="button" aria-haspopup="dialog"></button>
   </div>
+  <div id="langrow"></div>
   <div id="rolerule"></div>
 </header>
 
@@ -950,7 +938,7 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <div id="sistep2" hidden>
       <label for="sicode" id="sicodelab"></label>
       <input id="sicode" class="field" type="text" inputmode="numeric"
-             autocomplete="one-time-code" maxlength="6" spellcheck="false">
+             autocomplete="one-time-code" maxlength="10" spellcheck="false">
     </div>
 
     <p class="ferr" id="sierr" hidden></p>
@@ -978,15 +966,6 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <div class="lockrow">
       <button type="button" class="btn ghost" id="accbook"></button>
       <button type="button" class="btn ghost" id="accout"></button>
-    </div>
-  </div>
-</div>
-<div id="langpick" hidden>
-  <div class="lockbox" role="dialog" aria-modal="true" aria-labelledby="lph">
-    <h2 id="lph"></h2>
-    <div class="langlist" id="langlist"></div>
-    <div class="lockrow">
-      <button type="button" class="btn ghost" id="lpx"></button>
     </div>
   </div>
 </div>

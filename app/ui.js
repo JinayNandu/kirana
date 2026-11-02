@@ -9,8 +9,8 @@
 //  hoisted and throws at render -- a bug no checker can see.
 // =====================================================================
 
-import { T, TXT, t, setLang, getLang, bootLang, LANGS, LANG_NAMES,
-         LANG_SHORT } from './i18n.js';
+import { T, TXT, t, setLang, getLang, bootLang, LANGS,
+         LANG_NAMES } from './i18n.js';
 import { icon } from './icons.js';
 import { gated, passed, stuck, tryCode, waiting, forget } from './lock.js';
 
@@ -401,14 +401,9 @@ export function paint(){
   const b = $('l-brand'); if (b) b.textContent = name;
   const bs = $('l-brandsub'); if (bs) bs.textContent = sub2;
   document.title = name;
-  const lb = $('langbtn');
-  if (lb){
-    lb.textContent = LANG_SHORT[lang] || lang.toUpperCase();
-    lb.setAttribute('aria-label', c.setLang);
-  }
+  drawLangRow();
   drawTabs();
   drawLock();
-  lpDraw();
   for (const f of PAINTERS){ try { f(); } catch (e) { console.warn('paint', e); } }
   repaint();
 }
@@ -419,50 +414,37 @@ export function pickLang(code){
 }
 
 // ---------------------------------------------------------------------
-//  Choosing one, from anywhere
+//  Choosing one, in the open
 //
-//  The switch used to live on the Settings screen alone, which is the
-//  one place a reader of the wrong language cannot navigate to: the
-//  tab is labelled in the language they are trying to leave. It is now
-//  a button in the header, so it is on every screen, and it opens an
-//  overlay rather than a screen -- a chooser you can reach by pressing
-//  Back is a chooser that reopens itself.
+//  All three names, side by side, in a row of their own under the
+//  header -- so they are on every screen and nothing has to be opened
+//  to find out what the choices are.
+//
+//  This was a single button reading EN, and that was wrong twice
+//  over. "EN" is not a word anybody recognises, and a chooser that
+//  must be TAPPED to reveal its contents cannot be read by the one
+//  person it exists for: somebody looking at an app in a script they
+//  cannot read, who has to SEE मराठी to know it is on offer.
+//
+//  Each name stays in its own script for exactly that reason -- a
+//  list that said "Marathi" in English would have the same problem
+//  one level down.
 // ---------------------------------------------------------------------
-let lpOpen = false;
-
-function lpDraw(){
-  if (!lpOpen) return;
-  const c = t();
-  $('lph').textContent = c.setLang;
-  $('lpx').textContent = c.close;
-  // No input in here, so rebuilding is safe -- and it has to be
-  // rebuilt, because which row is pressed changes as you choose.
-  mount($('langlist'), LANGS.map((code) =>
-    '<button type="button" data-lang="' + esc(code) + '" aria-pressed="'
-    + (getLang() === code ? 'true' : 'false') + '">'
-    + '<span>' + esc(LANG_NAMES[code]) + '</span>'
-    + (getLang() === code ? icon('check') : '')
-    + '</button>').join(''));
-}
-
-function lpShow(){ lpOpen = true; $('langpick').hidden = false; lpDraw(); }
-function lpHide(){ lpOpen = false; $('langpick').hidden = true; }
+const drawLangRow = () => mount($('langrow'), langSeg());
 
 function wireLang(){
-  $('langbtn').onclick = () => lpShow();
-  $('lpx').onclick = () => lpHide();
-  $('langpick').onmousedown = (e) => { if (e.target === $('langpick')) lpHide(); };
-  $('langlist').onclick = (e) => {
+  // Delegated to the ROW, which survives every redraw. The seg inside
+  // it does not -- it is rebuilt on each paint, because which button
+  // is pressed changes as you choose.
+  $('langrow').onclick = (e) => {
     const b = e.target.closest('button[data-lang]');
-    if (!b) return;
-    pickLang(b.dataset.lang);   // repaints this box through paint()
-    lpHide();
+    if (b) pickLang(b.dataset.lang);
   };
-  registerOverlay(() => lpOpen, lpHide);
 }
 
 export function langSeg(){
-  return '<div class="seg" id="langseg" role="group">'
+  return '<div class="seg" id="langseg" role="group" aria-label="'
+    + esc(t().setLang) + '">'
     + LANGS.map((code) =>
         '<button type="button" data-lang="' + esc(code) + '" aria-pressed="'
         + (getLang() === code ? 'true' : 'false') + '">'
