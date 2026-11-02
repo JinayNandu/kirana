@@ -20,9 +20,29 @@ project**.
 - **Region: Mumbai (ap-south-1).** Not a detail. Every query from a
   Borivali phone crosses to wherever this sits and back — Mumbai is
   about 20 ms, Virginia about 250 ms. That is the difference between
-  the board ticking and the board lagging.
+  the board ticking and the board lagging. The region **cannot be
+  changed afterwards**.
 - Save the database password somewhere. The app never uses it and it
   cannot be recovered.
+
+Three checkboxes under **Security**, and the middle one is the one
+that bites:
+
+| | | |
+|---|---|---|
+| **Enable Data API** | **on** | What `supabase-js` talks to. Off, the app connects and then nothing works. |
+| **Automatically expose new tables** | **off** | Supabase's own advice. `schema.sql` grants each table explicitly instead, so nothing is ever reachable because somebody forgot it was. |
+| **Enable automatic RLS** | **on** | A belt to the schema's braces. Every table here enables RLS by hand; this makes a table added *later* fail shut rather than open. |
+
+⚠️ **Off and without the grants at the foot of `schema.sql`, nothing
+works** — because a grant and a policy are different things. The grant
+decides whether a role may reach a table at all; the policy decides
+which rows. Perfect policies with no grant answer every query with
+*permission denied for table*, and only the policy half is visible in
+the table editor.
+
+**Advanced configuration** needs nothing. Take whatever Postgres
+version it offers.
 
 ## 2. Create the tables — 1 min
 

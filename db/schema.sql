@@ -248,3 +248,52 @@ begin
     alter publication supabase_realtime add table runs;
   end if;
 end $$;
+
+-- =====================================================================
+--  Who may touch a table AT ALL
+--
+--  This is a SECOND layer and it is not the same as the policies
+--  above, which is the thing that catches people out:
+--
+--    GRANT   -- may this role reach this table through the API
+--    POLICY  -- which ROWS of it may it see or change
+--
+--  A table with perfect policies and no grant answers every query with
+--  "permission denied for table". A table with a grant and no policy
+--  answers every query with nothing at all. Both are needed, and only
+--  the second is visible in the Supabase table editor.
+--
+--  Supabase can hand out these grants automatically -- the project
+--  setting is "Automatically expose new tables" -- and its own advice
+--  is to turn that OFF and be explicit, which is what this block is.
+--  With it off and this block missing, NOTHING WORKS.
+--
+--  Only `authenticated`. Not `anon`: every visitor to this app signs
+--  in anonymously before the first query, so `anon` is the role of a
+--  session that does not exist yet, and it needs nothing. A failure
+--  to get that session is then a loud 401 rather than a half-working
+--  app, which is the better of the two.
+-- =====================================================================
+grant usage on schema public to authenticated;
+
+grant select                         on staff       to authenticated;
+grant select, insert, update, delete on addresses   to authenticated;
+-- update on orders is granted here and then limited to the shop by
+-- ord_staff_write. A customer may hold the privilege and still be
+-- refused every row, which is exactly the intended shape.
+grant select, insert, update         on orders      to authenticated;
+grant select, insert                 on order_lines to authenticated;
+grant select, insert, update, delete on runs        to authenticated;
+
+-- Inserting a row means drawing from the sequence behind its id.
+-- Missing this is a "permission denied for sequence order_seq" at the
+-- moment somebody places their first order, and nowhere before it.
+grant usage, select on sequence order_seq           to authenticated;
+grant usage, select on sequence order_lines_id_seq  to authenticated;
+
+-- is_staff() is called from inside the policies, so the caller needs
+-- to be allowed to run it. The other two are the customer's only
+-- writes to their own order.
+grant execute on function is_staff()                to authenticated;
+grant execute on function mark_paid(uuid, text)     to authenticated;
+grant execute on function mark_method(uuid, text)   to authenticated;
