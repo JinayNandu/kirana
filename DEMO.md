@@ -147,11 +147,28 @@ In rough order of what it buys you:
 
 1. **His price corrections** — `perl tools/pricelist.pl > prices.txt`,
    hand him the file, read it back with `setprice.pl`.
-2. **Change the Store code off the shop's own name.** The site is
-   public, and the name on the sign is the first thing anybody would
-   try. It is safe today only because there are no orders behind the
-   door, and that stops being true the moment a real customer orders.
-   `perl tools/setpin.pl <6 digits>`
+2. **Change the Store code. This one is not optional.**
+
+   Two reasons, and the second is the real one. The name on the shop
+   sign is the first thing anybody would try — and worse, the code
+   was written into a commit message and pushed, so it is sitting in
+   this repository's public history and can simply be read. That is
+   my mistake, not a design decision.
+
+   It costs nothing today, because the orders table is empty and
+   there is nothing behind the door. It costs a customer's name,
+   phone and address the moment there is a real order. So this runs
+   **before** the shop takes its first one, not "soon":
+
+   ```bash
+   perl tools/setpin.pl <6 digits>
+   git add -A && git commit -m "new Store code" && git push
+   ```
+
+   Do not try to scrub the old one out of the history. It is pushed
+   and public; forks and the API keep serving old objects, so a
+   force-push buys a feeling rather than a fix. Rotating the code is
+   what actually makes the leaked one worthless.
 3. **Sign in once on his phone**, then put his user id from Supabase
    → Authentication → Users into the `staff` table:
    `insert into staff (user_id) values ('<uuid>');`
