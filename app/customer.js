@@ -243,8 +243,9 @@ function railCard(p, qty){
 // `q` is the basket, as a pid -> qty map. Every caller already had
 // to be async to fetch its list, so one more await costs nothing and
 // keeps the counting in one place.
-const rail = (title, list, q) => list.length
+const rail = (title, list, q, sub) => list.length
   ? '<h2 class="railhead">' + esc(title) + '</h2>'
+    + (sub ? '<p class="railsub">' + esc(sub) + '</p>' : '')
     + '<ul class="srail">'
     + list.map((p) => railCard(p, (q && q[p.id]) || 0)).join('') + '</ul>'
   : '';
@@ -391,7 +392,8 @@ registerScreen('shop', async () => {
     // order still exists, on the screen for that order, which is where
     // you are actually looking at one.
     + await festiveBlock()
-    + rail(c.buyAgain, await strip('home.again', () => orders.againItems(10)), await qtyMap())
+    + rail(c.buyAgain, await strip('home.again', () => orders.againItems(10)),
+           await qtyMap(), c.buyAgainSub)
     // The offer, where somebody browsing will meet it. A discount
     // nobody is shown is a discount the shop pays for twice.
     + await offerBlock()
@@ -525,7 +527,7 @@ registerScreen('cart', async () => {
     // sitting stale further up the page, and pushed the button they
     // were reaching for off the bottom.
     + rail(c.goesWith, await strip('cart.goes', () => catalog.suggest(8)), q)
-    + rail(c.buyAgain, await strip('cart.again', () => orders.againItems(8)), q)
+    + rail(c.buyAgain, await strip('cart.again', () => orders.againItems(8)), q, c.buyAgainSub)
 
     // Everything sells at MRP, so a coupon is the only discount there
     // is -- which makes it worth a field of its own rather than a link.

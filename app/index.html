@@ -662,9 +662,13 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
    pill, which lives in the banner and on a slot card and is never on
    screen beside a product tile. */
 /* --- the offer band ------------------------------------------- */
+/* GREEN, not the turmeric it was. --spice is this app's alarm colour
+   -- the window about to close wears it -- and an offer is the
+   opposite of an alarm. It is also the shop's own colour, which is
+   the right thing for the shop's own discount to be wearing. */
 .offbox{
   margin:var(--s4) 0 var(--s3); padding:var(--s4) var(--s4) var(--s3);
-  border-radius:var(--r2); background:var(--spice); color:var(--on-spice);
+  border-radius:var(--r2); background:var(--leaf); color:var(--on-leaf);
 }
 .offhead{
   display:flex; align-items:center; gap:var(--s2);
@@ -673,13 +677,14 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 .offhead svg{width:22px; height:22px; flex:none}
 .offsub{margin:4px 0 0; font-size:13px; opacity:.9}
 .offrail{margin-top:var(--s3)}
-/* Bigger than it was. It is the one mark on a tile that is worth
-   money to the person reading it, and at 9px it read as a sticker
-   somebody had left on. */
+/* Bigger than it was, and green. It is the one mark on a tile that
+   is worth money to the person reading it; at 9px it read as a
+   sticker somebody had left on, and in turmeric it read as a
+   warning. */
 .offtag{
   position:absolute; right:4px; bottom:4px; z-index:2;
   padding:2px 7px; border-radius:var(--r1);
-  background:var(--spice); color:var(--on-spice);
+  background:var(--leaf); color:var(--on-leaf);
   font-size:10.5px; font-weight:800; letter-spacing:.02em;
   line-height:1.6; white-space:nowrap; box-shadow:var(--sh-card);
 }
@@ -881,7 +886,23 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 .btn.danger{color:var(--bad-ink); border-color:var(--edge-2)}
 .btn.danger.arm{background:var(--bad); color:var(--on-bad); border-color:var(--bad)}
 /* --- suggestion strips ------------------------------------------------ */
-.railhead{margin-top:var(--s6)}
+/* 18px, where every other h2 is 15. These strips are the only things
+   on the home screen selling a particular packet, and at the same
+   size as "What do you need?" they read as captions on the grid
+   below rather than as shelves of their own.
+   NO BAND, deliberately. The screen already carries a green
+   delivery banner, a maroon festive one and a green offer one; a
+   fourth coloured bar would make it a stack of bars, and what makes
+   "Buy it again" worth looking at is not a colour -- it is that
+   everything in it is something you have actually bought. The
+   subtitle says so in words, which is cheaper and truer. */
+.railhead{
+  margin-top:var(--s6); font-size:18px; font-weight:700;
+  letter-spacing:-.01em;
+}
+.railhead + .railsub{
+  margin:-6px 0 var(--s2); font-size:13px; color:var(--ink-soft);
+}
 .srail{
   list-style:none; margin:0 calc(var(--gutter) * -1); padding:0 var(--gutter) var(--s2);
   display:flex; gap:var(--s2); overflow-x:auto; scroll-snap-type:x proximity;
