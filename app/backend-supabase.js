@@ -43,7 +43,7 @@ import { createClient }
 import { SUPABASE } from './config.js';
 import {
   istDate, istMins, addDays, deriveRun, runState, isBookable,
-  canAdvance, canAdvanceRun, matchCoupon, totals as calcTotals,
+  canAdvance, canAdvanceRun, matchCoupon, totals as calcTotals, freeUnits,
 } from './domain.js';
 import * as local from './backend-local.js';
 
@@ -527,6 +527,7 @@ export const orders = {
 
     // Snapshot: the one moment a price must freeze.
     const lines = [];
+    const b2g1 = new Set((d.offers && d.offers.b2g1) || []);
     for (const l of raw){
       const p = d.byId[l.pid];
       if (!p) continue;
@@ -538,7 +539,13 @@ export const orders = {
         pack: { ...p.pack },
         qty: l.qty,
         unit_price: p.price, unit_mrp: p.mrp,
-        line_total: p.price * l.qty,
+        // NET of the offer, and from the SAME freeUnits() the basket
+        // total uses. A line total that does its own arithmetic is
+        // how a receipt ends up disagreeing with the figure printed
+        // underneath it -- three packets at 20 listed as 60, over a
+        // total of 40 -- and once an order is stored with both
+        // numbers in it there is no way to say which was right.
+        line_total: p.price * (l.qty - (b2g1.has(p.id) ? freeUnits(l.qty) : 0)),
       });
     }
     if (!lines.length) throw new Error('CART_EMPTY');

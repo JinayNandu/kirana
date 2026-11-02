@@ -21,6 +21,7 @@ import { payBlock, drawQR, wirePay } from './pay.js';
 import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
   minsToCutoff, minsToStart, fmtSoon, fmtAbout, windowOf, ORDER_TONE,
+  freeUnits,
 } from './domain.js';
 
 const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
@@ -105,15 +106,31 @@ function stepper(p, qty){
     + '</span>';
 }
 
+// The CART row, and nowhere else -- browsing and search both draw
+// cards. So the bold figure here is what this LINE costs, not what
+// one packet costs: in a basket the question is "what am I paying
+// for these", and the stepper beside it already says how many.
+//
+// It showed the unit price with no line total at all, which is why
+// three packets on a buy-2-get-1 read as full price: 20, and a 3 in
+// the stepper, and nothing anywhere saying one of them was free.
 function productRow(p, qty){
-  const off = p.mrp - p.price;
+  const free  = p.offer === 'b2g1' ? freeUnits(qty) : 0;
+  const line  = p.price * (qty - free);
+  // The printed price for the whole line. One rule covers both the
+  // offer and a product ever priced under its MRP, instead of two
+  // branches that could disagree.
+  const gross = p.mrp * qty;
   return '<li class="prow">' + ptile(p)
     + '<span class="pbody">'
     +   '<span class="pname">' + esc(pname(p)) + '</span>'
-    +   '<span class="ppack hint">' + esc(packLabel(p.pack, t())) + '</span>'
-    +   '<span class="pprice"><b class="mono">' + esc(rupees(p.price)) + '</b>'
-    +     (off > 0 ? '<s class="mono hint">' + esc(rupees(p.mrp)) + '</s>'
-                   + '<span class="pill leaf">' + esc(f(t().offMrp, { s: rupees(off) })) + '</span>' : '')
+    +   '<span class="ppack hint">' + esc(packLabel(p.pack, t()))
+    +     (qty > 1 ? ' · ' + esc(f(t().eachBy, { n: qty, s: rupees(p.price) })) : '')
+    +   '</span>'
+    +   '<span class="pprice"><b class="mono">' + esc(rupees(line)) + '</b>'
+    +     (gross > line ? '<s class="mono hint">' + esc(rupees(gross)) + '</s>' : '')
+    +     (free > 0
+          ? '<span class="pill leaf">' + esc(f(t().nFree, { n: free })) + '</span>' : '')
     +   '</span>'
     + '</span>'
     + '<span class="pact">' + stepper(p, qty) + '</span>'
@@ -149,6 +166,11 @@ function productCard(p, qty){
   return '<li class="pcard">' + ptile(p)
     + '<span class="pname">' + esc(pname(p)) + '</span>'
     + '<span class="ppack hint">' + esc(packLabel(p.pack, t())) + '</span>'
+    // Confirmation at the moment of adding: the badge promises the
+    // offer, and once the third one is in the basket this says it
+    // actually happened.
+    + (p.offer === 'b2g1' && freeUnits(qty) > 0
+        ? '<span class="pfree">' + esc(f(t().nFree, { n: freeUnits(qty) })) + '</span>' : '')
     + (p.stock > 0 && p.stock <= 5
         ? '<span class="plow">' + esc(f(t().lastFew, { n: p.stock })) + '</span>' : '')
     + '<span class="pbuy"><b class="mono">' + esc(rupees(p.price)) + '</b>'
@@ -159,12 +181,44 @@ function productCard(p, qty){
 // A line of what was ordered, for the confirmation and tracking
 // screens. Reading back what you just bought is the whole point of a
 // receipt, and the order-placed screen had been showing only a total.
+// What the offer took off this order, and how many packets it gave
+// away, DERIVED from the lines rather than read from a stored field.
+//
+// The lines are printed directly above this summary, so deriving it
+// is the only way to guarantee the two agree -- and a stored copy
+// would have had to exist in two databases. It did not exist in
+// one of them: a Supabase order carries no freeCount column, so the
+// summary fell back to `saved`, got the MONEY right (because every
+// product sells at MRP, which makes the two the same number) and
+// printed "0 free" beside it.
+//
+// Integer arithmetic throughout, because every price in this app is
+// a whole rupee and data.pl refuses one that is not.
+function offerOf(o){
+  let off = 0, free = 0;
+  for (const l of o.lines || []){
+    const paid = l.unitPrice > 0 ? Math.round(l.lineTotal / l.unitPrice) : l.qty;
+    free += Math.max(0, l.qty - paid);
+    off  += Math.max(0, (l.unitPrice * l.qty) - l.lineTotal);
+  }
+  return { off, free };
+}
+
 const orderLines = (o, c) =>
-  '<ul class="plist flat">' + o.lines.map((l) =>
-    '<li class="lrow"><span class="mono lq">' + esc(String(l.qty)) + '</span>'
-    + '<span>' + esc(l.nameEn) + '<span class="hint"> · '
-    + esc(packLabel(l.pack, c)) + '</span></span>'
-    + '<span class="mono">' + esc(rupees(l.lineTotal)) + '</span></li>').join('')
+  '<ul class="plist flat">' + o.lines.map((l) => {
+    // DERIVED, never stored: how many were charged for, out of the
+    // money that was actually charged. Exact integer arithmetic, so
+    // it cannot drift from the figure beside it the way a second
+    // saved field could -- and it needs no column in anybody's
+    // database.
+    const free = offerOf({ lines: [l] }).free;
+    return '<li class="lrow"><span class="mono lq">' + esc(String(l.qty)) + '</span>'
+      + '<span>' + esc(l.nameEn) + '<span class="hint"> · '
+      + esc(packLabel(l.pack, c))
+      + (free > 0 ? ' · ' + esc(f(c.nFree, { n: free })) : '')
+      + '</span></span>'
+      + '<span class="mono">' + esc(rupees(l.lineTotal)) + '</span></li>';
+  }).join('')
   + '</ul>';
 
 // A compact card for the suggestion strips. Horizontal, because the
@@ -886,15 +940,10 @@ registerScreen('done', async () => {
       + '<h2>' + esc(c.doneItems) + '</h2>'
       + orderLines(o, c)
       + '<div class="card totals">'
-      +   row(c.itemsTotal, rupees(o.itemsTotal + (o.offerOff != null ? o.offerOff : o.saved)))
-      // offerOff is exact. `saved` is the fallback for an order
-      // placed before that field existed, and for a Supabase row,
-      // whose table does not carry it yet -- for a shop selling
-      // everything AT MRP the two are the same number, because the
-      // only gap between mrp and price is the offer itself.
-      +   ((o.offerOff != null ? o.offerOff : o.saved) > 0
-          ? row(f(c.offerRow, { n: o.freeCount != null ? o.freeCount : 0 }),
-                '-' + rupees(o.offerOff != null ? o.offerOff : o.saved), 'leaf') : '')
+      +   row(c.itemsTotal, rupees(o.itemsTotal + offerOf(o).off))
+      +   (offerOf(o).off > 0
+          ? row(f(c.offerRow, { n: offerOf(o).free }),
+                '-' + rupees(offerOf(o).off), 'leaf') : '')
       +   ((o.discount || 0) > 0
           ? row(f(c.couponSaved, { s: o.coupon }), '-' + rupees(o.discount), 'leaf') : '')
       +   row(c.deliveryFee, c.feeFree, 'leaf')
