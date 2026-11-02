@@ -19,7 +19,7 @@
 //  makes -- never a fact the app observed.
 // =====================================================================
 
-import { esc, $ } from './ui.js';
+import { esc, $, toast } from './ui.js';
 import { t } from './i18n.js';
 
 const QR_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
@@ -79,6 +79,19 @@ export function payBlock(upi, order, c, opts){
       + (upi.demo ? '<p class="demostrip">' + esc(c.payDemo) + '</p>' : '')
       + '<p><b>' + esc(c.payScanHead) + '</b></p>'
       + '<div class="qrwrap"><div class="qrtile" id="' + esc(o.qrId) + '"></div></div>'
+      // The QR assumes a camera and a second device to point it at.
+      // These are for everybody else: the customer paying from the
+      // same phone that is holding this screen, the one whose
+      // scanner will not focus, and the one who pays by phone
+      // number because that is the only way they have ever done it.
+      + '<p class="payhand">' + esc(c.payByHand) + '</p>'
+      + '<dl class="payids">'
+      +   '<dt>' + esc(c.payIdLab) + '</dt>'
+      +   '<dd class="mono">' + esc(upi.vpa) + '</dd>'
+      +   (upi.phone
+            ? '<dt>' + esc(c.payPhoneLab) + '</dt>'
+              + '<dd class="mono">' + esc(upi.phone) + '</dd>' : '')
+      + '</dl>'
       + '<p class="proof">' + esc(c.payProof) + '</p>'
       + '<button type="button" class="btn" data-pay="done">' + esc(c.payMark) + '</button>'
       + '<button type="button" class="btn ghost" data-pay="cod">'
@@ -87,10 +100,18 @@ export function payBlock(upi, order, c, opts){
   }
 
   // Nothing chosen yet.
+  //
+  // BOTH buttons are ghosts, and that is the point. UPI used to be
+  // the filled one, which is a shop with a preference -- and the
+  // preference it stated was the one that suits the shop, not the
+  // customer. Plenty of this shop's customers pay cash because that
+  // is what they have; a screen that pushes past them to recommend
+  // UPI reads as a bank, not a kirana. This is a question with two
+  // right answers, so it is drawn as one.
   return '<div class="card paybox">'
     + '<p><b>' + esc(c.payHow) + '</b></p>'
     + (can
-        ? '<button type="button" class="btn" data-pay="upi">' + esc(c.payByUpi) + '</button>'
+        ? '<button type="button" class="btn ghost" data-pay="upi">' + esc(c.payByUpi) + '</button>'
         : '<p class="hint">' + esc(c.upiNotSet) + '</p>')
     + '<button type="button" class="btn ghost" data-pay="cod">' + esc(c.payCod) + '</button>'
     + '</div>';
@@ -138,6 +159,15 @@ export function wirePay(box, order, orders, after){
       if (what === 'done') await orders.setPaid(order.id, true, 'upi');
       else await orders.setPayMethod(order.id, what);
       if (after) after();
-    } catch (err){ console.warn('pay', err); }
+    } catch (err){
+      // This used to be a console.warn and nothing else, which is
+      // the exact shape of button this app forbids everywhere else:
+      // the customer taps "I have paid", the write fails, and the
+      // screen does not move. They cannot tell a refusal from a
+      // slow network, so they tap again, and the only record of it
+      // is in a console nobody standing at a door will open.
+      console.warn('pay', err);
+      toast(t().payNotSaved);
+    }
   };
 }

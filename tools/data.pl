@@ -30,8 +30,22 @@ my $fails = 0;
 sub bad { printf "  FAIL  %s\n", $_[0]; $fails++ }
 sub ok  { printf "  ok    %s\n", $_[0] }
 
-my %TILES = map { $_ => 1 } qw(bottle carton can packet pouch sack biscuit box jar
-                               tin tube soap spray loaf leaf fruit egg grain roll bag);
+# The pack shapes a product tile may name, read out of icons.js
+# rather than copied here. A copy of a list is a list that will
+# disagree, and this one did: five glyphs added to icons.js failed
+# this check for not being declared, while sitting in the file the
+# check is meant to be checking against.
+my %TILES = do {
+  my $f = $D . '../icons.js';
+  open my $h, '<:raw', $f or die "icons.js: $!\n";
+  my $src = do { local $/; <$h> }; close $h;
+  $src =~ /export const TILES = \[(.*?)\];/s
+    or die "icons.js: no exported TILES list to read\n";
+  my @names = ($1 =~ /'([a-z]+)'/g);
+  die "icons.js: TILES parsed as only " . scalar(@names) . " names\n"
+    unless @names >= 15;
+  map { $_ => 1 } @names;
+};
 my %UNITS = map { $_ => 1 } qw(g kg ml l pc pkt dozen);
 my @LANGS = qw(en mr hi);
 

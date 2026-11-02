@@ -1741,7 +1741,7 @@
             "बटाटा",
             "आलू"
          ],
-         "tile" : "fruit"
+         "tile" : "potato"
       },
       {
          "brand" : "Shop",
@@ -1764,7 +1764,7 @@
             "टोमॅटो",
             "टमाटर"
          ],
-         "tile" : "fruit"
+         "tile" : "tomato"
       },
       {
          "brand" : "Shop",
@@ -1788,7 +1788,7 @@
             "केळी",
             "केला"
          ],
-         "tile" : "fruit"
+         "tile" : "banana"
       },
       {
          "brand" : "Shop",
@@ -1884,7 +1884,7 @@
             "मिरची",
             "मिर्च"
          ],
-         "tile" : "leaf"
+         "tile" : "chilli"
       },
       {
          "brand" : "Shop",
@@ -2701,7 +2701,7 @@
             "मेणबत्ती",
             "मोमबत्ती"
          ],
-         "tile" : "box"
+         "tile" : "candle"
       },
       {
          "brand" : "Shop",

@@ -70,12 +70,6 @@
          "matched" : "Simply Salted",
          "source" : "world.openfoodfacts.org"
       },
-      "p-banana12" : {
-         "bytes" : 50411,
-         "matched" : "File:Banana Bunch Top Virus.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Banana_Bunch_Top_Virus.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-bhujia200" : {
          "brands" : "Haldiram's",
          "bytes" : 37079,
@@ -139,24 +133,12 @@
          "matched" : "Bru Instant Coffee",
          "source" : "world.openfoodfacts.org"
       },
-      "p-candles6" : {
-         "bytes" : 14926,
-         "matched" : "File:Candle light projected through a glass orb.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Candle_light_projected_through_a_glass_orb.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-chana-mdh100" : {
          "brands" : null,
          "bytes" : 17148,
          "code" : "8902167000812",
          "matched" : "CHANA MASALA mdh",
          "source" : "world.openfoodfacts.org"
-      },
-      "p-chilli250" : {
-         "bytes" : 116643,
-         "matched" : "File:VitorJubini MercadoDaVilaRubim Vitoria ES (39182859020) (square crop).jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:VitorJubini_MercadoDaVilaRubim_Vitoria_ES_(39182859020)_(square_crop).jpg",
-         "source" : "commons.wikimedia.org"
       },
       "p-clinicplus175" : {
          "brands" : "Clinic Plus, hul",
@@ -192,12 +174,6 @@
          "code" : "3159470000120",
          "matched" : "CORN FLAKES",
          "source" : "world.openfoodfacts.org"
-      },
-      "p-curryleaf1" : {
-         "bytes" : 70764,
-         "matched" : "File:20260317 Murraya koenigii 01.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:20260317_Murraya_koenigii_01.jpg",
-         "source" : "commons.wikimedia.org"
       },
       "p-dabur275" : {
          "brands" : "dabur",
@@ -433,12 +409,6 @@
          "matched" : "Britannia Vita Marie Gold Biscuits",
          "source" : "world.openfoodfacts.org"
       },
-      "p-matchbox10" : {
-         "bytes" : 245175,
-         "matched" : "File:Match and match labels, 100 years ago.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Match_and_match_labels,_100_years_ago.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-mirch-mdh100" : {
          "brands" : "MDH",
          "bytes" : 25356,
@@ -563,18 +533,6 @@
          "page" : "https://commons.wikimedia.org/wiki/File:Poha.jpg",
          "source" : "commons.wikimedia.org"
       },
-      "p-potato1" : {
-         "bytes" : 86191,
-         "matched" : "File:A heap of potatoes on a harvested field's edge - geograph.org.uk - 1581256.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:A_heap_of_potatoes_on_a_harvested_field%27s_edge_-_geograph.org.uk_-_1581256.jpg",
-         "source" : "commons.wikimedia.org"
-      },
-      "p-rajma500" : {
-         "bytes" : 99151,
-         "matched" : "File:Pounding Dried kidney beans.JPG",
-         "page" : "https://commons.wikimedia.org/wiki/File:Pounding_Dried_kidney_beans.JPG",
-         "source" : "commons.wikimedia.org"
-      },
       "p-real1l" : {
          "brands" : "Real",
          "bytes" : 20996,
@@ -651,12 +609,6 @@
          "matched" : "Sting Energy",
          "source" : "world.openfoodfacts.org"
       },
-      "p-sugar1" : {
-         "bytes" : 41080,
-         "matched" : "File:Granulated White Sugar with Large Crystals, Light Through the Crystals.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Granulated_White_Sugar_with_Large_Crystals,_Light_Through_the_Crystals.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-sunsilk180" : {
          "brands" : null,
          "bytes" : 21551,
@@ -692,12 +644,6 @@
          "matched" : "Premium",
          "source" : "world.openfoodfacts.org"
       },
-      "p-tomato1" : {
-         "bytes" : 90753,
-         "matched" : "File:Organic home-grown tomatoes - unripe to ripe.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Organic_home-grown_tomatoes_-_unripe_to_ripe.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-vimbar300" : {
          "brands" : "Henkel, Hindustan Unilever Ltd. (HUL), Vim",
          "bytes" : 23067,
@@ -706,5 +652,5 @@
          "source" : "world.openproductsfacts.org"
       }
    },
-   "note" : "Pack shots from the Open Facts databases (openfoodfacts.org, openbeautyfacts.org, openproductsfacts.org). Photographs are CC-BY-SA, the data ODbL. Regenerate with tools/getimages.pl. Each entry records the barcode it came from so a wrong match can be traced and replaced."
+   "note" : "Pack shots from the Open Facts databases (openfoodfacts.org, openbeautyfacts.org, openproductsfacts.org). Photographs are CC-BY-SA, the data ODbL. Regenerate with tools/getimages.pl. Each entry records the barcode it came from so a wrong match can be traced and replaced. LOOSE GOODS ARE THE WEAK SPOT: with no packet there is no barcode, so there is no Open Facts row and the script falls back to a keyword search over Wikimedia Commons -- which answers with the best photograph of the CONCEPT, not of the thing on a shelf. That returned a plant-disease photo for Banana, an empty field for Potato and an abstract macro for Sugar. Nine were removed rather than replaced; they fall back to the drawn glyph, and the right fix is a photograph of the shop's own produce."
 }

@@ -51,6 +51,8 @@
       "demo" : true,
       "note" : "A DELIBERATELY UNRESOLVABLE id, so the pay button and QR can be shown in a demo with no chance of money moving. `example` is not a real UPI handle -- no payment provider owns it -- so a UPI app opens, fails to resolve the id and stops. Money cannot reach a stranger, which was the only thing that made a dummy id risky. While `demo` is true the app prints a visible DEMO strip across the pay block in all three languages, so nobody tries to pay it in earnest. TO GO LIVE: put the shop's real UPI id here (e.g. 8169022727@ybl or milansupershoppe@okaxis), set `demo` to false, and the strip disappears by itself.",
       "payeeName" : "Milan's Super Shoppe (demo)",
+      "phone" : "8169022727",
+      "phoneNote" : "Shown on the pay screen beside the UPI id, for a customer typing it into their own UPI app rather than scanning. The shop's OWN number on purpose: an invented one would resolve in a UPI app and could send a customer's money to whoever really owns it, which is the one thing the unresolvable @example id is there to prevent. Change it only to another number this shop controls.",
       "vpa" : "demo.not.real@example"
    }
 }

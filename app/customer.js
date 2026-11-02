@@ -20,7 +20,7 @@ import { ready, catalog, cart, runs, orders, profile, places, live } from './sto
 import { payBlock, drawQR, wirePay } from './pay.js';
 import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
-  minsToCutoff, fmtSoon, windowOf, ORDER_TONE,
+  minsToCutoff, minsToStart, fmtSoon, fmtAbout, windowOf, ORDER_TONE,
 } from './domain.js';
 
 const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
@@ -219,15 +219,25 @@ async function nextSlotBanner(){
   }
 
   const r = list[0];
-  const left = minsToCutoff(r, today, istMins());
-  const soon = fmtSoon(left, c);
+  const now = istMins();
+  const left = minsToCutoff(r, today, now);
+  // Two different facts, and only one of them is ever urgent.
+  // Normally what a customer wants is when their shopping turns up;
+  // only with the cut-off in sight does the shop's deadline matter
+  // more than the delivery, and then it matters a lot.
+  const out  = fmtAbout(minsToStart(r, today, now), c);
+  const rush = left > 0 && left <= 90 ? fmtSoon(left, c) : null;
   return '<div class="banner">'
     + '<p class="bhead">' + icon('truck') + '<span>' + esc(c.freeDelivery) + '</span></p>'
     + '<p class="bline"><b>' + esc(f(c.nextSlotHead,
         { s: fmtDay(r.date, today, c).toLowerCase() + ' ' + windowOf(r) })) + '</b></p>'
     + '<p class="bline hint">' + esc(c.anywhere) + '</p>'
-    + (soon ? '<p class="bline"><span class="pill spice">'
-        + esc(f(c.closesIn, { s: soon })) + '</span></p>' : '')
+    + (rush
+        ? '<p class="bline"><span class="pill spice">'
+          + esc(f(c.orderWithin, { s: rush })) + '</span></p>'
+        : out
+        ? '<p class="bline"><span class="pill leaf">'
+          + esc(f(c.goesOutIn, { s: out })) + '</span></p>' : '')
     + '</div>';
 }
 
@@ -448,8 +458,10 @@ registerScreen('slot', async () => {
     const day = fmtDay(r.date, today, c);
     if (day !== lastDay){ cards.push('<h2>' + esc(day) + '</h2>'); lastDay = day; }
 
-    const left = minsToCutoff(r, today, istMins());
-    const soon = fmtSoon(left, c);
+    const nowM = istMins();
+    const left = minsToCutoff(r, today, nowM);
+    const out  = fmtAbout(minsToStart(r, today, nowM), c);
+    const rush = left > 0 && left <= 90 ? fmtSoon(left, c) : null;
     const sel = S.runId === r.id;
 
     cards.push('<button type="button" class="card slot' + (sel ? ' on' : '')
@@ -460,7 +472,8 @@ registerScreen('slot', async () => {
       + '<span class="srow3 hint">' + esc(f(c.orderByTime, { s: fmtTime(mins(r.cutoff)) })) + '</span>'
       + '<span class="srow4">'
       +   (r.full ? '<span class="pill bad">' + esc(c.runFull) + '</span>'
-                  : (soon ? '<span class="pill spice">' + esc(f(c.closesIn, { s: soon })) + '</span>' : ''))
+         : rush ? '<span class="pill spice">' + esc(f(c.orderWithin, { s: rush })) + '</span>'
+         : out  ? '<span class="pill leaf">'  + esc(f(c.goesOutIn,  { s: out  })) + '</span>' : '')
       + '</span></button>');
   }
 
@@ -512,20 +525,99 @@ const afield = (id, label, req, val, type, hint) =>
   + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '')
   + '</div>';
 
+// Home and Office are what nearly every address is called, so they
+// are a tap. The third opens a field, for the people whose answer is
+// "Amma's place".
+//
+// The KEY is stored, not the word. An address saved in Marathi and
+// later read in Hindi would otherwise keep the label it was saved
+// with, and a list reading "ghar / Office / itar" is a shop that
+// cannot decide what language it speaks. Anything that is not one of
+// the two known keys is free text, shown exactly as it was typed.
+const LABS = [
+  ['home',  'home', 'addrLabHome'],
+  ['work',  'case', 'addrLabWork'],
+  ['other', 'pin',  'addrLabOther'],
+];
+
+// 'office' is in here because addresses saved before this existed
+// carry a typed label, and the common two upgrade themselves free.
+const labelKeyOf = (s) => {
+  const k = String(s || '').trim().toLowerCase();
+  if (k === 'home') return 'home';
+  if (k === 'work' || k === 'office') return 'work';
+  return k ? 'other' : '';
+};
+
+const labelText = (a, c) => {
+  const k = labelKeyOf(a.label);
+  if (k === 'home') return c.addrLabHome;
+  if (k === 'work') return c.addrLabWork;
+  return a.label || a.name;
+};
+
+const labelField = (a, c) => {
+  const key = labelKeyOf(a.label);
+  return '<div class="fset">'
+    + '<label>' + esc(c.addrLabel)
+    +   '<span class="opt">' + esc(c.optionalTag) + '</span></label>'
+    + '<div class="labrow" id="labrow">'
+    +   LABS.map(([k, ic, tk]) =>
+          '<button type="button" data-lab="' + esc(k) + '"'
+          + ' aria-pressed="' + (key === k ? 'true' : 'false') + '">'
+          + icon(ic) + '<span>' + esc(c[tk]) + '</span></button>').join('')
+    + '</div>'
+    // Rendered once, then only ever shown or hidden. Building it on
+    // the tap would be a handler creating the very input it then has
+    // to focus -- and this app has already lost its search keyboard
+    // once to a field replaced underneath the caret.
+    + '<input id="flabel" class="field labother" type="text"'
+    +   ' value="' + esc(key === 'other' ? a.label : '') + '"'
+    +   ' aria-label="' + esc(c.addrLabelOther) + '"'
+    +   (key === 'other' ? '' : ' hidden') + '>'
+    + '</div>';
+};
+
+// The address first, the name for it last. Asking what to call a
+// place before being told where it is is the wrong way round, and it
+// put the one OPTIONAL question at the top of a form of required
+// ones -- where it reads as the first thing being asked for.
 const addrForm = (a, c) =>
-  afield('flabel', c.addrLabel, false, a.label, 'text', c.addrLabelHint)
-  + afield('fname',  c.fWho,      true,  a.name,  'text')
+  afield('fname',  c.fWho,      true,  a.name,  'text')
   + afield('fphone', c.fPhone,    true,  a.phone, 'tel')
   + afield('fflat',  c.fFlat,     true,  a.flat)
   + afield('fsoc',   c.fSociety,  true,  a.society)
   + afield('farea',  c.fArea,     true,  a.area)
-  + afield('fmark',  c.fLandmark, false, a.landmark);
+  + afield('fmark',  c.fLandmark, false, a.landmark)
+  + labelField(a, c);
+
+// Direct DOM, and deliberately no repaint: the custom-name field sits
+// inside this block, so a handler redrawing its own container would
+// throw away whatever was being typed into it.
+function labelWire(){
+  const row = $('labrow');
+  if (!row) return;
+  row.onclick = (e) => {
+    const b = e.target.closest('button[data-lab]');
+    if (!b) return;
+    for (const x of row.querySelectorAll('button[data-lab]'))
+      x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+    const other = b.dataset.lab === 'other';
+    const fl = $('flabel');
+    fl.hidden = !other;
+    if (other) fl.focus();
+  };
+}
 
 // The address, or null having already put the reason on screen.
 function readAddrForm(c){
   const v = (id) => $(id).value.trim();
+  // '' when nothing is chosen, which is allowed -- the card then
+  // falls back to the name of whoever takes delivery.
+  const lab = $('labrow') && $('labrow').querySelector('button[aria-pressed="true"]');
+  const key = lab ? lab.dataset.lab : '';
   const got = {
-    label: v('flabel'),
+    label: key === 'other' ? v('flabel') : key,
     name: v('fname'), phone: v('fphone').replace(/\D/g, ''),
     flat: v('fflat'), society: v('fsoc'), area: v('farea'),
     landmark: v('fmark'),
@@ -554,7 +646,7 @@ const addrCard = (a, chosen, c) =>
   '<li class="aitem">'
   + '<button type="button" class="acard" data-pick="' + esc(a.id) + '"'
   +   ' aria-pressed="' + (chosen ? 'true' : 'false') + '">'
-  +   '<span class="atop"><span class="aname">' + esc(a.label || a.name) + '</span>'
+  +   '<span class="atop"><span class="aname">' + esc(labelText(a, c)) + '</span>'
   +     (a.isDefault ? '<span class="apill">' + esc(c.addrDefault) + '</span>' : '')
   +   '</span>'
   +   '<span class="alines">' + esc(addrLines(a)) + '</span>'
@@ -585,6 +677,7 @@ registerScreen('addr', async () => {
         + esc(checkout ? c.placeOrder : c.addrSave) + '</button>');
 
     offerWire();
+    labelWire();
 
     $('place').onclick = async () => {
       const got = readAddrForm(c);
@@ -656,6 +749,8 @@ registerScreen('aedit', async () => {
     + '<button type="button" class="btn" id="asave">' + esc(c.addrSave) + '</button>'
     + (a ? '<button type="button" class="btn ghost danger" id="adel">'
            + esc(c.addrDelete) + '</button>' : ''));
+
+  labelWire();
 
   $('asave').onclick = async () => {
     const got = readAddrForm(c);

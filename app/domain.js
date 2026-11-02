@@ -241,6 +241,30 @@ export const dayNum = (dateStr) => {
 export const minsToCutoff = (run, nowDate, nowMins) =>
   (dayNum(run.date) - dayNum(nowDate)) * 1440 + mins(run.cutoff) - nowMins;
 
+// Minutes until this run's window OPENS. The cut-off is the shop's
+// deadline; this is the customer's answer to "when does my shopping
+// turn up", which is the question they actually asked.
+export const minsToStart = (run, nowDate, nowMins) =>
+  (dayNum(run.date) - dayNum(nowDate)) * 1440 + mins(run.from) - nowMins;
+
+// "About" is doing real work here, not hedging.
+//
+// This counts down to a van leaving a shop. "10 hr 31 min" claims a
+// precision nobody has, and the 31 reads as a promise somebody made.
+// Rounding to what a person would actually say -- about eleven hours,
+// about half an hour -- is the same fact in an honest shape, and it is
+// the shape that survives the van leaving four minutes late.
+export function fmtAbout(m, t){
+  if (m <= 0) return null;
+  const T = t || {};
+  const put = (s, n) => String(s).replace('{n}', n);
+  // Never "about 2 minutes" -- at that range a customer wants the
+  // clock time, and five is the smallest unit worth rounding to.
+  if (m < 50) return put(T.unitMinutes || '{n} minutes', Math.max(5, Math.round(m / 5) * 5));
+  if (m < 90) return T.unitOneHour || 'an hour';
+  return put(T.unitHours || '{n} hours', Math.round(m / 60));
+}
+
 // Takes the string table, because "11 hr 58 min" sitting inside an
 // otherwise Marathi sentence is exactly the kind of leak that makes a
 // translation look like a veneer.

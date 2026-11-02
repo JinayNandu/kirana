@@ -6,10 +6,15 @@
 //  coloured by whatever token its container sets and both themes come
 //  out right with no second definition.
 //
-//  Product tiles use the PACK SHAPE, not the food. There is no
-//  photograph anywhere in this app and there never will be: a generic
-//  bottle plus a two-letter brand monogram reads as Amul instantly,
-//  weighs nothing, and can never render as a broken image.
+//  Product tiles use the PACK SHAPE, not the food: a generic bottle
+//  plus a two-letter brand monogram reads as Amul instantly, weighs
+//  nothing, and can never render as a broken image.
+//
+//  This block used to say there was no photograph in this app and
+//  never would be. There are 94. Every glyph is still drawn under
+//  its photograph and shows through whenever one is missing, slow
+//  or wrong -- which is the job it does now, and the reason the
+//  loose goods have glyphs specific enough to tell apart.
 // =====================================================================
 
 const P = {
@@ -35,6 +40,11 @@ const P = {
   loaf:    '<path d="M4 12a4 4 0 0 1 4-4h8a4 4 0 0 1 0 8v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 8c0-1.5 1-2.5 2-2.5M12 8c0-1.5 1-2.5 2-2.5"/>',
   leaf:    '<path d="M20 4c0 8-5 13-12 13H4c0-8 5-13 12-13z"/><path d="M4 21c2-5 5-8 10-10"/>',
   fruit:   '<path d="M12 7c-4 0-6 3-6 7s2.5 7 6 7 6-3 6-7-2-7-6-7z"/><path d="M12 7V4M12 4c2 0 3-1 3-2.5"/>',
+  banana:  '<path d="M5.5 4.5c.5 7.5 5.5 13.5 12.3 13.5 1.5 0 2.4-.7 2.4-1.7 0-.9-.8-1.4-1.8-1.6-4.6-.9-8-4.9-8.6-10.2"/><path d="M5.5 4.5h4.3"/>',
+  potato:  '<path d="M5.4 14.6c-1.5-2.9.4-6.8 4.2-8.6s8-1 9.5 1.9-.4 6.8-4.2 8.6-8 1-9.5-1.9z"/><circle cx="10" cy="10.6" r=".85"/><circle cx="14.3" cy="13.4" r=".85"/>',
+  tomato:  '<circle cx="12" cy="14.5" r="6.2"/><path d="M12 8.3V5.5"/><path d="M12 8.3c-1.5-1.6-3.3-2-5-1.4.5 1.9 2.1 3 3.9 2.8"/><path d="M12 8.3c1.5-1.6 3.3-2 5-1.4-.5 1.9-2.1 3-3.9 2.8"/>',
+  chilli:  '<path d="M9 4h3.5"/><path d="M10.7 4c0 2 1 3.5 2.6 4.1"/><path d="M13.3 8.1c2.8 1.1 4.6 3.7 4.6 6.6 0 2.9-2.2 5.1-5.1 5.1-4.3 0-7.8-3.5-7.8-7.8 0-2.2 1.7-3.9 3.9-3.9z"/>',
+  candle:  '<rect x="8.5" y="9" width="7" height="12" rx="1"/><path d="M12 9V7"/><path d="M12 7c1.6-1 2-2.4 1.3-3.8C11.5 3.8 10.6 5.2 12 7z"/>',
   egg:     '<path d="M12 2c3.5 0 6.5 5.8 6.5 10.5A6.5 6.5 0 0 1 5.5 12.5C5.5 7.8 8.5 2 12 2z"/>',
   grain:   '<path d="M12 21V11"/><path d="M12 11c0-3 1.6-5.5 4-6.5 0 3-1.6 5.5-4 6.5z"/><path d="M12 11c0-3-1.6-5.5-4-6.5 0 3 1.6 5.5 4 6.5z"/><path d="M12 17c0-2.5 1.4-4.5 3.5-5.3 0 2.5-1.4 4.5-3.5 5.3z"/><path d="M12 17c0-2.5-1.4-4.5-3.5-5.3 0 2.5 1.4 4.5 3.5 5.3z"/>',
   roll:    '<rect x="4" y="5" width="16" height="14" rx="3"/><ellipse cx="8" cy="12" rx="2.4" ry="4.6"/>',
@@ -57,15 +67,19 @@ const P = {
   chev:    '<path d="m9 6 6 6-6 6"/>',
   globe:   '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.5 3.6 5.6 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.6-3.6-9S9.6 5.5 12 3z"/>',
   bag:     '<path d="M5 8h14l-1 12.2a2 2 0 0 1-2 1.8H8a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  case:    '<rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/><path d="M3 13h18"/>',
   home:    '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/>',
   lock:    '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/>',
 };
 
-// The 18 pack shapes a product tile may name. data.pl checks every
-// catalogue row against this list, so a typo cannot ship a blank tile.
+// The pack shapes a product tile may name. data.pl READS THIS LIST
+// out of this file, so a typo cannot ship a blank tile and the two
+// cannot drift apart. It used to keep its own copy, which it did
+// drift from: five glyphs added here failed the check for not
+// existing, from the very file the check was reading names out of.
 export const TILES = ['bottle','carton','can','packet','pouch','sack','biscuit',
   'box','jar','tin','tube','soap','spray','loaf','leaf','fruit','egg','grain',
-  'roll','bag'];
+  'roll','bag','banana','potato','tomato','chilli','candle'];
 
 export function icon(name, cls){
   const body = P[name] || P.box;
