@@ -9,7 +9,8 @@
 //  hoisted and throws at render -- a bug no checker can see.
 // =====================================================================
 
-import { T, TXT, t, setLang, getLang, bootLang, LANGS, LANG_NAMES } from './i18n.js';
+import { T, TXT, t, setLang, getLang, bootLang, LANGS, LANG_NAMES,
+         LANG_SHORT } from './i18n.js';
 import { icon } from './icons.js';
 import { gated, passed, stuck, tryCode, waiting, forget } from './lock.js';
 
@@ -42,6 +43,24 @@ const CURRENT = { customer: null, shop: null };
 
 const ENTER = {};                      // screen -> draw fn, registered by role modules
 export const registerScreen = (name, fn) => { ENTER[name] = fn; };
+
+// Chrome that lives outside the screens and has to redraw when the
+// language changes -- the account pill, so far. Same shape as
+// registerScreen, and for the same reason: ui.js must never import
+// the module that owns the thing it is drawing.
+const PAINTERS = [];
+export const onPaint = (fn) => { PAINTERS.push(fn); };
+
+// Overlays take the back press and the Escape key BEFORE the screen
+// stack does. Without that the screen behind one changes while it
+// stays up, which is the single thing a modal must never allow.
+// Each registers a pair -- is it open, and close it -- so there is
+// exactly one place that decides, however many of them there are.
+const OVERLAYS = [];
+export const registerOverlay = (isOpen, close) => {
+  OVERLAYS.push({ isOpen, close });
+};
+const overlayUp = () => OVERLAYS.find((o) => o.isOpen());
 
 let role = 'customer';
 let current = null;
@@ -117,7 +136,8 @@ addEventListener('popstate', () => {
   // A gate standing over a screen takes the back press. Without
   // this the screen behind it changes while the gate stays up, which
   // is the one thing a modal must never allow.
-  if (lockOpen){ closeLock(); if (parked) history.pushState({ k: 1 }, ''); return; }
+  const up = overlayUp();
+  if (up){ up.close(); if (parked) history.pushState({ k: 1 }, ''); return; }
   parked = false;
   goBack();
 });
@@ -330,9 +350,7 @@ function wireLock(){
   };
   field.onkeydown = (e) => { if (e.key === 'Enter') submitLock(); };
 
-  addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && lockOpen) closeLock();
-  });
+  registerOverlay(() => lockOpen, closeLock);
 }
 
 // Settings calls this. Clearing the token is the only "sign out"
@@ -383,14 +401,64 @@ export function paint(){
   const b = $('l-brand'); if (b) b.textContent = name;
   const bs = $('l-brandsub'); if (bs) bs.textContent = sub2;
   document.title = name;
+  const lb = $('langbtn');
+  if (lb){
+    lb.textContent = LANG_SHORT[lang] || lang.toUpperCase();
+    lb.setAttribute('aria-label', c.setLang);
+  }
   drawTabs();
   drawLock();
+  lpDraw();
+  for (const f of PAINTERS){ try { f(); } catch (e) { console.warn('paint', e); } }
   repaint();
 }
 
 export function pickLang(code){
   setLang(code);
   paint();
+}
+
+// ---------------------------------------------------------------------
+//  Choosing one, from anywhere
+//
+//  The switch used to live on the Settings screen alone, which is the
+//  one place a reader of the wrong language cannot navigate to: the
+//  tab is labelled in the language they are trying to leave. It is now
+//  a button in the header, so it is on every screen, and it opens an
+//  overlay rather than a screen -- a chooser you can reach by pressing
+//  Back is a chooser that reopens itself.
+// ---------------------------------------------------------------------
+let lpOpen = false;
+
+function lpDraw(){
+  if (!lpOpen) return;
+  const c = t();
+  $('lph').textContent = c.setLang;
+  $('lpx').textContent = c.close;
+  // No input in here, so rebuilding is safe -- and it has to be
+  // rebuilt, because which row is pressed changes as you choose.
+  mount($('langlist'), LANGS.map((code) =>
+    '<button type="button" data-lang="' + esc(code) + '" aria-pressed="'
+    + (getLang() === code ? 'true' : 'false') + '">'
+    + '<span>' + esc(LANG_NAMES[code]) + '</span>'
+    + (getLang() === code ? icon('check') : '')
+    + '</button>').join(''));
+}
+
+function lpShow(){ lpOpen = true; $('langpick').hidden = false; lpDraw(); }
+function lpHide(){ lpOpen = false; $('langpick').hidden = true; }
+
+function wireLang(){
+  $('langbtn').onclick = () => lpShow();
+  $('lpx').onclick = () => lpHide();
+  $('langpick').onmousedown = (e) => { if (e.target === $('langpick')) lpHide(); };
+  $('langlist').onclick = (e) => {
+    const b = e.target.closest('button[data-lang]');
+    if (!b) return;
+    pickLang(b.dataset.lang);   // repaints this box through paint()
+    lpHide();
+  };
+  registerOverlay(() => lpOpen, lpHide);
 }
 
 export function langSeg(){
@@ -423,6 +491,16 @@ export function boot(){
 
   wireLock();
   markLocked();
+  wireLang();
+
+  // One Escape handler for every overlay, asked in registration
+  // order. A listener per overlay closes all of them at once the
+  // day two are ever up together.
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const up = overlayUp();
+    if (up) up.close();
+  });
 
   $('roleseg').onclick = (e) => {
     const b = e.target.closest('button[data-role]');

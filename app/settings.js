@@ -7,6 +7,10 @@ import { $, esc, mount, show, registerScreen, langSeg, pickLang, h1,
 import { gated, passed } from './lock.js';
 import { t, getLang } from './i18n.js';
 import { ready, session, shared } from './store.js';
+// The overlay, the pill and the card all live in account.js now.
+// Settings only offers the same door a second time, for anyone who
+// came looking here rather than tapping the pill.
+import { siShow, refresh } from './account.js';
 import { icon } from './icons.js';
 
 registerScreen('set', async () => {
@@ -76,12 +80,12 @@ registerScreen('set', async () => {
     + '<button type="button" class="btn ghost danger" id="wipe">'
       + esc(c.resetBtn) + '</button>');
 
-  siWire();
   const si = $('dosignin');
   if (si) si.onclick = () => siShow();
   const so = $('signout');
   if (so) so.onclick = async () => {
     await session.signOut();
+    await refresh();            // the pill, before the screen under it
     toast(t().acctOutDone);
     repaint();
   };
@@ -120,138 +124,3 @@ registerScreen('set', async () => {
   };
 });
 
-// ---------------------------------------------------------------------
-//  Signing in
-//
-//  An overlay, for the same two reasons the Store gate is one: it has
-//  steps that must not join the back stack, and it holds inputs. An
-//  input must never sit inside a region its own handler repaints --
-//  that is what cost this app its search keyboard -- so nothing in
-//  here is ever rebuilt. Only textContent is written, into nodes that
-//  already exist in index.html.
-//
-//  NOBODY IS MADE TO DO THIS. Every visitor already has a session,
-//  anonymously, and can browse, save addresses and order without ever
-//  seeing this box. What signing in buys is that those addresses stop
-//  being tied to one phone. A login wall in front of a shop is how a
-//  shop loses the customer at the door.
-// ---------------------------------------------------------------------
-let siOpen = false;
-let siMode = null;     // 'link' when upgrading an anonymous user, else 'signin'
-let siEmail = '';
-
-const siErr = (msg) => {
-  const el = $('sierr');
-  el.textContent = msg || '';
-  el.hidden = !msg;
-};
-
-function siDraw(){
-  if (!siOpen) return;
-  const c = t();
-  $('siic').innerHTML = icon('user');
-  $('six').textContent = c.close;
-  const onCode = !$('sistep2').hidden;
-  $('sih').textContent   = onCode ? c.siCodeTitle : c.siTitle;
-  $('sisub').textContent = onCode
-    ? c.siCodeSub.replace('{s}', siEmail)
-    : c.siSub;
-  $('silab').textContent     = c.siEmail;
-  $('sicodelab').textContent = c.siCode;
-  $('sigo').textContent = onCode ? c.siVerify : c.siSend;
-}
-
-function siShow(){
-  siOpen = true;
-  $('signin').hidden = false;
-  $('sistep1').hidden = false;
-  $('sistep2').hidden = true;
-  $('siemail').value = '';
-  $('sicode').value = '';
-  siErr('');
-  siDraw();
-  setTimeout(() => $('siemail').focus(), 30);
-}
-
-function siHide(){
-  siOpen = false;
-  $('signin').hidden = true;
-  $('siemail').value = '';
-  $('sicode').value = '';
-  siErr('');
-}
-
-async function siSubmit(){
-  const c = t();
-  const go = $('sigo');
-  const onCode = !$('sistep2').hidden;
-
-  if (!onCode){
-    const email = $('siemail').value.trim();
-    // Deliberately loose. A regex that tries to be clever about email
-    // rejects addresses that are perfectly real; the only check worth
-    // making here is that there is something either side of an @, and
-    // the code either arrives or it does not.
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ siErr(c.siBadEmail); return; }
-    go.disabled = true;
-    go.textContent = c.siSending;
-    siErr('');
-    try {
-      const r = await session.sendCode(email);
-      siMode = r.mode;
-      siEmail = email;
-      $('sistep1').hidden = true;
-      $('sistep2').hidden = false;
-      siDraw();
-      setTimeout(() => $('sicode').focus(), 30);
-    } catch (e){
-      console.warn('sendCode', e);
-      siErr(c.siFailed);
-      siDraw();
-    } finally {
-      go.disabled = false;
-    }
-    return;
-  }
-
-  const code = $('sicode').value.replace(/\D/g, '');
-  if (code.length !== 6){ siErr(c.siShortCode); return; }
-  go.disabled = true;
-  go.textContent = c.siVerifying;
-  siErr('');
-  try {
-    await session.verifyCode(siEmail, code, siMode);
-    siHide();
-    toast(c.siDone);
-    repaint();
-  } catch (e){
-    console.warn('verifyCode', e);
-    $('sicode').value = '';
-    siErr(c.siBadCode);
-    siDraw();
-    $('sicode').focus();
-  } finally {
-    go.disabled = false;
-  }
-}
-
-function siWire(){
-  if ($('sigo').dataset.wired) return;
-  $('sigo').dataset.wired = '1';
-  $('sigo').onclick = siSubmit;
-  $('six').onclick = () => siHide();
-  $('signin').onmousedown = (e) => { if (e.target === $('signin')) siHide(); };
-  for (const id of ['siemail', 'sicode']){
-    $(id).onkeydown = (e) => { if (e.key === 'Enter') siSubmit(); };
-  }
-  $('sicode').oninput = () => {
-    const el = $('sicode');
-    const clean = el.value.replace(/\D/g, '').slice(0, 6);
-    if (clean !== el.value) el.value = clean;
-    siErr('');
-    // Six digits is the whole code. Waiting for a button press after
-    // the last one is ceremony on something read off another screen.
-    if (clean.length === 6) siSubmit();
-  };
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && siOpen) siHide(); });
-}

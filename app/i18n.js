@@ -20,6 +20,10 @@
 
 export const LANGS = ['en', 'mr', 'hi'];
 export const LANG_NAMES = { en: 'English', mr: 'मराठी', hi: 'हिंदी' };
+// The header button is 36px wide, so it carries a short form. Each
+// is in its OWN script on purpose: somebody who cannot read the
+// language the app is currently in has to be able to find theirs.
+export const LANG_SHORT = { en: 'EN', mr: 'मरा', hi: 'हिं' };
 export const LOCALE = { en: 'en-IN', mr: 'mr-IN', hi: 'hi-IN' };
 
 export const T = {
@@ -100,6 +104,9 @@ export const T = {
     siFailed: 'Could not send the code just now. Try again in a minute.',
     siDone: 'Signed in',
 
+    acctCta: 'Sign in to save your addresses and orders',
+    acctSaveTitle: 'Save this address?',
+    acctSaveSub: 'Sign in and your addresses and orders follow you to any phone. You can order without it.',
     addrBook: 'Saved addresses',
     addrBookSub: 'Save an address once and you will not type it again.',
     addrBookBtn: 'My addresses',
@@ -355,6 +362,9 @@ export const T = {
     siFailed: 'आत्ता कोड पाठवता आला नाही. एका मिनिटाने पुन्हा बघा.',
     siDone: 'साइन इन झालं',
 
+    acctCta: 'पत्ते आणि ऑर्डर जतन करायला साइन इन करा',
+    acctSaveTitle: 'हा पत्ता जतन करायचा?',
+    acctSaveSub: 'साइन इन केलं की तुमचे पत्ते आणि ऑर्डर कुठल्याही फोनवर येतील. त्याशिवायही ऑर्डर करता येते.',
     addrBook: 'जतन केलेले पत्ते',
     addrBookSub: 'एकदा पत्ता जतन करा, पुन्हा लिहायची गरज नाही.',
     addrBookBtn: 'माझे पत्ते',
@@ -595,6 +605,9 @@ export const T = {
     siFailed: 'अभी कोड नहीं भेजा जा सका. एक मिनट बाद फिर देखें.',
     siDone: 'साइन इन हो गया',
 
+    acctCta: 'पते और ऑर्डर सहेजने के लिए साइन इन करें',
+    acctSaveTitle: 'यह पता सहेजें?',
+    acctSaveSub: 'साइन इन करें तो आपके पते और ऑर्डर किसी भी फ़ोन पर आएँगे. इसके बिना भी ऑर्डर कर सकते हैं.',
     addrBook: 'सहेजे गए पते',
     addrBookSub: 'पता एक बार सहेजें, दोबारा लिखने की ज़रूरत नहीं.',
     addrBookBtn: 'मेरे पते',

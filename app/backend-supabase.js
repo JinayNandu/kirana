@@ -66,6 +66,13 @@ export const sb = createClient(SUPABASE.url, SUPABASE.key, {
 
 const oops = (error) => { if (error) throw new Error(error.message || String(error)); };
 
+// "That email is already registered" is the one auth error this app
+// treats as an ordinary answer rather than a failure. The code reads
+// the code first and the message only as a fallback, because the
+// message is English prose that Supabase is free to reword.
+const taken = (e) => !!e && (e.code === 'email_exists'
+  || /already (been )?registered|already exists/i.test(e.message || ''));
+
 // ---------------------------------------------------------------------
 //  Who is this
 //
@@ -125,8 +132,14 @@ export const session = {
     // mirrors this branch.
     if (u && u.is_anonymous){
       const { error } = await sb.auth.updateUser({ email });
-      oops(error);
-      return { mode: 'link' };
+      if (!error) return { mode: 'link' };
+      // That address already belongs to somebody, which is not an
+      // error here -- it is the ordinary case of a customer who
+      // signed in once and has opened the app on a second phone.
+      // They are anonymous again on this device, so the upgrade
+      // path cannot work; sign them into the account they already
+      // have and let this device's empty anonymous one go.
+      if (!taken(error)) oops(error);
     }
     const { error } = await sb.auth.signInWithOtp({ email });
     oops(error);

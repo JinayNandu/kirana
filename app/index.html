@@ -185,6 +185,91 @@ body[data-role="shop"]   #rolerule{background:var(--spice)}
 #hdr .seg button{color:var(--on-brand-dim)}
 #hdr .seg button[aria-pressed="true"]{background:var(--on-brand); color:var(--brand)}
 
+/* --- the language button ------------------------------------------ */
+/* It lives in the header and is therefore on every screen, which is
+   the whole requirement. Somebody who has landed in the wrong
+   language has to be able to leave it from wherever they are -- not
+   by finding Settings, whose name is written in the script they
+   cannot read. */
+#langbtn{
+  flex:none; min-width:38px; min-height:34px; padding:0 8px;
+  border-radius:var(--r2); background:var(--brand-well);
+  color:var(--on-brand); font-size:12px; font-weight:700;
+}
+#langbtn:active{opacity:.8}
+/* An overlay like the other two, so it cannot join the back stack and
+   the back gesture closes it instead of walking the screen behind. */
+#langpick .lockbox{text-align:left}
+.langlist{display:grid; gap:var(--s2); margin:var(--s3) 0 0}
+.langlist button{
+  display:flex; align-items:center; justify-content:space-between;
+  width:100%; min-height:52px; padding:0 var(--s3);
+  border:1px solid var(--edge); border-radius:var(--r2);
+  background:var(--card); color:var(--ink); font-size:16px; font-weight:600;
+}
+.langlist button[aria-pressed="true"]{
+  border-color:var(--leaf); background:var(--leaf-wash); color:var(--leaf-ink);
+}
+.langlist .ic{width:20px; height:20px}
+
+/* --- the account pill ---------------------------------------------- */
+/* Always up on the storefront, because what it offers -- an address
+   that follows you to another phone -- is worth nothing to somebody
+   who never learns it is there, and Settings is where that was
+   buried.
+   It is never a wall. Every visitor already has a session, and can
+   browse, save addresses and order without ever touching this. A
+   login wall in front of a shop is how a shop loses the customer at
+   the door. */
+#acct{
+  position:fixed; right:var(--gutter); z-index:30;
+  bottom:calc(54px + var(--s3) + env(safe-area-inset-bottom,0px));
+}
+#acct[hidden]{display:none}
+/* The shopkeeper's board has no use for a customer's sign-in offer. */
+body[data-role="shop"] #acct{display:none}
+#acctbtn{
+  display:flex; align-items:center; gap:var(--s2); text-align:left;
+  max-width:232px; min-height:44px; padding:5px 14px 5px 5px;
+  border-radius:999px; background:var(--card); color:var(--ink);
+  border:1px solid var(--edge); box-shadow:var(--sh-lift);
+}
+.av{
+  flex:none; width:34px; height:34px; border-radius:50%;
+  display:grid; place-items:center;
+  background:var(--leaf-wash); color:var(--leaf-ink);
+  font-size:15px; font-weight:700;
+}
+.av .ic{width:18px; height:18px}
+#acctlab{font-size:12.5px; font-weight:600; line-height:1.25}
+/* Signed in, the pill is the avatar and nothing else. The invitation
+   has been accepted, so there is nothing left for it to say on every
+   screen -- and the name is one tap away, which is where it belongs. */
+#acct.in #acctbtn{padding:5px; gap:0}
+#acct.in #acctlab{display:none}
+#acct.in .av{background:var(--leaf); color:var(--on-leaf)}
+
+/* The pill floats over the page, so the page has to end above it --
+   the same reason .wrap already clears the tab bar. Scoped to the
+   state that actually draws one, or the Store board would carry
+   50px of padding for a control it never shows. */
+body[data-acct][data-role="customer"] .wrap{
+  padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));
+}
+
+/* --- the sign-in offer at checkout --------------------------------- */
+/* On the address screen and nowhere else in the order, because that
+   is the one moment the offer is about something the customer is
+   holding: THIS address, which they are typing and would rather not
+   type a second time. */
+.sioffer{
+  background:var(--leaf-wash); border-left:3px solid var(--leaf);
+  border-radius:var(--r2); padding:var(--s3); margin:0 0 var(--s4);
+}
+.sioffer p{margin:0 0 var(--s1); font-weight:600; color:var(--leaf-ink)}
+.sioffer .hint{margin:0 0 var(--s3); font-weight:400}
+.sioffer .btn{min-height:40px}
+
 /* --- segmented controls ------------------------------------------- */
 .seg{
   display:inline-flex; background:var(--sunk); border-radius:var(--r2);
@@ -320,12 +405,12 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 /* Above the toast, because the toast is what says "Store view locked"
    as this opens, and a message about the gate must not sit on top of
    it. */
-#lock, #signin{
+#lock, #signin, #langpick, #acctcard{
   position:fixed; inset:0; z-index:60;
   display:flex; align-items:center; justify-content:center;
   padding:var(--s4); background:var(--scrim);
 }
-#lock[hidden], #signin[hidden]{display:none}
+#lock[hidden], #signin[hidden], #langpick[hidden], #acctcard[hidden]{display:none}
 .lockbox{
   background:var(--card); border-radius:var(--r2); box-shadow:var(--sh-lift);
   padding:var(--s5) var(--s4) var(--s4); width:100%; max-width:340px;
@@ -352,6 +437,10 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 /* The email box is ordinary text -- only the CODE gets the spaced
    mono treatment, because only the code is read off another screen
    and typed a character at a time. */
+/* The gate's circle wears --spice because the Store role does. Signing
+   in is the customer's own door and wears --leaf, or the app would
+   be offering an account in the shopkeeper's colour. */
+#siic{background:var(--leaf-wash); color:var(--leaf-ink)}
 #siemail{text-align:center}
 .acct{display:flex; align-items:center; gap:var(--s3); margin-bottom:var(--s3)}
 .acct .ic{width:20px; height:20px; color:var(--ink-soft); flex:none}
@@ -364,6 +453,16 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
    green button beside an orange one reads as a choice between two
    things worth doing. */
 .lockbox .btn.ghost{color:var(--ink-soft)}
+
+/* The account card opens from the thing that was tapped, so it is
+   anchored to the pill rather than centred like the other two. */
+#acctcard{
+  align-items:flex-end; justify-content:flex-end;
+  padding:var(--s4) var(--gutter) calc(54px + 54px + env(safe-area-inset-bottom,0px));
+}
+#acctcard .lockbox{max-width:290px; text-align:left}
+#acctcard .acct{margin-bottom:var(--s2)}
+
 /* A padlock beside "Store" in the header, so the gate is expected
    rather than a surprise. It is driven by data-locked on the body --
    NOT by which role is showing, because a device that has been
@@ -784,6 +883,7 @@ body[data-locked] #roleseg .lk{display:inline-block}
       <button type="button" data-role="customer" aria-pressed="true"><span id="l-rolecust">Shop</span></button>
       <button type="button" data-role="shop"     aria-pressed="false"><svg class="ic lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg><span id="l-roleshop">Store</span></button>
     </div>
+    <button id="langbtn" type="button" aria-haspopup="dialog"></button>
   </div>
   <div id="rolerule"></div>
 </header>
@@ -857,6 +957,36 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <div class="lockrow">
       <button type="button" class="btn" id="sigo"></button>
       <button type="button" class="btn ghost" id="six"></button>
+    </div>
+  </div>
+</div>
+<!-- Always up on the storefront: signed out it carries the offer,
+     signed in it is the avatar and the name is one tap inside. -->
+<div id="acct" hidden>
+  <button type="button" id="acctbtn">
+    <span class="av" id="acctav" aria-hidden="true"></span>
+    <span id="acctlab"></span>
+  </button>
+</div>
+<div id="acctcard" hidden>
+  <div class="lockbox" role="dialog" aria-modal="true" aria-labelledby="acch">
+    <div class="acct">
+      <span class="av" id="accav" aria-hidden="true"></span>
+      <span class="acctwho" id="acch"></span>
+    </div>
+    <p class="hint" id="accsub"></p>
+    <div class="lockrow">
+      <button type="button" class="btn ghost" id="accbook"></button>
+      <button type="button" class="btn ghost" id="accout"></button>
+    </div>
+  </div>
+</div>
+<div id="langpick" hidden>
+  <div class="lockbox" role="dialog" aria-modal="true" aria-labelledby="lph">
+    <h2 id="lph"></h2>
+    <div class="langlist" id="langlist"></div>
+    <div class="lockrow">
+      <button type="button" class="btn ghost" id="lpx"></button>
     </div>
   </div>
 </div>

@@ -11,6 +11,7 @@
 import { boot, setShop } from './ui.js';
 import { ready, begin, shared } from './store.js';
 import { prime } from './lock.js';
+import { start as startAccount } from './account.js';
 import './customer.js';
 import './shop.js';
 import './settings.js';
@@ -51,5 +52,11 @@ seedIfEmpty()
 
     await prime(d && d.shop);
     boot();
+
+    // After boot(), because it wires nodes the shell has just made
+    // live, and NOT awaited: the pill stays hidden until whoami()
+    // answers, so the storefront paints on the first frame either
+    // way. A failure in here must not cost anybody a catalogue.
+    startAccount().catch((e) => console.warn('account', e));
     if (d) setShop(d.shop);
   });

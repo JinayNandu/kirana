@@ -9,6 +9,7 @@
 //  time is in parked/.
 // =====================================================================
 
+import { offerHtml, offerWire } from './account.js';
 import {
   $, esc, mount, show, goBack, registerScreen, repaint, onLeave, toast,
   setCartCount, clearNav, h1, sub, empty,
@@ -578,9 +579,12 @@ registerScreen('addr', async () => {
     mount(box, h1(checkout ? c.addrTitle : c.addrBook)
       + '<p class="sub">' + esc(checkout ? c.anywhere : c.addrNoneSub) + '</p>'
       + addrForm({ name: me.name, phone: me.phone }, c)
+      + (checkout ? offerHtml(c) : '')
       + '<p id="aerr" class="ferr" hidden></p>'
       + '<button type="button" class="btn" id="place">'
         + esc(checkout ? c.placeOrder : c.addrSave) + '</button>');
+
+    offerWire();
 
     $('place').onclick = async () => {
       const got = readAddrForm(c);
@@ -605,10 +609,13 @@ registerScreen('addr', async () => {
     +   book.map((a) => addrCard(a, checkout && a.id === S.addrId, c)).join('')
     + '</ul>'
     + '<button type="button" class="btn ghost" id="anew">' + esc(c.addrAdd) + '</button>'
+    + (checkout ? offerHtml(c) : '')
     + '<p id="aerr" class="ferr" hidden></p>'
     + (checkout
         ? '<button type="button" class="btn" id="place">' + esc(c.placeOrder) + '</button>'
         : ''));
+
+  offerWire();
 
   $('abook').onclick = (e) => {
     // Edit is tested first: it sits inside the card's box, so a tap on
