@@ -630,7 +630,7 @@ The strip is simply absent when it would be empty, which is every new
 device — a heading over nothing reads as a bug.
 
 **The same strip is the home screen's "Buy it again".** It used to be
-one card there reading *K-0007 - 4 - Rs 693*. That is the shop's own
+one card there reading *M-0007 - 4 - Rs 693*. That is the shop's own
 filing reference: the customer never knew the number, cannot tell what
 is inside it, and has no reason to care. **What they recognise is the
 packet.**

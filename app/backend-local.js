@@ -679,7 +679,10 @@ export const orders = {
     const now = new Date().toISOString();
     const order = {
       id: 'ord-' + istDate() + '-' + String(n).padStart(4, '0'),
-      code: 'K-' + String(n).padStart(4, '0'),
+      // The shop's own letter, out of shop.json. db/schema.sql has
+      // to carry the same one, because a Postgres generated column
+      // cannot read a JSON file; data.pl checks that they agree.
+      code: (d.shop.orderPrefix || 'K') + '-' + String(n).padStart(4, '0'),
       placedAt: now,
       runId: run.id,
       // Free text, because the shop delivers wherever the customer is

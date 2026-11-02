@@ -230,6 +230,42 @@ Both are worth having and they do different jobs.
 
 ---
 
+## Changing the order prefix — for a project that already exists
+
+Order codes are `M-0007`. The letter lives in **two** places and they
+have to agree:
+
+- `orderPrefix` in `app/data/shop.json`
+- the generated column in `db/schema.sql`
+
+It is written twice because Postgres mints the code in a `generated
+always as` column, and a generated column cannot read a JSON file.
+`tools/data.pl` fails if the two drift, which is the only thing
+stopping the app numbering orders one way and the database another.
+
+A project created from the current `schema.sql` already has the right
+letter. One created earlier has `K-`, and `create table if not
+exists` will not change it. To move it:
+
+```sql
+alter table orders drop column code;
+alter table orders add column code text
+  generated always as ('M-' || lpad(seq::text, 4, '0')) stored;
+```
+
+⚠️ **Only do this while the table is EMPTY.** The column is
+`generated always`, so recreating it recomputes **every** row — an
+order the customer knows as K-0005 would silently become M-0005, and
+the code they are reading down the phone would no longer be in the
+system. With real orders in the table, leave the old ones alone and
+change the letter only for a new shop.
+
+To start the numbering over as well, on an empty table:
+
+```sql
+alter sequence order_seq restart with 1;
+```
+
 ## What it costs
 
 Nothing on the free tier: two projects, 500 MB each, 50,000 users a

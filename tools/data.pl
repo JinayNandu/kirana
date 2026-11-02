@@ -189,6 +189,32 @@ for my $i (1 .. $#sorted) {
 ok("$n delivery windows, none overlapping: "
    . join(', ', map { "$_->{from}-$_->{to}" } @sorted));
 
+# --- the order prefix, in the two places it has to live ---------------
+#
+# Postgres mints the order code in a generated column, and a generated
+# column cannot read shop.json. So the letter is written twice and
+# this is the only thing in the project that can see both copies. Left
+# unchecked they drift the moment somebody edits one, and the symptom
+# is a customer reading back a code the shopkeeper cannot find.
+{
+  my $want = $shop->{orderPrefix};
+  if (!defined $want || $want !~ /^[A-Z]{1,2}$/) {
+    bad("shop.json orderPrefix should be one or two capital letters, got "
+        . (defined $want ? "'$want'" : 'nothing'));
+  } else {
+    my $sf = ($here || './') . '../db/schema.sql';
+    if (open my $h, '<:raw', $sf) {
+      my $sql = do { local $/; <$h> }; close $h;
+      if ($sql =~ /generated always as \('([A-Za-z]{1,2})-'/) {
+        my $got = $1;
+        $got eq $want
+          ? ok("order codes are '$want-0001' in shop.json and in schema.sql")
+          : bad("order prefix disagrees: shop.json says '$want', schema.sql says '$got'");
+      } else { bad('could not find the generated code column in db/schema.sql') }
+    } else { bad("db/schema.sql is not readable: $!") }
+  }
+}
+
 # --- categories -------------------------------------------------------
 my %catid;
 for my $c (@{ $cats->{categories} }) {

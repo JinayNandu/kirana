@@ -64,6 +64,8 @@
       ],
       "note" : "Buy 2 get 1 free. Every THIRD unit of the SAME product is free: 2 cost 2, 3 cost 2, 6 cost 4, 7 cost 5. Integer division, so it can never hand out part of a packet. These are the small snack packs people already buy several of -- the offer has to be on something a basket naturally holds three of, or it is decoration. Add or remove ids here and nothing else changes; an empty list switches the offer off completely. ORDER OF OPERATIONS: the free unit is priced out BEFORE a coupon is applied, so the coupon discounts what is actually owed and the two never multiply."
    },
+   "orderPrefix" : "M",
+   "orderPrefixNote" : "The letter in front of an order number -- M-0007. It was K, for \"Kirana\", the placeholder name this project had before the shop had one; nothing about K ever meant Milan. This is the number the shopkeeper shouts across the counter, so it should be his. ONE LETTER, because it is read aloud and written on a bag. ALSO SET IT IN db/schema.sql: Postgres mints the code in a generated column and a generated column cannot read this file, so the letter has to be written there too. data.pl FAILS if the two disagree -- which is the only thing standing between you and orders numbered M-0007 in one half of the app and K-0007 in the other.",
    "phone" : "+918169022727",
    "phoneLocal" : "8169022727",
    "pin" : "400103",

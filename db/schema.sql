@@ -89,7 +89,7 @@ create policy addr_own on addresses for all
 -- ---------------------------------------------------------------------
 --  orders
 --
---  The code (K-0007) is derived from a sequence rather than counted in
+--  The code (M-0007) is derived from a sequence rather than counted in
 --  the browser. Two customers ordering in the same second on different
 --  phones is exactly the case a localStorage counter could not get
 --  right, and the code is what the shopkeeper shouts across the shop.
@@ -99,7 +99,12 @@ create sequence if not exists order_seq start 1;
 create table if not exists orders (
   id          uuid primary key default gen_random_uuid(),
   seq         bigint not null default nextval('order_seq'),
-  code        text generated always as ('K-' || lpad(seq::text, 4, '0')) stored,
+  -- ⚠️ THE LETTER MUST MATCH `orderPrefix` IN app/data/shop.json.
+  -- A generated column cannot read a JSON file, so it is written in
+  -- both places and tools/data.pl fails if they drift -- otherwise
+  -- the two backends number the same shop's orders differently and
+  -- nobody notices until a customer reads a code back over the phone.
+  code        text generated always as ('M-' || lpad(seq::text, 4, '0')) stored,
   user_id     uuid default auth.uid() references auth.users on delete set null,
   run_id      text not null,
   status      text not null default 'placed',
