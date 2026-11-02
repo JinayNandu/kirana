@@ -19,10 +19,13 @@
 import * as local from './backend-local.js';
 import { SUPABASE } from './config.js';
 
-// Top-level await: the choice has to be settled before anything
-// imports a name from here, and the alternative is every screen
-// awaiting a backend that is already decided.
-const backend = SUPABASE.url
+// BOTH, not just the url. A config with one filled in and the other
+// blank is a real state -- it is what this file looks like halfway
+// through setting the project up -- and switching on the url alone
+// would hand every screen a client that cannot authenticate. Falling
+// back to one-browser mode until both are present means a half-done
+// setup is a working app rather than a broken one.
+const backend = (SUPABASE.url && SUPABASE.key)
   ? await import('./backend-supabase.js')
   : local;
 
@@ -34,7 +37,7 @@ export const {
 // devices. The UI uses it to tell the truth about what it can promise
 // -- "your order is with the shop" means something different when the
 // only copy is in this browser.
-export const shared = () => !!SUPABASE.url;
+export const shared = () => !!(SUPABASE.url && SUPABASE.key);
 
 // Gets a session before the first query. A no-op on the local backend,
 // where there is nobody to be.
