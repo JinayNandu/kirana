@@ -9,7 +9,7 @@
 //  time is in parked/.
 // =====================================================================
 
-import { offerHtml, offerWire } from './account.js';
+import { offerHtml, offerWire, who } from './account.js';
 import {
   $, esc, mount, show, goBack, registerScreen, repaint, onLeave, toast,
   setCartCount, clearNav, h1, sub, empty,
@@ -270,9 +270,18 @@ const row = (l, r, tone, raw) =>
 // again and a product bought five minutes ago is gone from the
 // suggestions by the time you come back.
 async function strip(key, make){
+  // SCOPED TO WHOEVER IS SIGNED IN. Signing in makes a different
+  // set of past orders visible, and a cache that outlived that
+  // handed the customer the empty "Buy it again" they had a moment
+  // earlier -- until they reloaded the page by hand. account.js does
+  // repaint on the way in; what it could not do was clear a cache it
+  // must not import (customer.js already imports account.js, and the
+  // other direction is the circular import this project forbids).
+  const me = who();
+  const k = ((me && (me.email || me.id)) || 'guest') + '|' + key;
   S.strips = S.strips || {};
-  if (!S.strips[key]) S.strips[key] = await make();
-  return S.strips[key];
+  if (!S.strips[k]) S.strips[k] = await make();
+  return S.strips[k];
 }
 
 // Delegated: one handler per box that CONTAINS its targets.
@@ -340,7 +349,7 @@ async function offerBlock(){
   if (!list.length) return '';
   const q = await qtyMap();
   return '<div class="offbox">'
-    + '<p class="offhead">' + icon('tag') + '<span>' + esc(c.offB2G1) + '</span></p>'
+    + '<p class="offhead">' + icon('gift') + '<span>' + esc(c.offB2G1) + '</span></p>'
     + '<p class="offsub">' + esc(c.offB2G1Sub) + '</p>'
     + '</div>'
     + '<ul class="srail offrail">'
@@ -397,7 +406,9 @@ registerScreen('shop', async () => {
     // The offer, where somebody browsing will meet it. A discount
     // nobody is shown is a discount the shop pays for twice.
     + await offerBlock()
-    + '<h2>' + esc(c.catsHead) + '</h2>'
+    // The same heading as a strip carries. It is the biggest thing on
+    // this screen by area and it was wearing the smallest heading.
+    + '<h2 class="railhead">' + esc(c.catsHead) + '</h2>'
     + '<div class="cgrid">' + cats.map((cat) =>
         // Same arrangement as a product tile: the glyph is always
         // drawn and the photograph sits over it, so a category whose

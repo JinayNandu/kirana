@@ -54,6 +54,11 @@ const P = {
   // beside the festive greeting, which is why it is down here with
   // the interface marks and not among the pack shapes.
   diya:    '<path d="M3.5 13.5h17c0 3.4-3.8 5.6-8.5 5.6s-8.5-2.2-8.5-5.6z"/><path d="M12 13.5v-3.2"/><path d="M12 10.3c1.9-1.2 2.4-2.9 1.6-4.6C11.2 6.8 10 8.5 12 10.3z"/>',
+  // A gift box. It replaced a price tag, which said "this has a
+  // price on it" -- true of every product in the shop, and the
+  // opposite of what the offer is about. The thing being advertised
+  // is the free one.
+  gift:    '<rect x="3.5" y="10.5" width="17" height="10.5" rx="1.5"/><rect x="2.5" y="6.5" width="19" height="4" rx="1"/><path d="M12 6.5V21"/><path d="M12 6.5C9.6 6.5 8 5.6 8 4.3c0-1 .8-1.8 1.9-1.6C11.2 3 12 4.4 12 6.5z"/><path d="M12 6.5c2.4 0 4-.9 4-2.2 0-1-.8-1.8-1.9-1.6C12.8 3 12 4.4 12 6.5z"/>',
   // A price tag, for the offer band. Only ever shown there.
   tag:     '<path d="M11.6 3H20a1 1 0 0 1 1 1v8.4a2 2 0 0 1-.6 1.4l-7 7a2 2 0 0 1-2.8 0l-6.4-6.4a2 2 0 0 1 0-2.8l7-7A2 2 0 0 1 11.6 3z"/><circle cx="16.6" cy="7.4" r="1.4"/>',
   // ---- interface -----------------------------------------------------

@@ -662,19 +662,23 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
    pill, which lives in the banner and on a slot card and is never on
    screen beside a product tile. */
 /* --- the offer band ------------------------------------------- */
-/* GREEN, not the turmeric it was. --spice is this app's alarm colour
-   -- the window about to close wears it -- and an offer is the
-   opposite of an alarm. It is also the shop's own colour, which is
-   the right thing for the shop's own discount to be wearing. */
+/* Green, and LIGHT. --spice is this app's alarm colour -- the window
+   about to close wears it -- and an offer is the opposite of an
+   alarm. Solid --leaf then turned out to be too much of a good
+   thing: a second heavy green block a thumb's width under a green
+   header. The wash with its own edge reads as a band without
+   shouting, and leaves the solid green for the badge, which sits on
+   a photograph and has to win. */
 .offbox{
   margin:var(--s4) 0 var(--s3); padding:var(--s4) var(--s4) var(--s3);
-  border-radius:var(--r2); background:var(--leaf); color:var(--on-leaf);
+  border-radius:var(--r2); background:var(--leaf-wash); color:var(--leaf-ink);
+  border:1px solid var(--leaf);
 }
 .offhead{
   display:flex; align-items:center; gap:var(--s2);
   margin:0; font-size:19px; font-weight:700; letter-spacing:-.01em;
 }
-.offhead svg{width:22px; height:22px; flex:none}
+.offhead svg{width:22px; height:22px; flex:none; color:var(--leaf)}
 .offsub{margin:4px 0 0; font-size:13px; opacity:.9}
 .offrail{margin-top:var(--s3)}
 /* Bigger than it was, and green. It is the one mark on a tile that
