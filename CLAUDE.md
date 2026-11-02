@@ -1162,12 +1162,22 @@ three, and whoever sits last on the row is the one who has to look
 hardest. 270 keys each, and `i18n.pl` fails if any block is missing
 one.
 
-**The shop's own words are translated in full** — its name, address
-and eleven aisle names. **Product names are not**, and that is a
-decision rather than an omission: `pname()` falls back to English, and
-a brand read in Latin script is what every grocery app in India shows
-anyway. 117 transliterations are worth doing and are not worth
-blocking a language on.
+**Everything is translated** — the shop's name and address, eleven
+aisle names, and all 117 product names.
+
+**Brands stay in Latin.** `pname()` prints the brand and then the
+translated name, so it reads "Haldiram's સોન પાપડી". That is how a
+packet is read in a Borivali shop and how every grocery app in India
+shows one; transliterating Haldiram into three scripts would make it
+harder to recognise, not easier.
+
+Product names were briefly left falling back to English, with a
+second shorter language list in `data.pl` to let them lag. Both are
+gone. **A list of exemptions is a list somebody forgets to shorten.**
+
+`catalog.search()` reads `p.name[lang]`, so the translations make
+search work in each language for free: લોટ finds both attas, દૂધ
+finds the milks, ડુંગળી finds the onion.
 
 ⚠️ **Gujarati is not Devanagari.** It is a different Unicode block
 (U+0A80–U+0AFF), and the mojibake check hardcoded U+0900–U+097F. Left

@@ -48,13 +48,11 @@ my %TILES = do {
   map { $_ => 1 } @names;
 };
 my %UNITS = map { $_ => 1 } qw(g kg ml l pc pkt dozen);
-# The shop's OWN words -- its name, its address, its aisles -- are
-# translated in full. PRODUCT names are not: `pname()` falls back to
-# English, and a brand read in Latin script is what every grocery
-# app in India shows anyway. Translating 117 of them is worth doing
-# and is not worth blocking the language on.
-my @LANGS  = qw(en mr hi gu);
-my @PLANGS = qw(en mr hi);
+# Every language, everywhere: the shop's name and address, its eleven
+# aisles, and all 117 product names. A second, shorter list used to
+# let products lag behind while Gujarati was half done. It is gone --
+# a list of exemptions is a list somebody forgets to shorten.
+my @LANGS = qw(en hi gu mr);
 
 # --- the shop ---------------------------------------------------------
 for my $l (@LANGS) {
@@ -293,7 +291,7 @@ for my $p (@{ $cat->{products} }) {
   #
   # Word boundaries matter here -- \begg matches "eggs" and does NOT
   # match "Deggi Mirch", which is a chilli powder and has to stay.
-  for my $l (@PLANGS) {
+  for my $l (@LANGS) {
     my $name = $p->{name}{$l} // '';
     bad("product $id is not vegetarian: its $l name says '$1'")
       if $name =~ /\b(eggs?|chicken|mutton|fish|prawns?|bacon|meat)\b/i
@@ -314,7 +312,7 @@ for my $p (@{ $cat->{products} }) {
   bad("product $id sells at $p->{price} ABOVE its MRP $p->{mrp}") if $p->{price} > $p->{mrp};
   bad("product $id stock is negative") if ($p->{stock} // 0) < 0;
 
-  for my $l (@PLANGS) {
+  for my $l (@LANGS) {
     bad("product $id has no $l name") unless ($p->{name}{$l} // '') =~ /\S/;
   }
   $untranslated++ if ($p->{name}{mr} // '') eq ($p->{name}{en} // '')
