@@ -246,6 +246,25 @@ async function nextSlotBanner(){
     + '</div>';
 }
 
+// The festive shelf. Drawn only while the shopkeeper's dates say so,
+// and only if i18n has wording for that festival id -- an id nobody
+// has written a greeting for draws nothing at all, which is a better
+// failure than a banner reading `undefined` over a row of sweets.
+async function festiveBlock(){
+  const c = t();
+  const fest = await catalog.festival();
+  if (!fest.on) return '';
+  const key = 'fest' + fest.id.charAt(0).toUpperCase() + fest.id.slice(1);
+  if (!c[key]) return '';
+  return '<div class="festbox">'
+    + '<p class="festhead">' + icon('diya') + '<span>' + esc(c[key]) + '</span></p>'
+    + '<p class="festsub">' + esc(c[key + 'Sub'] || '') + '</p>'
+    + '</div>'
+    + '<ul class="srail festrail">'
+    + fest.products.map(railCard).join('')
+    + '</ul>';
+}
+
 // ---------------------------------------------------------------------
 //  s-shop
 // ---------------------------------------------------------------------
@@ -266,6 +285,7 @@ registerScreen('shop', async () => {
     // What they recognise is the packet. Reordering a whole past
     // order still exists, on the screen for that order, which is where
     // you are actually looking at one.
+    + await festiveBlock()
     + rail(c.buyAgain, await orders.againItems(10))
     // The offer, where somebody browsing will meet it. A discount
     // nobody is shown is a discount the shop pays for twice.

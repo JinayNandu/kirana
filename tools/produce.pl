@@ -56,6 +56,8 @@ my %TERMS = (
   'p-matchbox10'  => 'safety matches box -drawing -label -collection',
   'p-ginger250'   => 'ginger root white background -drawing -plant',
   'p-coriander1'  => 'coriander leaves bunch -plant -field -drawing',
+  'p-kajukatli250' => 'kaju katli barfi indian sweet -drawing',
+  'p-dryfruit400' => 'mixed nuts dried fruit -tree -plant'
 );
 
 # PACKETED goods that getimages.pl left on a glyph. It scores a search
@@ -85,6 +87,7 @@ my %SHELF = (
   'p-goodknight45' => ['world.openproductsfacts.org', 'Good Knight'],
   'p-colin500'     => ['world.openproductsfacts.org', 'Colin glass cleaner'],
   'p-exo700'       => ['world.openproductsfacts.org', 'Exo dishwash'],
+  'p-soanpapdi500' => ['world.openfoodfacts.org',     'soan papdi'],
 );
 
 sub esc_q { my $s = shift; $s =~ s/([^A-Za-z0-9_.~-])/sprintf('%%%02X', ord $1)/ge; $s }

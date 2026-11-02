@@ -24,6 +24,23 @@
    },
    "demo" : false,
    "demoNote" : "OFF. While true, app/seed.js drops a few INVENTED orders onto the next window, but only on a device that has never been used -- so the Store board is not empty the first time someone is shown this. Turned off so the app starts genuinely blank. Flip it back to true and clear the browser data (Settings has a button) to get the demo world again.",
+   "festival" : {
+      "from" : "2026-10-29",
+      "id" : "diwali",
+      "note" : "The festive shelf. It shows itself between `from` and `to` (IST dates, inclusive) and then takes itself down -- nobody has to remember to remove it, which is the only reason a seasonal banner is safe to ship at all. THE SHOPKEEPER SETS THE DATES: he knows when Diwali is and the app does not compute it, because the festival calendar is lunar and a wrong guess would put a greeting on the wrong fortnight. `id` picks the wording out of i18n.js -- with an id nothing is written for, no banner is drawn at all. Products are shown in the order listed, so put the thing you most want sold first.",
+      "products" : [
+         "p-kajukatli250",
+         "p-soanpapdi500",
+         "p-dryfruit400",
+         "p-dairymilk50",
+         "p-bournville80",
+         "p-candles6",
+         "p-agarbatti120",
+         "p-matchbox10",
+         "p-ghee-amul500"
+      ],
+      "to" : "2026-11-12"
+   },
    "id" : "depot",
    "ll" : [
       19.2382,

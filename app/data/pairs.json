@@ -6,7 +6,7 @@
   "coverage": "Every product in the catalogue has an entry, and data.pl FAILS if one does not. It separately reports any product that nothing ever suggests -- one nothing points at can only be found by browsing.",
 
   "byProduct": {
-    "p-tatatea500":    ["p-sugar1", "p-amultaaza500", "p-parleg250", "p-chaimasala50"],
+    "p-tatatea500":    ["p-sugar1", "p-amultaaza500", "p-parleg250", "p-chaimasala50", "p-soanpapdi500"],
     "p-redlabel500":   ["p-sugar1", "p-amultaaza500", "p-marie250", "p-chaimasala50"],
     "p-tajmahal250":   ["p-sugar1", "p-amultaaza500", "p-parleg250"],
     "p-chaimasala50":  ["p-tatatea500", "p-sugar1", "p-ginger250", "p-amultaaza500"],
@@ -34,6 +34,9 @@
     "p-bingo66":       ["p-sprite750", "p-thumsup750", "p-maaza600"],
     "p-balaji135":     ["p-thumsup750", "p-limca750"],
     "p-bhujia200":     ["p-tatatea500", "p-thumsup750", "p-moongdal200", "p-lassi200"],
+    "p-soanpapdi500":  ["p-dryfruit400", "p-kajukatli250", "p-tatatea500", "p-ghee-amul500"],
+    "p-kajukatli250":  ["p-soanpapdi500", "p-dryfruit400", "p-agarbatti120", "p-dairymilk50"],
+    "p-dryfruit400":   ["p-kajukatli250", "p-soanpapdi500", "p-ghee-amul500", "p-tatatea500"],
     "p-moongdal200":   ["p-tatatea500", "p-bhujia200"],
     "p-parleg250":     ["p-tatatea500", "p-amultaaza500"],
     "p-marie250":      ["p-tatatea500", "p-amultaaza500"],
@@ -41,7 +44,7 @@
     "p-monaco200":     ["p-amulbutter100", "p-tatatea500"],
     "p-darkfantasy":   ["p-amultaaza500", "p-icecream700"],
     "p-oreo120":       ["p-amultaaza500", "p-icecream700", "p-darkfantasy"],
-    "p-dairymilk50":   ["p-icecream700", "p-oreo120", "p-bournville80"],
+    "p-dairymilk50":   ["p-icecream700", "p-oreo120", "p-bournville80", "p-kajukatli250"],
     "p-bournville80":  ["p-dairymilk50", "p-icecream700"],
 
     "p-atta-aash5":    ["p-oil-fort1", "p-dal-toor1", "p-salt-tata1", "p-ghee-amul500"],
@@ -113,7 +116,7 @@
     "p-pampers-m56":   ["p-jnjsoap100", "p-jnjpowder400"],
     "p-jnjsoap100":    ["p-jnjpowder400", "p-pampers-m56"],
     "p-jnjpowder400":  ["p-jnjsoap100", "p-pampers-m56"],
-    "p-agarbatti120":  ["p-matchbox10", "p-candles6"],
+    "p-agarbatti120":  ["p-matchbox10", "p-candles6", "p-dryfruit400"],
     "p-candles6":      ["p-matchbox10", "p-agarbatti120"],
     "p-matchbox10":    ["p-candles6", "p-agarbatti120"],
     "p-toiletroll4":   ["p-garbagebag30", "p-harpic1", "p-dettol4"],

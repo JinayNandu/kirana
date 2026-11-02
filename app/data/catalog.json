@@ -2725,6 +2725,90 @@
             "पिशवी"
          ],
          "tile" : "bag"
+      },
+      {
+         "brand" : "Haldiram's",
+         "cat" : "snacks",
+         "id" : "p-soanpapdi500",
+         "mrp" : 185,
+         "name" : {
+            "en" : "Soan Papdi",
+            "hi" : "à¤¸à¥à¤¨ à¤ªà¤¾à¤ªà¤¡à¤¼à¥",
+            "mr" : "à¤¸à¥à¤¨ à¤ªà¤¾à¤ªà¤¡à¥"
+         },
+         "pack" : {
+            "n" : 500,
+            "u" : "g"
+         },
+         "price" : 185,
+         "stock" : 30,
+         "tags" : [
+            "soan papdi",
+            "sweet",
+            "mithai",
+            "diwali",
+            "à¤¸à¥à¤¨ à¤ªà¤¾à¤ªà¤¡à¤¼à¥",
+            "à¤®à¤¿à¤ à¤¾à¤",
+            "à¤¦à¤¿à¤µà¤¾à¤³à¥"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "snacks",
+         "id" : "p-kajukatli250",
+         "mrp" : 425,
+         "name" : {
+            "en" : "Kaju Katli",
+            "hi" : "à¤à¤¾à¤à¥ à¤à¤¤à¤²à¥",
+            "mr" : "à¤à¤¾à¤à¥ à¤à¤¤à¤²à¥"
+         },
+         "pack" : {
+            "n" : 250,
+            "u" : "g"
+         },
+         "price" : 425,
+         "stock" : 16,
+         "tags" : [
+            "kaju katli",
+            "barfi",
+            "sweet",
+            "mithai",
+            "diwali",
+            "à¤à¤¾à¤à¥ à¤à¤¤à¤²à¥",
+            "à¤¬à¤°à¥à¤«à¥",
+            "à¤®à¤¿à¤ à¤¾à¤"
+         ],
+         "tile" : "box"
+      },
+      {
+         "brand" : "Shop",
+         "cat" : "snacks",
+         "id" : "p-dryfruit400",
+         "mrp" : 480,
+         "name" : {
+            "en" : "Mixed Dry Fruits",
+            "hi" : "à¤¡à¥à¤°à¤¾à¤¯ à¤«à¥à¤°à¥à¤à¥à¤¸",
+            "mr" : "à¤¸à¥à¤à¤¾ à¤®à¥à¤µà¤¾"
+         },
+         "pack" : {
+            "n" : 400,
+            "u" : "g"
+         },
+         "price" : 480,
+         "stock" : 20,
+         "tags" : [
+            "dry fruits",
+            "kaju",
+            "badam",
+            "almond",
+            "cashew",
+            "diwali",
+            "à¤¸à¥à¤à¤¾ à¤®à¥à¤µà¤¾",
+            "à¤à¤¾à¤à¥",
+            "à¤¬à¤¦à¤¾à¤®"
+         ],
+         "tile" : "packet"
       }
    ]
 }

@@ -24,7 +24,7 @@
 
 
 import {
-  istDate, istMins, addDays, deriveRun, runState, isBookable,
+  istDate, festivalOn, istMins, addDays, deriveRun, runState, isBookable,
   totals as calcTotals, matchCoupon, canAdvance, canAdvanceRun,
 } from './domain.js';
 
@@ -89,6 +89,7 @@ const DATA = Promise.all([
     shop, delivery: shop.delivery, upi: shop.upi || {},
     coupons: shop.coupons || {},
     offers: shop.offers || {},
+    festival: shop.festival || null,
     pairs: { byProduct: pairs.byProduct || {}, byCategory: pairs.byCategory || {} },
     slots: plan.slots,
   };
@@ -175,6 +176,19 @@ export const catalog = {
   async byCat(catId){ return clone((await DATA).products.filter((p) => p.cat === catId)); },
   // In stock only. An offer on something that cannot be bought is
   // worse than no offer: it is a promise the shelf cannot keep.
+  // The whole festival in one answer -- whether it is on, what to
+  // call it, and the products -- so no screen has to hold a date
+  // rule of its own. Off-season this returns { on: false } and the
+  // home screen draws nothing.
+  async festival(){
+    const d = await DATA;
+    const fest = d.festival;
+    if (!festivalOn(fest, istDate())) return { on: false };
+    const list = (fest.products || [])
+      .map((id) => d.byId[id])
+      .filter((p) => p && p.stock > 0);
+    return { on: list.length > 0, id: fest.id, products: clone(list) };
+  },
   async onOffer(limit){
     const all = (await DATA).products.filter((p) => p.offer && p.stock > 0);
     return clone(limit ? all.slice(0, limit) : all);

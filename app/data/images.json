@@ -256,6 +256,12 @@
          "matched" : "Beauty cream bar",
          "source" : "world.openbeautyfacts.org"
       },
+      "p-dryfruit400" : {
+         "bytes" : 56300,
+         "matched" : "File:Liat Portal for Foodie Disorder - Mixed nuts and dried fruit.jpg",
+         "page" : "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Mixed_nuts_and_dried_fruit.jpg",
+         "source" : "commons.wikimedia.org"
+      },
       "p-frooti600" : {
          "brands" : null,
          "bytes" : 23529,
@@ -351,6 +357,12 @@
          "code" : "3574661728131",
          "matched" : "Baby powder",
          "source" : "world.openproductsfacts.org"
+      },
+      "p-kajukatli250" : {
+         "bytes" : 41805,
+         "matched" : "File:Kaju katli.JPG",
+         "page" : "https://commons.wikimedia.org/wiki/File:Kaju_katli.JPG",
+         "source" : "commons.wikimedia.org"
       },
       "p-ketchup-kissan" : {
          "brands" : "Kissan",
@@ -632,6 +644,13 @@
          "code" : "8901399005305",
          "matched" : "SANTOOR Skin Moisturising Sandal & Turmeric",
          "source" : "world.openbeautyfacts.org"
+      },
+      "p-soanpapdi500" : {
+         "bytes" : 21979,
+         "code" : "8904063251077",
+         "matched" : "Haldiram's Soan Papdi 250g",
+         "page" : "https://world.openfoodfacts.org/product/8904063251077",
+         "source" : "world.openfoodfacts.org"
       },
       "p-sprite750" : {
          "brands" : "The Coca-Cola Company",

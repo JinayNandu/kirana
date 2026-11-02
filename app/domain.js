@@ -290,6 +290,15 @@ export function fmtSoon(m, t){
   return r ? h + ' ' + hr + ' ' + r + ' ' + min : h + ' ' + hr;
 }
 
+// A festival is on between two dates, inclusive, in IST. Comparing
+// the strings is correct and deliberate: YYYY-MM-DD sorts
+// lexicographically in calendar order, which is the one thing that
+// format exists for, and it keeps this function free of a clock.
+// The caller passes today from istDate(), so there is still exactly
+// one place in this app that reads the time.
+export const festivalOn = (fest, today) =>
+  !!(fest && fest.id && fest.from && fest.to && today >= fest.from && today <= fest.to);
+
 // =====================================================================
 //  Delivery fee
 //
