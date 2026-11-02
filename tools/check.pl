@@ -14,7 +14,7 @@ my @checks = (
   ['i18n.pl',    'en / mr / hi parity',         []],
   ['data.pl',    'shop, catalogue and windows', []],
   ['slots.pl',   'the run state machine',       []],
-  ['tokens.pl',  'both CSS palettes',           []],
+  ['tokens.pl',  'the colour palette',           []],
   ['money.pl',   'cart arithmetic',             []],
 );
 

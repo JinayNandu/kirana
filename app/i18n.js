@@ -26,6 +26,7 @@ export const T = {
   en: {
     // ---- shell ----
     brand: 'Kirana', brandsub: 'Borivali West',
+    pureVeg: 'Pure Veg',
     rolecust: 'Shop', roleshop: 'Store',
     back: 'Back', close: 'Close', save: 'Save', cancel: 'Cancel',
     retry: 'Try again', loading: 'Loading…',
@@ -297,6 +298,7 @@ export const T = {
   // ===================================================================
   mr: {
     brand: 'किराणा', brandsub: 'बोरिवली पश्चिम',
+    pureVeg: 'शुद्ध शाकाहारी',
     rolecust: 'दुकान', roleshop: 'स्टोअर',
     back: 'मागे', close: 'बंद', save: 'जतन करा', cancel: 'रद्द करा',
     retry: 'पुन्हा प्रयत्न करा', loading: 'लोड होत आहे…',
@@ -547,6 +549,7 @@ export const T = {
   // ===================================================================
   hi: {
     brand: 'किराना', brandsub: 'बोरीवली पश्चिम',
+    pureVeg: 'शुद्ध शाकाहारी',
     rolecust: 'दुकान', roleshop: 'स्टोर',
     back: 'पीछे', close: 'बंद', save: 'सेव करें', cancel: 'रद्द करें',
     retry: 'फिर कोशिश करें', loading: 'लोड हो रहा है…',
@@ -823,6 +826,7 @@ export function f(str, vals){
 // Element id -> key, for the handful of static labels in index.html.
 // Everything else is drawn by a render function and reads t() directly.
 export const TXT = {
+  'l-pureveg': 'pureVeg',
   'l-rolecust': 'rolecust',
   'l-roleshop': 'roleshop',
 };

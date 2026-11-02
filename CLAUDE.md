@@ -970,6 +970,32 @@ every product's name in all three languages and every search tag, and
 fails on `egg`, `chicken`, `mutton`, `fish`, `prawn`, `bacon`, `meat`,
 and on `अंड`, `चिकन`, `मांस`.
 
+### The mark in the header
+
+**"Pure Veg", beside the locality, on every screen in both roles** —
+the FSSAI mark (a filled green circle inside a green square) and the
+words, translated.
+
+- **It is drawn inline in `index.html`, NOT in `icons.js`.** That set
+  is stroked line art — `fill:none; stroke:currentColor` — and this
+  mark's meaning depends on the circle being **solid**. It is a
+  regulated symbol, not an icon, and it would be wrong if it
+  inherited that language.
+- **It sits on a light chip.** The header band is green, and a green
+  mark on a green band is not a mark. A shop's veg sticker is stuck
+  *on* the door, not painted into it.
+- `--veg-ink` / `--veg-paper` are **fixed, not themed** — the same
+  rule as `--qr-ink` / `--qr-paper`. Green on light is what the mark
+  *means*; a dark version of it is not a darker mark, it is a wrong
+  one. `parked/dark-palette.css` is told so in writing.
+- Measured **5.08** on the chip, which 10px needs.
+- ⚠️ **`.brand small` had to become a flex row.** `.brand` truncates
+  with an ellipsis, and with the mark inside one run of text the
+  *mark* was what got cut off on a narrow screen — precisely
+  backwards. The locality takes the squeeze now; the mark never does.
+  Checked at 375px in all three languages and with the back button
+  showing, which is the narrowest the brand ever gets.
+
 **Word boundaries are load-bearing**: `\begg` matches "eggs" and does
 not match **Deggi Mirch**, which is a chilli powder and has to stay.
 Proved by breaking it three ways — an English name, a Devanagari name

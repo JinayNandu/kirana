@@ -47,6 +47,11 @@
 
    --edge in dark had to go far lighter than instinct suggested or
    every divider on the page vanished.
+
+   DO NOT THEME --veg-ink / --veg-paper. They were added after this
+   was parked. The veg mark is a regulated symbol: green on light
+   is what it means, exactly like --qr-ink on --qr-paper. A dark
+   version of it is not a darker mark, it is a wrong one.
    ===================================================================== */
 
 @media (prefers-color-scheme: dark){

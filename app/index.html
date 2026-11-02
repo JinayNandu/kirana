@@ -51,6 +51,12 @@
      carrying the shop's identity. Only the text on it is themed. */
   --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
   --qr-paper:#FFFFFF; --qr-ink:#111111;
+  /* The veg mark, which is a REGULATED symbol and not decoration.
+     Green on light is what it MEANS -- the same reason --qr-ink and
+     --qr-paper are fixed rather than themed. If the dark palette
+     ever comes back out of parked/, it must leave these alone.
+     --veg-ink on --veg-paper measures 5.08, which 10px needs. */
+  --veg-ink:#1A7F37; --veg-paper:#FFFFFF;
   /* Pack shots are photographs on their own white backdrop, so the
      tile behind one is paper in BOTH themes -- the same deliberate
      non-varying token as the QR above. Tinting it to the dark UI
@@ -112,8 +118,28 @@ a{color:var(--leaf-ink)}
 }
 .brand{font-weight:700; font-size:18px; letter-spacing:-.01em; flex:1; min-width:0;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.brand small{display:block; font-weight:400; font-size:11px; color:var(--on-brand-dim);
-  letter-spacing:.04em; text-transform:uppercase; line-height:1.2}
+/* A ROW, not a block. .brand truncates with an ellipsis, and with
+   the mark inside one run of text the mark is the thing that gets
+   cut off -- which is precisely backwards. The locality takes the
+   squeeze; the mark never does. */
+.brand small{display:flex; align-items:center; font-weight:400; font-size:11px;
+  color:var(--on-brand-dim); letter-spacing:.04em; text-transform:uppercase; line-height:1.2}
+#l-brandsub{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+/* The FSSAI veg mark: a filled green circle inside a green square.
+   It is drawn here rather than in icons.js on purpose. That set is
+   stroked line art -- fill:none, stroke:currentColor -- and this
+   mark's meaning depends on the circle being SOLID, so it does not
+   belong to that language and would be wrong if it inherited it.
+   It sits on a light chip because the band behind it is green, and
+   a green mark on a green band is not a mark. A shop's veg sticker
+   is stuck ON the door, not painted into it. */
+.vegmark{
+  flex:none; display:inline-flex; align-items:center; gap:3px;
+  margin-left:7px; padding:1px 5px 1px 3px; border-radius:3px;
+  background:var(--veg-paper); color:var(--veg-ink);
+  font-weight:700; letter-spacing:.03em;
+}
+.vegsym{width:11px; height:11px; flex:none; display:block}
 
 /* The role rule sits UNDER the band now, so it reads as the band's own
    edge rather than a stripe floating on white. */
@@ -857,7 +883,15 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <button id="backbtn" type="button" hidden aria-label="Back">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <div class="brand"><span id="l-brand">Kirana</span><small id="l-brandsub">Borivali West</small></div>
+    <div class="brand"><span id="l-brand">Kirana</span><small>
+      <span id="l-brandsub">Borivali West</span>
+      <span class="vegmark">
+        <svg class="vegsym" viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="1.2" y="1.2" width="13.6" height="13.6" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"></rect>
+          <circle cx="8" cy="8" r="3.5" fill="currentColor"></circle>
+        </svg><span id="l-pureveg">Pure Veg</span>
+      </span>
+    </small></div>
     <div class="seg" id="roleseg" role="group" aria-label="View as">
       <button type="button" data-role="customer" aria-pressed="true"><span id="l-rolecust">Shop</span></button>
       <button type="button" data-role="shop"     aria-pressed="false"><svg class="ic lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg><span id="l-roleshop">Store</span></button>
