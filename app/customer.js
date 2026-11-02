@@ -224,26 +224,55 @@ const orderLines = (o, c) =>
 // A compact card for the suggestion strips. Horizontal, because the
 // cart screen's job is the total and the button -- a vertical list of
 // add-ons would push both off the page.
-function railCard(p){
+// Takes a QUANTITY, like every other card shape does. It used to
+// hardcode an Add button and never call stepper() at all, so a
+// product added from any strip -- Buy it again, Goes well with your
+// order, the offer rail, the festive rail -- went into the basket
+// and the card went on saying "Add". The tab bar counted up and the
+// thing you had just tapped looked untouched.
+function railCard(p, qty){
   return '<li class="scard">'
     + ptile(p)
     + '<span class="sname">' + esc(pname(p)) + '</span>'
     + '<span class="spack hint">' + esc(packLabel(p.pack, t())) + '</span>'
     + '<span class="sbuy"><b class="mono">' + esc(rupees(p.price)) + '</b>'
-    +   '<button type="button" class="btn small ghost" data-add="' + esc(p.id) + '">'
-    +     esc(t().add) + '</button></span>'
+    +   stepper(p, qty) + '</span>'
     + '</li>';
 }
 
-const rail = (title, list) => list.length
+// `q` is the basket, as a pid -> qty map. Every caller already had
+// to be async to fetch its list, so one more await costs nothing and
+// keeps the counting in one place.
+const rail = (title, list, q) => list.length
   ? '<h2 class="railhead">' + esc(title) + '</h2>'
-    + '<ul class="srail">' + list.map(railCard).join('') + '</ul>'
+    + '<ul class="srail">'
+    + list.map((p) => railCard(p, (q && q[p.id]) || 0)).join('') + '</ul>'
   : '';
 
 const row = (l, r, tone, raw) =>
   '<p class="trow' + (tone ? ' ' + tone : '') + '">'
   + '<span>' + (raw ? l : esc(l)) + '</span>'
   + '<span class="mono">' + (raw ? r : esc(r)) + '</span></p>';
+
+// A strip's CONTENTS are chosen once per visit; only the quantities
+// re-render after that.
+//
+// "Buy it again" and "Goes well with your order" both leave out
+// whatever is already in the basket -- a suggestion for something
+// you have is a wasted slot -- and that is right when the list is
+// BUILT. It was wrong on every repaint: adding from a strip made
+// the card vanish under your finger at the one moment you most want
+// it to stay, which is when you were about to tap + and make it
+// two. The basket count went up and the thing you touched was gone.
+//
+// Cleared on the way out of the screen, so the next visit asks
+// again and a product bought five minutes ago is gone from the
+// suggestions by the time you come back.
+async function strip(key, make){
+  S.strips = S.strips || {};
+  if (!S.strips[key]) S.strips[key] = await make();
+  return S.strips[key];
+}
 
 // Delegated: one handler per box that CONTAINS its targets.
 function wireSteppers(box){
@@ -308,11 +337,13 @@ async function offerBlock(){
   const c = t();
   const list = await catalog.onOffer(10);
   if (!list.length) return '';
+  const q = await qtyMap();
   return '<div class="offbox">'
     + '<p class="offhead">' + icon('tag') + '<span>' + esc(c.offB2G1) + '</span></p>'
     + '<p class="offsub">' + esc(c.offB2G1Sub) + '</p>'
     + '</div>'
-    + '<ul class="srail offrail">' + list.map(railCard).join('') + '</ul>';
+    + '<ul class="srail offrail">'
+    + list.map((p) => railCard(p, q[p.id] || 0)).join('') + '</ul>';
 }
 
 // The festive shelf. Drawn only while the shopkeeper's dates say so,
@@ -323,6 +354,7 @@ async function festiveBlock(){
   const c = t();
   const fest = await catalog.festival();
   if (!fest.on) return '';
+  const q = await qtyMap();
   const key = 'fest' + fest.id.charAt(0).toUpperCase() + fest.id.slice(1);
   if (!c[key]) return '';
   // A BUTTON, because it was a sign pointing at nothing: tapping the
@@ -334,7 +366,7 @@ async function festiveBlock(){
     + '<span class="festsub">' + esc(c[key + 'Sub'] || '') + '</span>'
     + '</button>'
     + '<ul class="srail festrail">'
-    + fest.products.map(railCard).join('')
+    + fest.products.map((p) => railCard(p, q[p.id] || 0)).join('')
     + '</ul>';
 }
 
@@ -359,7 +391,7 @@ registerScreen('shop', async () => {
     // order still exists, on the screen for that order, which is where
     // you are actually looking at one.
     + await festiveBlock()
-    + rail(c.buyAgain, await orders.againItems(10))
+    + rail(c.buyAgain, await strip('home.again', () => orders.againItems(10)), await qtyMap())
     // The offer, where somebody browsing will meet it. A discount
     // nobody is shown is a discount the shop pays for twice.
     + await offerBlock()
@@ -381,6 +413,7 @@ registerScreen('shop', async () => {
       + '</div>');
 
   wireSteppers(box);
+  onLeave(() => { S.strips = null; });
 
   const fg = $('festgo');
   // The aisle the band is advertising. It pointed at snacks while
@@ -472,6 +505,7 @@ registerScreen('cart', async () => {
   }
 
   const map = await catalog.byIds(lines.map((l) => l.pid));
+  const q = await qtyMap();
   const tot = await cart.totals();
   const rows = lines.map((l) => map[l.pid]).filter(Boolean);
 
@@ -490,8 +524,8 @@ registerScreen('cart', async () => {
     // adding from one left a figure the customer had already read
     // sitting stale further up the page, and pushed the button they
     // were reaching for off the bottom.
-    + rail(c.goesWith, await catalog.suggest(8))
-    + rail(c.buyAgain, await orders.againItems(8))
+    + rail(c.goesWith, await strip('cart.goes', () => catalog.suggest(8)), q)
+    + rail(c.buyAgain, await strip('cart.again', () => orders.againItems(8)), q)
 
     // Everything sells at MRP, so a coupon is the only discount there
     // is -- which makes it worth a field of its own rather than a link.
@@ -527,6 +561,7 @@ registerScreen('cart', async () => {
       + esc(c.chooseRun) + '</button>');
 
   wireSteppers(box);
+  onLeave(() => { S.strips = null; });
 
   const go = $('coupgo'), inp = $('coup'), off = $('coupoff');
   if (go) go.onclick = async () => {

@@ -913,6 +913,16 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 .sbuy{display:flex; align-items:center; justify-content:space-between; gap:var(--s2); margin-top:auto; padding-top:var(--s2)}
 .sbuy b{font-size:14px}
 .sbuy .btn{min-height:32px; padding:0 var(--s2); font-size:13px}
+/* The rail card carried an Add button and now carries a stepper,
+   which is three controls where there was one. At the default 36px
+   it overflows a 136px card and pushes the price out of it, so the
+   card gains 14px and the stepper loses its gaps. */
+.scard{flex-basis:150px}
+.scard .step{gap:0}
+.scard .step button{width:28px; height:30px}
+.scard .step button svg{width:15px; height:15px}
+.scard .step b{min-width:16px; font-size:13px}
+.scard .sbuy b{font-size:13px}
 
 .coupbox{margin:var(--s4) 0}
 .coupbox label{margin-bottom:var(--s2)}
