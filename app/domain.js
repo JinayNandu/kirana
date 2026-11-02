@@ -127,12 +127,21 @@ export function matchCoupon(code, coupons){
   return hit ? { code: String(hit), percent: coupons.percent } : null;
 }
 
-export function totals(lines, byId, rules, coupon){
-  let items = 0, mrp = 0, count = 0;
+// Buy 2 get 1 free: every THIRD unit of the same product is free.
+// Integer division, so two cost two, three cost two, seven cost
+// five -- and it can never hand out part of a packet.
+export const freeUnits = (qty) => Math.floor((qty || 0) / 3);
+
+export function totals(lines, byId, rules, coupon, offers){
+  const b2g1 = new Set((offers && offers.b2g1) || []);
+  let items = 0, mrp = 0, count = 0, offerOff = 0, freeCount = 0;
   for (const l of lines || []){
     const p = byId[l.pid];
     if (!p) continue;
-    items += p.price * l.qty;
+    const free = b2g1.has(l.pid) ? freeUnits(l.qty) : 0;
+    items    += p.price * (l.qty - free);
+    offerOff += p.price * free;
+    freeCount += free;
     mrp   += p.mrp   * l.qty;
     count += l.qty;
   }
@@ -146,6 +155,11 @@ export function totals(lines, byId, rules, coupon){
   const fee = (payable >= rules.freeOver || payable === 0) ? 0 : rules.fee;
   return {
     count, items, mrp,
+    // What the offer took off, and how many packets it gave
+    // away. Kept apart from `saved` because they are different
+    // claims: one is a discount this shop is running, the
+    // other is the gap to the printed price.
+    offerOff, freeCount,
     saved: mrp - items,                    // 0 now: everything sells at MRP
     coupon: coupon ? coupon.code : null,
     couponPercent: coupon ? coupon.percent : 0,

@@ -78,6 +78,11 @@ const ptile = (p) =>
         + ' onload="this.classList.add(\'on\');this.parentNode.classList.add(\'shot\')"'
         + ' onerror="this.remove()">'
       : '')
+  // Bottom right, which is where it was asked for and also where it
+  // costs least: a pack shot carries its brand band across the TOP,
+  // and that is the part anyone actually reads at this size.
+  + (p.offer === 'b2g1'
+      ? '<span class="offtag">' + esc(t().offTag) + '</span>' : '')
   + '</span>';
 
 // Every question says whether it has to be answered. An asterisk for
@@ -262,6 +267,9 @@ registerScreen('shop', async () => {
     // order still exists, on the screen for that order, which is where
     // you are actually looking at one.
     + rail(c.buyAgain, await orders.againItems(10))
+    // The offer, where somebody browsing will meet it. A discount
+    // nobody is shown is a discount the shop pays for twice.
+    + rail(c.offB2G1, await catalog.onOffer(10))
     + '<h2>' + esc(c.catsHead) + '</h2>'
     + '<div class="cgrid">' + cats.map((cat) =>
         // Same arrangement as a product tile: the glyph is always
@@ -402,7 +410,9 @@ registerScreen('cart', async () => {
     + '</div>'
 
     + '<div class="card totals">'
-    +   row(c.itemsTotal, rupees(tot.items))
+    +   row(c.itemsTotal, rupees(tot.items + tot.offerOff))
+    +   (tot.offerOff > 0
+        ? row(f(c.offerRow, { n: tot.freeCount }), '-' + rupees(tot.offerOff), 'leaf') : '')
     +   (tot.discount > 0
         ? row(f(c.couponSaved, { s: tot.coupon }), '-' + rupees(tot.discount), 'leaf') : '')
     +   row(c.deliveryFee, c.feeFree, 'leaf')
@@ -856,7 +866,15 @@ registerScreen('done', async () => {
       + '<h2>' + esc(c.doneItems) + '</h2>'
       + orderLines(o, c)
       + '<div class="card totals">'
-      +   row(c.itemsTotal, rupees(o.itemsTotal))
+      +   row(c.itemsTotal, rupees(o.itemsTotal + (o.offerOff != null ? o.offerOff : o.saved)))
+      // offerOff is exact. `saved` is the fallback for an order
+      // placed before that field existed, and for a Supabase row,
+      // whose table does not carry it yet -- for a shop selling
+      // everything AT MRP the two are the same number, because the
+      // only gap between mrp and price is the offer itself.
+      +   ((o.offerOff != null ? o.offerOff : o.saved) > 0
+          ? row(f(c.offerRow, { n: o.freeCount != null ? o.freeCount : 0 }),
+                '-' + rupees(o.offerOff != null ? o.offerOff : o.saved), 'leaf') : '')
       +   ((o.discount || 0) > 0
           ? row(f(c.couponSaved, { s: o.coupon }), '-' + rupees(o.discount), 'leaf') : '')
       +   row(c.deliveryFee, c.feeFree, 'leaf')

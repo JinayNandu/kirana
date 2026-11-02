@@ -36,6 +36,17 @@
       "mr" : "मिलन सुपर शॉपी"
    },
    "note" : "EVERYTHING THE SHOPKEEPER OWNS, in one file. Name, address, phone, UPI, and what delivery costs. Nothing here needs a code change. It is JSON rather than config.js so the Perl checks can read it too.",
+   "offers" : {
+      "b2g1" : [
+         "p-lays52",
+         "p-bingo66",
+         "p-kurkure90",
+         "p-balaji135",
+         "p-monaco200",
+         "p-parleg250"
+      ],
+      "note" : "Buy 2 get 1 free. Every THIRD unit of the SAME product is free: 2 cost 2, 3 cost 2, 6 cost 4, 7 cost 5. Integer division, so it can never hand out part of a packet. These are the small snack packs people already buy several of -- the offer has to be on something a basket naturally holds three of, or it is decoration. Add or remove ids here and nothing else changes; an empty list switches the offer off completely. ORDER OF OPERATIONS: the free unit is priced out BEFORE a coupon is applied, so the coupon discounts what is actually owed and the two never multiply."
+   },
    "phone" : "+918169022727",
    "phoneLocal" : "8169022727",
    "pin" : "400103",

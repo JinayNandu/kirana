@@ -61,7 +61,14 @@ const DATA = Promise.all([
   // so there is no 404 per missing image.
   const have = (imgs && imgs.images) || {};
   const has = (id) => Object.prototype.hasOwnProperty.call(have, id);
-  for (const p of products) p.img = has(p.id);
+  const onOffer = new Set((shop.offers && shop.offers.b2g1) || []);
+  for (const p of products){
+    p.img = has(p.id);
+    // A flag on the product, the same shape as p.img, so every
+    // screen that already renders a tile gets the badge free
+    // and nothing has to look the offer up a second time.
+    if (onOffer.has(p.id)) p.offer = 'b2g1';
+  }
 
   // A category wears one of its own products as its picture -- named
   // in categories.json so the shopkeeper can change which, and
@@ -81,6 +88,7 @@ const DATA = Promise.all([
     categories: cats.categories.slice().sort((a, b) => a.order - b.order),
     shop, delivery: shop.delivery, upi: shop.upi || {},
     coupons: shop.coupons || {},
+    offers: shop.offers || {},
     pairs: { byProduct: pairs.byProduct || {}, byCategory: pairs.byCategory || {} },
     slots: plan.slots,
   };
@@ -165,6 +173,12 @@ export const catalog = {
   async categories(){ return clone((await DATA).categories); },
   async all(){ return clone((await DATA).products); },
   async byCat(catId){ return clone((await DATA).products.filter((p) => p.cat === catId)); },
+  // In stock only. An offer on something that cannot be bought is
+  // worse than no offer: it is a promise the shelf cannot keep.
+  async onOffer(limit){
+    const all = (await DATA).products.filter((p) => p.offer && p.stock > 0);
+    return clone(limit ? all.slice(0, limit) : all);
+  },
   async byId(pid){ return clone((await DATA).byId[pid] || null); },
 
   async byIds(pids){
@@ -325,7 +339,7 @@ export const cart = {
 
   async totals(){
     const d = await DATA;
-    return calcTotals(read(K.cart, []), d.byId, d.delivery, await cart.coupon());
+    return calcTotals(read(K.cart, []), d.byId, d.delivery, await cart.coupon(), d.offers);
   },
 };
 
@@ -637,7 +651,7 @@ export const orders = {
     // Re-matched at placement, not trusted from the cart: a code
     // withdrawn between adding it and ordering must not still apply.
     const coupon = matchCoupon(read(K.coupon, null), d.coupons);
-    const t = calcTotals(raw, d.byId, d.delivery, coupon);
+    const t = calcTotals(raw, d.byId, d.delivery, coupon, d.offers);
     if (t.short > 0) throw new Error('BELOW_MIN');
 
     const n = nextSeq();
@@ -659,6 +673,7 @@ export const orders = {
       },
       lines,
       itemsTotal: t.items, mrpTotal: t.mrp, saved: t.saved,
+      offerOff: t.offerOff, freeCount: t.freeCount,
       coupon: t.coupon, couponPercent: t.couponPercent, discount: t.discount,
       fee: t.fee, grand: t.grand,
       // The app cannot KNOW that a UPI payment happened -- there is no

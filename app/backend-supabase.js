@@ -546,7 +546,7 @@ export const orders = {
     // Re-matched at placement, never trusted from the cart: a code
     // withdrawn between adding it and ordering must not still apply.
     const coupon = matchCoupon(await local.cart.coupon(), d.coupons);
-    const t = calcTotals(raw, d.byId, d.delivery, coupon);
+    const t = calcTotals(raw, d.byId, d.delivery, coupon, d.offers);
     if (t.short > 0) throw new Error('BELOW_MIN');
 
     const now = new Date().toISOString();

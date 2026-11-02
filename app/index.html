@@ -600,6 +600,20 @@ body[data-locked] #roleseg .lk{display:inline-block}
 }
 .pshot.on{opacity:1; background:var(--shot-paper)}
 @media (prefers-reduced-motion:reduce){ .pshot{transition:none} }
+/* The offer badge. --spice is the app's attention colour and this is
+   the only other thing competing for it -- the window-about-to-close
+   pill, which lives in the banner and on a slot card and is never on
+   screen beside a product tile. */
+.offtag{
+  position:absolute; right:3px; bottom:3px; z-index:2;
+  padding:1px 5px; border-radius:var(--r1);
+  background:var(--spice); color:var(--on-spice);
+  font-size:9px; font-weight:800; letter-spacing:.02em;
+  line-height:1.6; white-space:nowrap;
+}
+/* The cart's 64px thumbnail cannot carry the words, so it gets the
+   badge small enough to read as a mark rather than a label. */
+.prow .offtag{font-size:8px; padding:0 3px; right:2px; bottom:2px}
 .pmono{
   position:absolute; left:5px; bottom:3px;
   font-family:var(--f-mono); font-size:10px; font-weight:600;

@@ -22,6 +22,8 @@ open my $cf, '<:raw', $root . '../app/data/shop.json' or die "shop.json: $!\n";
 my $shop = JSON::PP->new->decode(<$cf>);
 close $cf;
 
+my %B2G1 = map { $_ => 1 } @{ ($shop->{offers} && $shop->{offers}{b2g1}) || [] };
+
 my $DEL = $shop->{delivery} or die "shop.json has no delivery block\n";
 my ($FEE, $FREEOVER, $MINORDER) = @{$DEL}{qw(fee freeOver minOrder)};
 die "shop.json delivery block is missing fee / freeOver / minOrder\n"
@@ -38,15 +40,21 @@ printf "  fee %d, free over %d, minimum order %d, %d products\n",
 # The same rules as totals() in app/domain.js.
 sub totals {
   my (@lines) = @_;
-  my ($items, $mrp, $count) = (0, 0, 0);
+  my ($items, $mrp, $count, $offerOff, $freeCount) = (0, 0, 0, 0, 0);
   for my $l (@lines) {
-    $items += $l->{p}{price} * $l->{qty};
+    # Every third unit of the same product, free. int() is the whole
+    # rule: it can never hand out part of a packet.
+    my $free = $B2G1{ $l->{p}{id} } ? int($l->{qty} / 3) : 0;
+    $items     += $l->{p}{price} * ($l->{qty} - $free);
+    $offerOff  += $l->{p}{price} * $free;
+    $freeCount += $free;
     $mrp   += $l->{p}{mrp}   * $l->{qty};
     $count += $l->{qty};
   }
   my $fee = ($items >= $FREEOVER || $items == 0) ? 0 : $FEE;
   return {
     count => $count, items => $items, mrp => $mrp,
+    offerOff => $offerOff, freeCount => $freeCount,
     saved => $mrp - $items, fee => $fee,
     toFree => ($FREEOVER - $items) > 0 ? $FREEOVER - $items : 0,
     short  => ($MINORDER - $items) > 0 ? $MINORDER - $items : 0,
@@ -66,7 +74,11 @@ for my $trial (1 .. 500) {
   }
   my $t = totals(@lines);
 
-  my $sum = 0; $sum += $_->{p}{price} * $_->{qty} for @lines;
+  my $sum = 0;
+  for my $l (@lines) {
+    my $free = $B2G1{ $l->{p}{id} } ? int($l->{qty} / 3) : 0;
+    $sum += $l->{p}{price} * ($l->{qty} - $free);
+  }
   bad("trial $trial items total does not equal the sum of its lines") if $t->{items} != $sum;
   bad("trial $trial grand is not items + fee")  if $t->{grand} != $t->{items} + $t->{fee};
   bad("trial $trial saving is not mrp - items") if $t->{saved} != $t->{mrp} - $t->{items};
@@ -148,6 +160,61 @@ print "  ok    500 random baskets, every invariant holds\n";
     }
     printf "  ok    %d%% coupon over 200 baskets: whole rupees, never over the basket\n", $pc;
     printf "  ok    %d codes, all distinct and typeable: %s\n", scalar @codes, join(' ', @codes);
+  }
+}
+
+
+# --- buy 2 get 1 ------------------------------------------------------
+#
+# The arithmetic is small enough to state outright, so it is checked
+# against a table rather than only against itself: a mirror of the
+# implementation that agrees with the implementation proves nothing.
+{
+  my ($victim) = grep { $B2G1{ $_->{id} } } @P;
+  if (!$victim) {
+    print "  note  no product is on buy-2-get-1, so there is nothing to check\n";
+  } else {
+    my $pr = $victim->{price};
+    my %want = (0 => 0, 1 => 1, 2 => 2, 3 => 2, 4 => 3, 5 => 4,
+                6 => 4, 7 => 5, 9 => 6, 12 => 8);
+    my $wrong = 0;
+    for my $qty (sort { $a <=> $b } keys %want) {
+      next unless $qty;
+      my $t = totals({ p => $victim, qty => $qty });
+      my $paid = $want{$qty};
+      if ($t->{items} != $pr * $paid) {
+        bad("$qty of $victim->{id} should cost $paid units, got " . ($t->{items} / $pr));
+        $wrong++;
+      }
+      if ($t->{freeCount} != $qty - $paid) {
+        bad("$qty of $victim->{id} should give " . ($qty - $paid) . " free, got $t->{freeCount}");
+        $wrong++;
+      }
+    }
+    print "  ok    buy 2 get 1: 1,2,3,4,5,6,7,9,12 all charge the right number of packets\n"
+      unless $wrong;
+  }
+
+  # A product NOT on the offer must never get one free, however many
+  # are bought. This is the half that silently over-discounts.
+  my ($plain) = grep { !$B2G1{ $_->{id} } } @P;
+  my $t = totals({ p => $plain, qty => 9 });
+  bad("$plain->{id} is not on the offer but was given $t->{freeCount} free")
+    if $t->{freeCount} != 0;
+  bad("$plain->{id} is not on the offer but its total was discounted")
+    if $t->{items} != $plain->{price} * 9;
+  print "  ok    a product not on the offer is never discounted (9 of $plain->{id})\n";
+
+  # Offer first, THEN the coupon -- never both on the full price.
+  if ($victim && $shop->{coupons} && $shop->{coupons}{percent}) {
+    my $pc = $shop->{coupons}{percent};
+    my $t3 = totals({ p => $victim, qty => 3 });
+    my $owed = $victim->{price} * 2;
+    my $cut  = int($owed * $pc / 100 + 0.5);
+    bad("the coupon should be measured on $owed (after the offer), not on the full three")
+      if $t3->{items} != $owed;
+    printf "  ok    offer is priced out before the %d%% coupon: 3 packets owe %d, coupon takes %d\n",
+      $pc, $owed, $cut;
   }
 }
 
