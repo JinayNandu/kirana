@@ -151,6 +151,11 @@ a{color:var(--leaf-ink)}
    edge rather than a stripe floating on white. */
 #rolerule{height:3px; background:var(--leaf)}
 body[data-role="shop"]   #rolerule{background:var(--spice)}
+/* The role switch belongs to whoever was given the Store link. A
+   customer on the plain URL never sees it: a button they cannot use
+   is noise at best, and an invitation to tap at worst. See ui.js --
+   this hides a control, it does not lock a door. */
+body:not([data-store]) #roleseg{display:none}
 
 #backbtn{
   width:40px; height:40px; margin-left:calc(var(--s2) * -1);

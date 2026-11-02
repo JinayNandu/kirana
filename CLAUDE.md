@@ -350,6 +350,37 @@ somebody forgets to add to the fifth.
 `ui.js` owns the gate screen and calls in to ask whether it has to
 draw one, so the import graph stays a tree.
 
+#### Two links, one document
+
+| | |
+|---|---|
+| `…/kirana/` | the customer. **No Store button at all.** |
+| `…/kirana/?store` | the shopkeeper. Opens straight onto the gate. |
+
+`?store` sets `kirana.storedoor` in localStorage and `data-store` on
+the body; CSS hides `#roleseg` without it. So the owner opens his link
+once and his phone remembers, while a customer never sees a control
+they cannot use — a button that only leads to a code box is noise at
+best and an invitation to poke at worst.
+
+⚠️ **This is not a lock and nothing may ever be built on the belief
+that it is.** Same file, same JavaScript, and `?store` is five
+characters anybody could guess or read in the source. What keeps a
+stranger off the board is the six-digit code, and after the Supabase
+swap the server refusing to hand them anybody's orders. All this
+decides is whether a BUTTON is drawn.
+
+**`?store`, not `?shop`.** In this app "Shop" is the CUSTOMER's half
+and "Store" is the staff half — the same trap that made the gate say
+*Store code* rather than *shop code*. Naming the link after the wrong
+one is how somebody hands the owner the customer link and then
+wonders why he cannot see his orders.
+
+This replaces an earlier rule that the role switch is always visible
+"because this is a demo of three roles and hiding the switch is how a
+demo fumbles". That was true of a demo and stopped being true the day
+a customer was going to open it.
+
 #### What it is, said plainly
 
 It is a lock on a door, and it is worth having: it stops the thing

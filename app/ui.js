@@ -149,6 +149,43 @@ addEventListener('popstate', () => {
 //  design. Two windows side by side, one Shop and one Store, is the
 //  whole demo; a shared role would switch both at once.
 // ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//  Two front doors, one document
+//
+//  A customer opening the plain link never sees the Store button. It
+//  is a door they cannot open, and the only thing it can do for them
+//  is invite a tap that ends at a code box. The shopkeeper opens the
+//  link with ?store on it once, and the device remembers.
+//
+//  ⚠️ THIS IS NOT A LOCK, and nothing should ever be built on the
+//  belief that it is. Same file, same JavaScript, and `?store` is
+//  five characters anybody could guess or find in the source. What
+//  keeps a stranger off the board is the six-digit code, and after
+//  the Supabase swap the server refusing to hand them anybody's
+//  orders. All this decides is whether a BUTTON is drawn.
+//
+//  `?store` and not `?shop`, deliberately: in this app "Shop" is the
+//  CUSTOMER's half and "Store" is the staff half. Naming the link
+//  after the wrong one is exactly how somebody hands the owner the
+//  customer link and wonders why he cannot see his orders.
+// ---------------------------------------------------------------------
+const DOOR = 'kirana.storedoor';
+
+function storeDoor(){
+  let open = false;
+  try { open = localStorage.getItem(DOOR) === '1'; } catch {}
+  const asked = /(^|[?&])store(=|&|$)/.test(location.search);
+  if (asked){
+    open = true;
+    try { localStorage.setItem(DOOR, '1'); } catch {}
+  }
+  // An attribute on the body, like data-locked and data-acct: the
+  // CSS decides what that means, and no screen has to ask.
+  if (open) document.body.setAttribute('data-store', '');
+  else document.body.removeAttribute('data-store');
+  return { open, asked };
+}
+
 export function setRole(r, firstRun){
   if (!HOME[r]) return;
 
@@ -494,8 +531,17 @@ export function boot(){
     if (b) show(b.dataset.go, false);
   };
 
+  const door = storeDoor();
   let r = 'customer';
   try { r = sessionStorage.getItem('kirana.role') || 'customer'; } catch {}
-  setRole(HOME[r] ? r : 'customer', true);
+  // Arriving ON the staff link goes to the board, which means the
+  // gate opens -- that is the whole point of the link. Otherwise
+  // restore whatever this tab was last on, and never the Store view
+  // on a device that has never been given the link.
+  if (door.asked) r = 'shop';
+  else if (!door.open) r = 'customer';
+  // firstRun false on the staff link, so setRole() opens the code
+  // box instead of falling back to the storefront quietly.
+  setRole(HOME[r] ? r : 'customer', !door.asked);
   paint();
 }
