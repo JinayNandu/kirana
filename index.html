@@ -6,24 +6,44 @@
   app/ because tools/ and parked/ are not things to publish. So the
   short URL lands here and goes on.
 
-  The redirect is a <meta refresh> rather than JavaScript, so it still
-  works with scripts off, and the link underneath is there for the
-  case where even that is ignored. Relative paths throughout: this has
-  to work at example.github.io/kirana/ as well as at a bare domain.
+  TWO redirects, in this order. JavaScript first, because it is the
+  only one that can carry ?store across -- and that query is the whole
+  difference between the customer's link and the shopkeeper's. The
+  <meta refresh> is the fallback for scripts off, and it lands on the
+  storefront, which is the right default for whoever that is. The link
+  underneath is there for the case where even the meta is ignored.
+
+  Relative paths throughout: this has to work at
+  example.github.io/kirana/ as well as at a bare domain.
 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="0; url=./app/">
+<script>
+  // ⚠️ A <meta refresh> CANNOT CARRY A QUERY STRING, and ?store is
+  // the entire difference between the customer's link and the
+  // shopkeeper's. Without this, …/kirana/?store landed here, bounced
+  // to ./app/ with the query dropped on the floor, and the
+  // shopkeeper got the storefront with no Store button on it.
+  //
+  // It did not show up in local testing because tools/serve.pl
+  // serves app/ AS the root -- there is no redirect to lose it. The
+  // bug only exists on the deployed path, which is the one nobody
+  // was testing.
+  //
+  // replace(), not assign(), so the back button does not land the
+  // customer back on this page and bounce them forward again.
+  location.replace("./app/" + location.search + location.hash);
+</script>
 <link rel="canonical" href="./app/">
 <title>Milan's Super Shoppe</title>
 <style>
-  :root{ --paper:#FAF7F0; --ink:#1C1A17; --leaf:#1F5C3D; }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){ --paper:#14120F; --ink:#F2EEE6; --leaf:#7FBF9A; }
-  }
-  :root[data-theme="dark"]{ --paper:#14120F; --ink:#F2EEE6; --leaf:#7FBF9A; }
+  /* Light only, like the app. This page kept a dark palette after
+     dark was parked, so a phone set to dark flashed a dark page for
+     an instant and then landed on a light one. */
+  :root{ --paper:#FAF7F0; --ink:#1C1A17; --leaf:#1F5C3D; color-scheme:light; }
   html,body{height:100%}
   body{
     margin:0; display:grid; place-items:center; text-align:center;
@@ -35,6 +55,10 @@
 </style>
 </head>
 <body>
-  <p>Taking you to <a href="./app/">Milan&rsquo;s Super Shoppe</a>&hellip;</p>
+  <p>Taking you to <a id="go" href="./app/">Milan&rsquo;s Super Shoppe</a>&hellip;</p>
+  <script>
+    // Only reached if the redirect above was blocked. Same query.
+    document.getElementById("go").href = "./app/" + location.search + location.hash;
+  </script>
 </body>
 </html>

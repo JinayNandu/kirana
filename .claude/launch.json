@@ -10,6 +10,16 @@
         "C:/Users/Nandu jinay/Projects/kirana/app"
       ],
       "port": 8110
+    },
+    {
+      "name": "kirana-as-deployed",
+      "runtimeExecutable": "C:/Users/Nandu jinay/AppData/Local/Programs/Git/usr/bin/perl.exe",
+      "runtimeArgs": [
+        "C:/Users/Nandu jinay/Projects/kirana/tools/serve.pl",
+        "8111",
+        "C:/Users/Nandu jinay/Projects/kirana"
+      ],
+      "port": 8111
     }
   ]
 }

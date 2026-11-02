@@ -75,6 +75,13 @@ while (1) {
     my @parts = grep { length && $_ ne '.' && $_ ne '..' } split m{/}, $path;
     my $file  = join('/', $root, @parts);
 
+    # A directory serves its index.html, which is what GitHub Pages
+    # does and what this did not. Serving app/ directly made that
+    # invisible: there was never a directory to resolve, so the
+    # repo-root redirect -- the thing that drops a query string --
+    # was never once exercised locally.
+    $file .= ($file =~ m{/$} ? '' : '/') . 'index.html' if -d $file;
+
     if (index($file, $root) != 0 || !-f $file) {
       print $c "HTTP/1.1 404 Not Found\r\n"
              . "Content-Length: 9\r\nConnection: close\r\n\r\nNot found";
