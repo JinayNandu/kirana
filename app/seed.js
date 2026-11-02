@@ -49,7 +49,7 @@ const PEOPLE = [
     flat: '602', society: 'Sai Krupa CHS', area: 'Vazira Naka',
     landmark: 'Next to the medical store',
     items: [['p-dal-toor1', 1], ['p-ghee-amul500', 1], ['p-bread-ww', 1],
-            ['p-eggs12', 1], ['p-tomato1', 2]] },
+            ['p-tomato1', 2]] },
 ];
 
 export async function seedIfEmpty(){

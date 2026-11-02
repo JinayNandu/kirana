@@ -9,7 +9,7 @@
     { "id": "drinks",  "order": 4,  "hero": "p-maaza600", "tile": "bottle",
       "name": { "en": "Cold Drinks & Water", "mr": "थंड पेये आणि पाणी", "hi": "कोल्ड ड्रिंक और पानी" } },
     { "id": "dairy",   "order": 5,  "hero": "p-amultaaza500", "tile": "carton",
-      "name": { "en": "Milk, Bread & Eggs", "mr": "दूध, ब्रेड आणि अंडी", "hi": "दूध, ब्रेड और अंडे" } },
+      "name": { "en": "Milk, Bread & Paneer", "mr": "दूध, ब्रेड आणि पनीर", "hi": "दूध, ब्रेड और पनीर" } },
     { "id": "tea",     "order": 6,  "hero": "p-tatatea500", "tile": "tin",
       "name": { "en": "Tea, Coffee & Health", "mr": "चहा, कॉफी आणि हेल्थ", "hi": "चाय, कॉफ़ी और हेल्थ" } },
     { "id": "fresh",   "order": 7,  "hero": "p-tomato1", "tile": "leaf",

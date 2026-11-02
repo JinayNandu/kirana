@@ -208,6 +208,25 @@ for my $p (@{ $cat->{products} }) {
   bad("product $id names category '$p->{cat}', which does not exist") unless $catid{ $p->{cat} };
   bad("product $id tile '$p->{tile}' is not a declared glyph") unless $TILES{ $p->{tile} };
   bad("product $id pack unit '$p->{pack}{u}' is not allowed") unless $UNITS{ $p->{pack}{u} };
+  # Milan's Super Shoppe is a PURE VEG shop. That is a fact about
+  # the business, not a filter on a list, so it belongs in a check
+  # rather than in somebody's memory of a conversation: a catalogue
+  # is edited by hand, by whoever is to hand, and the day eggs come
+  # back in it will be as one ordinary-looking row among 114.
+  #
+  # Word boundaries matter here -- \begg matches "eggs" and does NOT
+  # match "Deggi Mirch", which is a chilli powder and has to stay.
+  for my $l (@LANGS) {
+    my $name = $p->{name}{$l} // '';
+    bad("product $id is not vegetarian: its $l name says '$1'")
+      if $name =~ /\b(eggs?|chicken|mutton|fish|prawns?|bacon|meat)\b/i
+      || $name =~ /(\xe0\xa4\x85\xe0\xa4\x82\xe0\xa4\xa1|\xe0\xa4\x9a\xe0\xa4\xbf\xe0\xa4\x95\xe0\xa4\xa8|\xe0\xa4\xae\xe0\xa4\xbe\xe0\xa4\x82\xe0\xa4\xb8)/;
+  }
+  for my $t (@{ $p->{tags} || [] }) {
+    bad("product $id is not vegetarian: it carries the search tag '$t'")
+      if $t =~ /\b(eggs?|chicken|mutton|fish|prawns?|bacon|meat)\b/i
+      || $t =~ /(\xe0\xa4\x85\xe0\xa4\x82\xe0\xa4\xa1|\xe0\xa4\x9a\xe0\xa4\xbf\xe0\xa4\x95\xe0\xa4\xa8|\xe0\xa4\xae\xe0\xa4\xbe\xe0\xa4\x82\xe0\xa4\xb8)/;
+  }
   $percat{ $p->{cat} }++;
   $bycat{$id} = $p->{cat};
 

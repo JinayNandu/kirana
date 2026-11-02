@@ -70,7 +70,6 @@ my %COMMONS = (
   'p-chilli250'   => 'green chili peppers',
   'p-coriander1'  => 'coriander leaves cilantro bunch',
   'p-curryleaf1'  => 'curry leaves murraya koenigii',
-  'p-eggs12'      => 'chicken eggs carton',
   'p-sugar1'      => 'white sugar crystals',
   'p-poha500'     => 'poha flattened rice',
   'p-rajma500'    => 'kidney beans dried',

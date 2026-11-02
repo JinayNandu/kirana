@@ -82,12 +82,12 @@ app/
   lock.js           PURE -- the code that opens the Store view
   pay.js            UPI link + QR. Takes no money -- see below.
   seed.js           demo orders, on a device that has never been used
-  icons.js          20 pack glyphs + interface icons
+  icons.js          26 pack glyphs + interface icons
   config.js         CDN pins -- technical plumbing ONLY
   data/
     shop.json         THE SHOPKEEPER'S FILE -- name, address, phone,
                       UPI id, what delivery costs
-    catalog.json      115 products
+    catalog.json      114 products
     categories.json   10 categories
     pairs.json        what goes with what -- basket suggestions
     runplan.json      the three delivery windows
@@ -641,7 +641,7 @@ order**, where the items are listed directly above the button, so
 belonged all along; on the home screen it was a feature wearing a
 database key as its label.
 
-**All 115 products have an entry** — 316 pairings — and `data.pl`
+**All 114 products have an entry** — 305 pairings — and `data.pl`
 **fails** if one does not. Without an entry a basket of that product
 alone falls through to its category rule, which offers the cheapest
 things from a neighbouring aisle: technically a suggestion, visibly a
@@ -733,11 +733,13 @@ already knows how to read his own UPI app.
 ## Design
 
 Warm paper, deep green `--leaf`, turmeric `--spice` for the run that is
-about to close. **41 tokens, both palettes, same set.** No component
+about to close. **47 tokens, one palette.** No component
 rule names a colour — `tokens.pl` enforces both halves of that.
 
 - `--on-leaf` / `--on-spice` / `--on-sky` for text on a filled accent.
-  **Never hardcode `#fff`** — the dark accents are light.
+  **Never hardcode `#fff`** — these exist so a filled accent can be
+  restyled in one place, and they are what a restored dark palette
+  would redefine first.
 - `--ink-dim` had to be measured and moved **twice**: 2.73 on `--sunk`
   in light and 3.57 in dark, both fails for 13px text. The pack
   monogram now uses `--ink-soft` instead, because it was the only
@@ -838,7 +840,7 @@ Settings carries the credit, because that is a **condition** of using
 them and not a courtesy.
 
 The loose goods have no packet and no barcode, so no barcode database
-holds a picture of them. Onion, eggs, poha and the rest come from
+holds a picture of them. Onion, potato, poha and the rest come from
 **Wikimedia Commons** instead, through a hand-written search term each
 (`%COMMONS` in the script): Commons rewards precision and punishes
 vagueness, and a bare "onion" returns botanical plates.
@@ -948,6 +950,54 @@ of dots turning into a face.
 
 ---
 
+## A pure veg shop
+
+Milan's Super Shoppe sells **no eggs, no meat, no fish**. The one
+non-vegetarian row the catalogue ever had — `p-eggs12`, "Eggs, tray of
+12" — is gone, along with its photograph, its search tags in three
+languages, its seven entries in `pairs.json`, its line in the demo
+order, and the `egg` glyph, which had nothing left to stand for.
+
+The dairy aisle was called **"Milk, Bread & Eggs"**. It is **"Milk,
+Bread & Paneer"** now, in all three languages. Renaming it mattered as
+much as removing the product: a category heading is read by everyone
+who opens the shop, including the people the shop is for.
+
+⚠️ **`data.pl` enforces this, and that is the point.** A catalogue is
+edited by hand, by whoever is to hand, and the day eggs come back they
+will arrive as one ordinary-looking row among 114. The check reads
+every product's name in all three languages and every search tag, and
+fails on `egg`, `chicken`, `mutton`, `fish`, `prawn`, `bacon`, `meat`,
+and on `अंड`, `चिकन`, `मांस`.
+
+**Word boundaries are load-bearing**: `\begg` matches "eggs" and does
+not match **Deggi Mirch**, which is a chilli powder and has to stay.
+Proved by breaking it three ways — an English name, a Devanagari name
+and a search tag — and by checking that a name containing "Deggi"
+still passes.
+
+## One palette
+
+**Dark mode is parked**, on the owner's call — *"for now only keep the
+light mode, the dark mode is not looking too good"*. It is in
+`parked/dark-palette.css` with everything already measured written
+down, so putting it back is a paste and not a re-derivation.
+
+`:root` keeps `color-scheme:light`, which is doing real work rather
+than stating the obvious: without it a phone set to dark renders the
+form controls, scrollbars and autofill in dark against a light page,
+which looks like a bug rather than a preference. **Verified with the
+OS set to dark**: `--paper` resolves `#F7F5F0` and `color-scheme` is
+`light`.
+
+⚠️ **`tokens.pl` now refuses to run if a dark `:root` block comes
+back**, naming the parked file. Three checks went with the palette —
+light/dark colour parity, no dark-only tokens, and the two dark blocks
+being byte-identical — and a second palette without them ships holes
+that are invisible from the light one: a token defined in light and
+forgotten in dark renders as whatever it inherits, which is usually
+almost right.
+
 ## Cross-tab sync — the demo
 
 Two windows side by side, customer left, Store right: place an order and
@@ -1008,7 +1058,7 @@ otherwise have to sit and wait for.
 | `i18n.pl` | en/mr/hi key parity, **duplicate keys** (they overwrite silently and counting does not catch it), placeholder parity, and a **missing trailing comma** -- a syntax error that leaves every brace and quote balanced, so balance.pl cannot see it, and the whole app then fails to parse. It has happened twice; the check is proved by removing one and watching it fail., and **double-encoded Devanagari** -- see below. |
 | `data.pl` | ids, categories, whole rupees, `price <= mrp`, all three names present, the delivery windows not overlapping, a demo UPI id that cannot resolve, every pairing naming a product that still exists, every product having a pairing of its own, and the shape of the Store code -- including a **loud failure if the code itself ever gets written into `shop.json`**, which is served to every visitor |
 | `slots.pl` | the run state machine across a whole day, **including 00:15 IST**; also greps for `toISOString` outside `domain.js` |
-| `tokens.pl` | both palettes define the same colour set; no literal colour in a component rule |
+| `tokens.pl` | every `var(--x)` is defined; no literal colour in a component rule; and it REFUSES TO RUN if a dark `:root` block reappears, because the checks that guarded a second palette were parked with it |
 | `money.pl` | 500 random baskets; the minimum-order-on-items case against a synthetic minimum, since the shop now has none; and 200 coupon baskets for whole-rupee, once-on-the-total rounding |
 
 ### The bug that every other check passed through

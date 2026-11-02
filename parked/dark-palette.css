@@ -1,0 +1,104 @@
+/* =====================================================================
+   Parked: the dark palette
+
+   Taken out of the app on the owner's call -- "for now only keep the
+   light mode, the dark mode is not looking too good". Nothing here is
+   broken; it was measured and it passed every contrast check. It is
+   simply not wanted yet.
+
+   WHAT IT IS
+
+   Two blocks, deliberately identical:
+
+     @media (prefers-color-scheme: dark) :root:not([data-theme="light"])
+         dark because the operating system asked for it
+     :root[data-theme="dark"]
+         dark because a HOST forced it -- an artifact frame can set
+         data-theme itself, and a page carrying only the media query
+         ignores the viewer's own toggle
+
+   PUTTING IT BACK
+
+   1. Paste both blocks back into app/index.html, immediately after the
+      :root light palette and before the `/* ===== */` rule that opens
+      the component styles. Order matters: they must come after :root.
+   2. Restore the dark theme-color meta in <head>:
+        <meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#12150F" media="(prefers-color-scheme: dark)">
+   3. tools/tokens.pl -- the three checks that guarded a second palette
+      were removed with it and MUST come back, or the theme ships with
+      holes invisible from the light one:
+        - every light token carrying a colour is redefined in dark
+        - no token exists in dark that is missing from light
+        - the two dark blocks are byte-identical to each other
+      tokens.pl currently FAILS on sight of a dark :root block for
+      exactly this reason, and that failure names this file.
+
+   WHAT WAS ALREADY PAID FOR, so nobody re-measures it
+
+   --ink-dim had to be raised twice. At the obvious value it scored
+   3.57 against --sunk, and it carries 13px hint text -- small text,
+   so it needs 4.5 and not 3.
+
+   --brand is the SAME green in both themes, like --qr-paper and
+   --shot-paper: a shop sign does not change colour at dusk. Only the
+   text on it is themed, through --on-brand (8.50 on the band) and
+   --on-brand-dim (4.91, which 11px uppercase needs).
+
+   --edge in dark had to go far lighter than instinct suggested or
+   every divider on the page vanished.
+   ===================================================================== */
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12150F; --card:#1B1F17; --sunk:#232820;
+    /* --ink-dim measured at 3.57 on --sunk at the obvious value and
+       had to come up: it carries 13px hint text, which is small text
+       and so needs 4.5, not 3. */
+    --ink:#E9EDE4; --ink-soft:#A3AB9B; --ink-dim:#929B89;
+    --edge:#2E342A; --edge-2:#434A3C;
+
+    --leaf:#5FBF8C;  --leaf-wash:#17291F;  --leaf-ink:#7FD1A4;
+    --spice:#E8A33F; --spice-wash:#2C2114; --spice-ink:#F0B761;
+    --sky:#5BAFD4;   --sky-wash:#14242C;   --sky-ink:#7EC3E0;
+    --bad:#E07A72;   --bad-wash:#2C1816;   --bad-ink:#EA968F;
+
+    --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
+    --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+    --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
+
+    --sh-card:0 1px 3px rgba(0,0,0,.4);
+    --sh-lift:0 2px 10px rgba(0,0,0,.5);
+    --scrim:rgba(0,0,0,.72);
+    color-scheme:dark;
+  }
+}
+
+
+/* The same palette again, for a host that forces the theme rather
+   than letting the OS decide. Both must exist or the artifact
+   ignores the viewer toggle. tokens.pl checks all three blocks. */
+:root[data-theme="dark"]{
+    --paper:#12150F; --card:#1B1F17; --sunk:#232820;
+    /* --ink-dim measured at 3.57 on --sunk at the obvious value and
+       had to come up: it carries 13px hint text, which is small text
+       and so needs 4.5, not 3. */
+    --ink:#E9EDE4; --ink-soft:#A3AB9B; --ink-dim:#929B89;
+    --edge:#2E342A; --edge-2:#434A3C;
+
+    --leaf:#5FBF8C;  --leaf-wash:#17291F;  --leaf-ink:#7FD1A4;
+    --spice:#E8A33F; --spice-wash:#2C2114; --spice-ink:#F0B761;
+    --sky:#5BAFD4;   --sky-wash:#14242C;   --sky-ink:#7EC3E0;
+    --bad:#E07A72;   --bad-wash:#2C1816;   --bad-ink:#EA968F;
+
+    --on-leaf:#06130C; --on-spice:#241703; --on-sky:#04161E; --on-bad:#2A0D0A;
+    --qr-paper:#FFFFFF; --qr-ink:#111111; --shot-paper:#FFFFFF;
+    --brand:#19573C; --on-brand:#FFFFFF; --on-brand-dim:#A9CDBA; --brand-well:#0F3D29;
+
+    --sh-card:0 1px 3px rgba(0,0,0,.4);
+    --sh-lift:0 2px 10px rgba(0,0,0,.5);
+    --scrim:rgba(0,0,0,.72);
+    color-scheme:dark;
+}
+
+

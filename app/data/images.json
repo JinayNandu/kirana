@@ -256,12 +256,6 @@
          "matched" : "Beauty cream bar",
          "source" : "world.openbeautyfacts.org"
       },
-      "p-eggs12" : {
-         "bytes" : 64760,
-         "matched" : "File:Egg cartons with chicken eggs 03.jpg",
-         "page" : "https://commons.wikimedia.org/wiki/File:Egg_cartons_with_chicken_eggs_03.jpg",
-         "source" : "commons.wikimedia.org"
-      },
       "p-frooti600" : {
          "brands" : null,
          "bytes" : 23529,

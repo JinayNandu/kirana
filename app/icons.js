@@ -47,7 +47,6 @@ const P = {
   tomato:  '<circle cx="12" cy="14.5" r="6.2"/><path d="M12 8.3V5.5"/><path d="M12 8.3c-1.5-1.6-3.3-2-5-1.4.5 1.9 2.1 3 3.9 2.8"/><path d="M12 8.3c1.5-1.6 3.3-2 5-1.4-.5 1.9-2.1 3-3.9 2.8"/>',
   chilli:  '<path d="M9 4h3.5"/><path d="M10.7 4c0 2 1 3.5 2.6 4.1"/><path d="M13.3 8.1c2.8 1.1 4.6 3.7 4.6 6.6 0 2.9-2.2 5.1-5.1 5.1-4.3 0-7.8-3.5-7.8-7.8 0-2.2 1.7-3.9 3.9-3.9z"/>',
   candle:  '<rect x="8.5" y="9" width="7" height="12" rx="1"/><path d="M12 9V7"/><path d="M12 7c1.6-1 2-2.4 1.3-3.8C11.5 3.8 10.6 5.2 12 7z"/>',
-  egg:     '<path d="M12 2c3.5 0 6.5 5.8 6.5 10.5A6.5 6.5 0 0 1 5.5 12.5C5.5 7.8 8.5 2 12 2z"/>',
   grain:   '<path d="M12 21V11"/><path d="M12 11c0-3 1.6-5.5 4-6.5 0 3-1.6 5.5-4 6.5z"/><path d="M12 11c0-3-1.6-5.5-4-6.5 0 3 1.6 5.5 4 6.5z"/><path d="M12 17c0-2.5 1.4-4.5 3.5-5.3 0 2.5-1.4 4.5-3.5 5.3z"/><path d="M12 17c0-2.5-1.4-4.5-3.5-5.3 0 2.5 1.4 4.5 3.5 5.3z"/>',
   roll:    '<rect x="4" y="5" width="16" height="14" rx="3"/><ellipse cx="8" cy="12" rx="2.4" ry="4.6"/>',
 
@@ -80,7 +79,7 @@ const P = {
 // drift from: five glyphs added here failed the check for not
 // existing, from the very file the check was reading names out of.
 export const TILES = ['bottle','carton','can','packet','pouch','sack','biscuit',
-  'box','jar','tin','tube','soap','spray','loaf','leaf','fruit','egg','grain',
+  'box','jar','tin','tube','soap','spray','loaf','leaf','fruit','grain',
   'roll','bag','banana','potato','tomato','chilli','candle','jug','plugin'];
 
 export function icon(name, cls){

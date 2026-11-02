@@ -1391,30 +1391,6 @@
          "tile" : "loaf"
       },
       {
-         "brand" : "Shop",
-         "cat" : "dairy",
-         "id" : "p-eggs12",
-         "mrp" : 90,
-         "name" : {
-            "en" : "Eggs, tray of 12",
-            "hi" : "अंडे, 12 नग",
-            "mr" : "अंडी, १२ नग"
-         },
-         "pack" : {
-            "n" : 12,
-            "u" : "pc"
-         },
-         "price" : 90,
-         "stock" : 30,
-         "tags" : [
-            "egg",
-            "anda",
-            "अंडी",
-            "अंडे"
-         ],
-         "tile" : "egg"
-      },
-      {
          "brand" : "Mother Dairy",
          "cat" : "dairy",
          "id" : "p-lassi200",

@@ -31,16 +31,10 @@ die "no <style> block found\n" unless $css;
 # that cries wolf is worse than no checker.
 $css =~ s{/\*.*?\*/}{}gs;
 
-# Three :root blocks:
-#   :root                              the light palette
-#   :root:not([data-theme="light"])    dark, when the OS says so
-#   :root[data-theme="dark"]           dark, when the host forces it
-#
-# The last two must exist and must be IDENTICAL. An artifact host can
-# set data-theme itself, so a page with only the media query ignores
-# the viewer's toggle -- and two dark palettes that have drifted apart
-# give different colours depending on how dark was arrived at, which
-# is the kind of bug nobody reproduces on purpose.
+# ONE :root block, the light palette. There were three -- light, dark
+# by media query, and dark forced by a host setting data-theme -- and
+# the two dark ones are in parked/dark-palette.css now. This file
+# refuses to run if either comes back without its checks.
 my %raw;
 while ($css =~ /(:root[^{]*)\{([^}]*)\}/g) {
   my ($sel, $body) = ($1, $2);
@@ -52,8 +46,19 @@ while ($css =~ /(:root[^{]*)\{([^}]*)\}/g) {
   next unless $which;
   $raw{$which} = $body;
 }
-for my $need (qw(light dark darkforced)) {
-  die "no :root block found for '$need'\n" unless defined $raw{$need};
+die "no :root block found for the light palette\n" unless defined $raw{light};
+
+# Dark is PARKED -- parked/dark-palette.css. If a dark block has come
+# back, the three checks that guarded a second palette have to come
+# back with it, and they are not in this file any more. Shipping a
+# second palette without them means holes nobody can see from the
+# light one: a token defined in light and forgotten in dark renders
+# as whatever it inherits, which is usually almost right.
+for my $gone (qw(dark darkforced)) {
+  next unless defined $raw{$gone};
+  die "index.html has a '$gone' :root block, but dark mode is parked and\n"
+    . "the checks that guard a second palette went with it.\n"
+    . "See parked/dark-palette.css -- it says exactly what to restore here.\n";
 }
 
 my %def;
@@ -72,31 +77,8 @@ sub bad { printf "  FAIL  %s\n", $_[0]; $fails++ }
 # in both themes -- only a token carrying a COLOUR has to be redefined.
 my $is_colour = sub { $_[0] =~ /#[0-9A-Fa-f]{3,8}\b|\brgba?\(|\bhsla?\(/ };
 
-printf "  light defines %d tokens, dark redefines %d\n",
-  scalar keys %{ $def{light} }, scalar keys %{ $def{dark} };
+printf "  one palette, %d tokens\n", scalar keys %{ $def{light} };
 
-for my $t (sort keys %{ $def{light} }) {
-  next if $def{dark}{$t};
-  next unless $is_colour->($def{light}{$t});
-  bad("$t carries a colour but is only defined in the light palette");
-}
-for my $t (sort keys %{ $def{dark} }) {
-  bad("$t is defined in dark but NOT in light") unless exists $def{light}{$t};
-}
-
-# The two dark palettes must agree exactly.
-{
-  my %all = map { $_ => 1 } (keys %{ $def{dark} }, keys %{ $def{darkforced} });
-  my $drift = 0;
-  for my $t (sort keys %all) {
-    my $a = $def{dark}{$t};
-    my $b = $def{darkforced}{$t};
-    if (!defined $a)      { bad("$t is in :root[data-theme=dark] but not the media query"); $drift++ }
-    elsif (!defined $b)   { bad("$t is in the dark media query but not :root[data-theme=dark]"); $drift++ }
-    elsif ($a ne $b)      { bad("$t differs between the two dark palettes: '$a' vs '$b'"); $drift++ }
-  }
-  print "  ok    both dark palettes are identical (", scalar keys %all, " tokens)\n" unless $drift;
-}
 
 # --- every var(--x) resolves ------------------------------------------
 my %used;
@@ -137,5 +119,5 @@ if (@lits) {
   print "  ok    no component rule names a colour\n";
 }
 
-print $fails ? "\n$fails FAILED\n" : "\nboth palettes agree\n";
+print $fails ? "\n$fails FAILED\n" : "\nthe palette holds together\n";
 exit($fails ? 1 : 0);
