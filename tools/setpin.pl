@@ -78,7 +78,7 @@ if ($code eq '--off') {
 die "The code must be exactly 6 digits -- got '$code'.\n"
   unless $code =~ /\A[0-9]{6}\z/;
 
-# Four obvious ones, refused by name. A code anybody would try first
+# Six obvious ones, refused by name. A code anybody would try first
 # is not a code, and finding that out from a script beats finding it
 # out from a customer standing at the counter.
 my %silly = map { $_ => 1 } qw(000000 111111 123456 654321 121212 999999);
