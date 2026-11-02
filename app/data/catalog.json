@@ -896,7 +896,7 @@
       },
       {
          "brand" : "Cadbury",
-         "cat" : "snacks",
+         "cat" : "sweets",
          "id" : "p-dairymilk50",
          "mrp" : 50,
          "name" : {
@@ -919,7 +919,7 @@
       },
       {
          "brand" : "Cadbury",
-         "cat" : "snacks",
+         "cat" : "sweets",
          "id" : "p-bournville80",
          "mrp" : 110,
          "name" : {
@@ -2728,7 +2728,7 @@
       },
       {
          "brand" : "Haldiram's",
-         "cat" : "snacks",
+         "cat" : "sweets",
          "id" : "p-soanpapdi500",
          "mrp" : 185,
          "name" : {
@@ -2755,7 +2755,7 @@
       },
       {
          "brand" : "Shop",
-         "cat" : "snacks",
+         "cat" : "sweets",
          "id" : "p-kajukatli250",
          "mrp" : 425,
          "name" : {
@@ -2783,7 +2783,7 @@
       },
       {
          "brand" : "Shop",
-         "cat" : "snacks",
+         "cat" : "sweets",
          "id" : "p-dryfruit400",
          "mrp" : 480,
          "name" : {

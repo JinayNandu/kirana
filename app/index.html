@@ -525,7 +525,7 @@ body[data-locked] #roleseg .lk{display:inline-block}
      white backdrop belongs to a photograph that has arrived. */
   opacity:0; transition:opacity .18s ease;
 }
-.cshot.on{opacity:1; background:var(--shot-paper)}
+.cshot.on{opacity:1}
 @media (prefers-reduced-motion:reduce){ .cshot{transition:none} }
 .ccard:active{background:var(--sunk)}
 
@@ -563,7 +563,15 @@ body[data-locked] #roleseg .lk{display:inline-block}
    shaped packets look like one set. In the cart's rows the backdrop
    stays, because there the tile is small and a grey edge round a 64px
    thumbnail reads as a smudge. */
-.pcard .pshot.on, .scard .pshot.on{background:transparent}
+/* Once a PHOTOGRAPH has arrived the well turns white, so a pack shot
+   on a white studio background merges into its tile instead of
+   sitting in a beige box. Most of them are on white now, which was
+   not true when --sunk was chosen: back then the well was what made
+   a row of differently framed snapshots look like one set.
+   A DRAWN GLYPH keeps the well. A line drawing with no frame at all
+   floats on a white card with nothing holding it, and eleven
+   products still have no photograph. */
+.ptile.shot, .ctile.shot{background:var(--shot-paper)}
 /* One margin inside every frame, on every screen that shows a
    photograph big. These were contributed by different people with
    different ideas of how much table to leave around a packet, and
@@ -626,7 +634,7 @@ body[data-locked] #roleseg .lk{display:inline-block}
      while you scroll it, and it looks broken rather than loading. */
   opacity:0; transition:opacity .18s ease;
 }
-.pshot.on{opacity:1; background:var(--shot-paper)}
+.pshot.on{opacity:1}
 @media (prefers-reduced-motion:reduce){ .pshot{transition:none} }
 /* --- the festive shelf ----------------------------------------- */
 /* A band rather than a card: it is the one thing on this screen
@@ -638,6 +646,8 @@ body[data-locked] #roleseg .lk{display:inline-block}
   background:linear-gradient(135deg, var(--fest) 0%, var(--fest-2) 100%);
   box-shadow:inset 0 -3px 0 var(--fest-gold);
 }
+button.festbox{display:block; width:100%; text-align:left; border:0; font:inherit}
+.festbox:active{opacity:.9}
 .festhead{
   display:flex; align-items:center; gap:var(--s2);
   margin:0; font-size:19px; font-weight:700; letter-spacing:-.01em;
@@ -651,12 +661,27 @@ body[data-locked] #roleseg .lk{display:inline-block}
    the only other thing competing for it -- the window-about-to-close
    pill, which lives in the banner and on a slot card and is never on
    screen beside a product tile. */
+/* --- the offer band ------------------------------------------- */
+.offbox{
+  margin:var(--s4) 0 var(--s3); padding:var(--s4) var(--s4) var(--s3);
+  border-radius:var(--r2); background:var(--spice); color:var(--on-spice);
+}
+.offhead{
+  display:flex; align-items:center; gap:var(--s2);
+  margin:0; font-size:19px; font-weight:700; letter-spacing:-.01em;
+}
+.offhead svg{width:22px; height:22px; flex:none}
+.offsub{margin:4px 0 0; font-size:13px; opacity:.9}
+.offrail{margin-top:var(--s3)}
+/* Bigger than it was. It is the one mark on a tile that is worth
+   money to the person reading it, and at 9px it read as a sticker
+   somebody had left on. */
 .offtag{
-  position:absolute; right:3px; bottom:3px; z-index:2;
-  padding:1px 5px; border-radius:var(--r1);
+  position:absolute; right:4px; bottom:4px; z-index:2;
+  padding:2px 7px; border-radius:var(--r1);
   background:var(--spice); color:var(--on-spice);
-  font-size:9px; font-weight:800; letter-spacing:.02em;
-  line-height:1.6; white-space:nowrap;
+  font-size:10.5px; font-weight:800; letter-spacing:.02em;
+  line-height:1.6; white-space:nowrap; box-shadow:var(--sh-card);
 }
 /* The cart's 64px thumbnail cannot carry the words, so it gets the
    badge small enough to read as a mark rather than a label. */

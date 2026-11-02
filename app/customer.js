@@ -300,6 +300,21 @@ async function nextSlotBanner(){
     + '</div>';
 }
 
+// The offer gets a band of its own rather than a heading, because a
+// heading is what every other strip on this screen has and this one
+// is the only thing on it that saves anybody money. Same shape as
+// the festive band, in the attention colour instead of the season's.
+async function offerBlock(){
+  const c = t();
+  const list = await catalog.onOffer(10);
+  if (!list.length) return '';
+  return '<div class="offbox">'
+    + '<p class="offhead">' + icon('tag') + '<span>' + esc(c.offB2G1) + '</span></p>'
+    + '<p class="offsub">' + esc(c.offB2G1Sub) + '</p>'
+    + '</div>'
+    + '<ul class="srail offrail">' + list.map(railCard).join('') + '</ul>';
+}
+
 // The festive shelf. Drawn only while the shopkeeper's dates say so,
 // and only if i18n has wording for that festival id -- an id nobody
 // has written a greeting for draws nothing at all, which is a better
@@ -310,10 +325,14 @@ async function festiveBlock(){
   if (!fest.on) return '';
   const key = 'fest' + fest.id.charAt(0).toUpperCase() + fest.id.slice(1);
   if (!c[key]) return '';
-  return '<div class="festbox">'
-    + '<p class="festhead">' + icon('diya') + '<span>' + esc(c[key]) + '</span></p>'
-    + '<p class="festsub">' + esc(c[key + 'Sub'] || '') + '</p>'
-    + '</div>'
+  // A BUTTON, because it was a sign pointing at nothing: tapping the
+  // greeting did not move, and the one thing anybody wants from a
+  // Diwali banner is the shelf behind it. The rail under it holds
+  // nine; the aisle holds every sweet, biscuit and chocolate.
+  return '<button type="button" class="festbox" id="festgo">'
+    + '<span class="festhead">' + icon('diya') + '<span>' + esc(c[key]) + '</span></span>'
+    + '<span class="festsub">' + esc(c[key + 'Sub'] || '') + '</span>'
+    + '</button>'
     + '<ul class="srail festrail">'
     + fest.products.map(railCard).join('')
     + '</ul>';
@@ -343,7 +362,7 @@ registerScreen('shop', async () => {
     + rail(c.buyAgain, await orders.againItems(10))
     // The offer, where somebody browsing will meet it. A discount
     // nobody is shown is a discount the shop pays for twice.
-    + rail(c.offB2G1, await catalog.onOffer(10))
+    + await offerBlock()
     + '<h2>' + esc(c.catsHead) + '</h2>'
     + '<div class="cgrid">' + cats.map((cat) =>
         // Same arrangement as a product tile: the glyph is always
@@ -353,7 +372,8 @@ registerScreen('shop', async () => {
         + '<span class="ctile">' + icon(cat.tile)
         +   (cat.hero
               ? '<img class="cshot" src="./img/' + esc(cat.hero) + '.jpg" alt=""'
-                + ' decoding="async" onload="this.classList.add(\'on\')"'
+                + ' decoding="async"'
+                + ' onload="this.classList.add(\'on\');this.parentNode.classList.add(\'shot\')"'
                 + ' onerror="this.remove()">'
               : '')
         + '</span>'
@@ -361,6 +381,12 @@ registerScreen('shop', async () => {
       + '</div>');
 
   wireSteppers(box);
+
+  const fg = $('festgo');
+  // The aisle the band is advertising. It pointed at snacks while
+  // there was no sweets aisle to point at, which meant a Diwali
+  // banner delivering you to a shelf of crisps.
+  if (fg) fg.onclick = () => { S.catId = 'sweets'; show('cat'); };
 
   const qbox = $('q');
   qbox.oninput = () => {

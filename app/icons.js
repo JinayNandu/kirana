@@ -54,6 +54,8 @@ const P = {
   // beside the festive greeting, which is why it is down here with
   // the interface marks and not among the pack shapes.
   diya:    '<path d="M3.5 13.5h17c0 3.4-3.8 5.6-8.5 5.6s-8.5-2.2-8.5-5.6z"/><path d="M12 13.5v-3.2"/><path d="M12 10.3c1.9-1.2 2.4-2.9 1.6-4.6C11.2 6.8 10 8.5 12 10.3z"/>',
+  // A price tag, for the offer band. Only ever shown there.
+  tag:     '<path d="M11.6 3H20a1 1 0 0 1 1 1v8.4a2 2 0 0 1-.6 1.4l-7 7a2 2 0 0 1-2.8 0l-6.4-6.4a2 2 0 0 1 0-2.8l7-7A2 2 0 0 1 11.6 3z"/><circle cx="16.6" cy="7.4" r="1.4"/>',
   // ---- interface -----------------------------------------------------
   store:   '<path d="M3 9.5 4.6 4.3A1.5 1.5 0 0 1 6 3.2h12a1.5 1.5 0 0 1 1.4 1.1L21 9.5"/><path d="M4 9.5h16V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M9.5 21v-5h5v5"/>',
   cart:    '<circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.5 12.1a1.5 1.5 0 0 0 1.5 1.2h8.9a1.5 1.5 0 0 0 1.5-1.2L21 7H5.3"/>',

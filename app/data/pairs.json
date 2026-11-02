@@ -138,6 +138,7 @@
     "staples": ["masala", "fresh"],
     "masala":  ["staples", "fresh"],
     "snacks":  ["drinks", "tea"],
+    "sweets":  ["tea", "dairy"],
     "drinks":  ["snacks"],
     "dairy":   ["tea", "snacks"],
     "tea":     ["dairy", "snacks"],
