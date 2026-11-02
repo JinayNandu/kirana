@@ -357,11 +357,22 @@ draw one, so the import graph stays a tree.
 | `…/kirana/` | the customer. **No Store button at all.** |
 | `…/kirana/?store` | the shopkeeper. Opens straight onto the gate. |
 
-`?store` sets `kirana.storedoor` in localStorage and `data-store` on
-the body; CSS hides `#roleseg` without it. So the owner opens his link
-once and his phone remembers, while a customer never sees a control
-they cannot use — a button that only leads to a code box is noise at
-best and an invitation to poke at worst.
+**The URL decides, and nothing remembers.** There is no role switch in
+either link: `#roleseg` is hidden outright, and `isStoreLink()` reads
+`location.search` at boot.
+
+⚠️ It did remember, in localStorage, so the owner's phone would know
+it had been given the staff link. That was wrong in a way only a real
+device shows you: once a phone had opened `?store` ONCE, the plain
+link showed the Store button too — so the two links were identical on
+the one device where the difference mattered, and stayed that way
+forever. Reading the URL is a rule a person can hold in their head.
+The link you opened is what you get, on any phone, every time.
+
+The shopkeeper reaches the shop by opening the shop's link, the same
+way his customers do. **The unlock is still remembered**
+(`kirana.storeopen`), so reopening the staff link goes straight to the
+board without the code.
 
 ⚠️ **This is not a lock and nothing may ever be built on the belief
 that it is.** Same file, same JavaScript, and `?store` is five

@@ -29,19 +29,24 @@ Then, on the phone you will hand him:
    else's name.
 2. Check it loads and the Diwali band is showing.
 3. **Now** open the Store link, type the code, confirm the board
-   opens. Then switch back to Shop and leave it there.
+   opens. Leave that tab open — you will come back to it.
+4. Open the Shop link in a **second tab**, and start there.
 
-⚠️ **That order is not arbitrary.** Clearing data wipes *all* of this
-phone's local storage — including the fact that it was given the Store
-link and the fact that it has been unlocked. Clear first and set up
-second, or the Shop/Store buttons will vanish from the header halfway
-through and you will be re-typing a URL in front of him.
+⚠️ **That order is not arbitrary.** Clearing data wipes all of this
+phone's local storage, including the fact that the Store view has
+been unlocked. Clear first and set up second, or you will be typing
+the code again in front of him.
 
-⚠️ **Use ONE phone, and switch with the Shop/Store buttons in the
-header.** Two devices will not work yet: the database shows the board
-only the orders placed by that same device until Milan's own user id
-is added to the `staff` table, and that cannot happen until he has
-signed in once. See the end of this file.
+⚠️ **One phone, TWO TABS.** There is no Shop/Store button any more —
+the two links are completely separate, which is the point of them.
+Keep the Shop link in one tab and the Store link in another, and
+move between them by switching tabs.
+
+⚠️ **And one phone, not two.** The database shows the board only the
+orders placed by that same device, until Milan's own user id is in
+the `staff` table — and that cannot happen until he has signed in
+once. Two devices would show him an empty board. See the end of this
+file.
 
 ---
 
@@ -84,7 +89,8 @@ Steer him only this far:
 
 ## 3. The counter — 4 minutes
 
-Tap **Store** in the header and type the code.
+Switch to the Store tab. If it has gone to sleep, reopen the Store
+link and type the code.
 
 His order is sitting there. Walk him through it in his own words:
 

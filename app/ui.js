@@ -169,22 +169,19 @@ addEventListener('popstate', () => {
 //  after the wrong one is exactly how somebody hands the owner the
 //  customer link and wonders why he cannot see his orders.
 // ---------------------------------------------------------------------
-const DOOR = 'kirana.storedoor';
-
-function storeDoor(){
-  let open = false;
-  try { open = localStorage.getItem(DOOR) === '1'; } catch {}
-  const asked = /(^|[?&])store(=|&|$)/.test(location.search);
-  if (asked){
-    open = true;
-    try { localStorage.setItem(DOOR, '1'); } catch {}
-  }
-  // An attribute on the body, like data-locked and data-acct: the
-  // CSS decides what that means, and no screen has to ask.
-  if (open) document.body.setAttribute('data-store', '');
-  else document.body.removeAttribute('data-store');
-  return { open, asked };
-}
+// THE URL DECIDES, AND NOTHING REMEMBERS.
+//
+// This used to set a flag in localStorage so the shopkeeper's phone
+// would remember it had been given the staff link. That was wrong in
+// a way only a real device shows you: once a phone had opened the
+// staff link ONCE, the plain link showed the Store button too -- so
+// the two links were identical on the one device where the
+// difference mattered, and stayed that way forever.
+//
+// Reading the URL is now the whole rule, which is also the only
+// version a person can hold in their head: the link you opened is
+// what you get, on any phone, every time.
+const isStoreLink = () => /(^|[?&])store(=|&|$)/.test(location.search);
 
 export function setRole(r, firstRun){
   if (!HOME[r]) return;
@@ -540,10 +537,8 @@ export function boot(){
     if (b) show(b.dataset.go, false);
   };
 
-  const door = storeDoor();
-  let r = 'customer';
-  try { r = sessionStorage.getItem('kirana.role') || 'customer'; } catch {}
-  if (!door.open) r = 'customer';
+  const staff = isStoreLink();
+  document.body.toggleAttribute('data-store', staff);
 
   // ⚠️ A SCREEN IS ALWAYS RENDERED FIRST, and the gate goes on top.
   //
@@ -559,8 +554,7 @@ export function boot(){
   // which is also the kinder failure, because closing the code box
   // leaves the shopkeeper looking at his own shop rather than at
   // nothing.
-  if (door.asked) r = passed() ? 'shop' : 'customer';
-  setRole(HOME[r] ? r : 'customer', true);
-  if (door.asked && !passed()) openLock();
+  setRole('customer', true);
+  if (staff) setRole('shop');
   paint();
 }
