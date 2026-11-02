@@ -320,12 +320,12 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 /* Above the toast, because the toast is what says "Store view locked"
    as this opens, and a message about the gate must not sit on top of
    it. */
-#lock{
+#lock, #signin{
   position:fixed; inset:0; z-index:60;
   display:flex; align-items:center; justify-content:center;
   padding:var(--s4); background:var(--scrim);
 }
-#lock[hidden]{display:none}
+#lock[hidden], #signin[hidden]{display:none}
 .lockbox{
   background:var(--card); border-radius:var(--r2); box-shadow:var(--sh-lift);
   padding:var(--s5) var(--s4) var(--s4); width:100%; max-width:340px;
@@ -343,12 +343,19 @@ body[data-role="shop"]   #tabs button[aria-current="true"]{color:var(--spice-ink
 .lockbox .hint{margin:0 0 var(--s4)}
 /* Six digits, spaced out and in the mono face, so a mistyped one is
    visible as a gap rather than hidden in a run of dots. */
-#lockpin{
+#lockpin, #sicode{
   text-align:center; font-family:var(--f-mono); font-size:22px;
   letter-spacing:.42em; text-indent:.42em; min-height:56px;
 }
-#lockerr{min-height:20px; margin:var(--s2) 0 0}
-#lockerr[hidden]{display:none}
+#lockerr, #sierr{min-height:20px; margin:var(--s2) 0 0}
+#lockerr[hidden], #sierr[hidden]{display:none}
+/* The email box is ordinary text -- only the CODE gets the spaced
+   mono treatment, because only the code is read off another screen
+   and typed a character at a time. */
+#siemail{text-align:center}
+.acct{display:flex; align-items:center; gap:var(--s3); margin-bottom:var(--s3)}
+.acct .ic{width:20px; height:20px; color:var(--ink-soft); flex:none}
+.acctwho{font-size:14px; color:var(--ink); word-break:break-all}
 .lockrow{display:flex; flex-direction:column; gap:var(--s2); margin-top:var(--s4)}
 .lockbox .btn.spice[disabled]{opacity:.5}
 /* Close is a way out, not a second offer. The ghost button is green
@@ -822,6 +829,34 @@ body[data-locked] #roleseg .lk{display:inline-block}
     <div class="lockrow">
       <button type="button" class="btn spice" id="lockgo"></button>
       <button type="button" class="btn ghost" id="lockx"></button>
+    </div>
+  </div>
+</div>
+<!-- Signing in. An overlay for the same reason the Store gate is one:
+     two steps that must not join the back stack, and an input that
+     must never sit inside a region a handler repaints. Nothing here
+     is ever rebuilt -- only textContent is written. -->
+<div id="signin" hidden>
+  <div class="lockbox" role="dialog" aria-modal="true" aria-labelledby="sih">
+    <div class="lockic" id="siic" aria-hidden="true"></div>
+    <h2 id="sih"></h2>
+    <p class="hint" id="sisub"></p>
+
+    <div id="sistep1">
+      <label for="siemail" id="silab"></label>
+      <input id="siemail" class="field" type="email" inputmode="email"
+             autocomplete="email" autocapitalize="off" spellcheck="false">
+    </div>
+    <div id="sistep2" hidden>
+      <label for="sicode" id="sicodelab"></label>
+      <input id="sicode" class="field" type="text" inputmode="numeric"
+             autocomplete="one-time-code" maxlength="6" spellcheck="false">
+    </div>
+
+    <p class="ferr" id="sierr" hidden></p>
+    <div class="lockrow">
+      <button type="button" class="btn" id="sigo"></button>
+      <button type="button" class="btn ghost" id="six"></button>
     </div>
   </div>
 </div>

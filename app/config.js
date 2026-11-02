@@ -66,6 +66,6 @@ export const MAP = {
 //  Setup, step by step: db/SETUP.md
 // ---------------------------------------------------------------------
 export const SUPABASE = {
-  url: '',
-  key: '',
+  url: 'https://pdcvdthlrvhtsnpfggsc.supabase.co',
+  key: 'sb_publishable_25_o0iqXbQgrNVcbddAqTw_jl_764GO',
 };
