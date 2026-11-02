@@ -483,22 +483,36 @@ body[data-locked] #roleseg .lk{display:inline-block}
 .locbox .hint{margin:var(--s2) 0 0; min-height:2.6em}
 
 /* --- category grid --------------------------------------------------- */
-.cgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s2)}
-@media (min-width:460px){ .cgrid{grid-template-columns:repeat(3,1fr)} }
+/* Three across, image first and the name under it.
+   This was two across, with a 56px thumbnail beside the words and a
+   card drawn round the pair -- which spent most of each tile on
+   border and whitespace and left the photograph as the smallest
+   thing in it. An aisle is recognised by the packet on its shelf,
+   not by reading ten labels, and that is the whole reason every
+   grocery app on a phone looks like this.
+   NO border and NO card behind it: the tinted square IS the tile,
+   so the eye lands on the photograph instead of on a box. */
+.cgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3) var(--s2)}
+@media (min-width:460px){ .cgrid{grid-template-columns:repeat(4,1fr)} }
 .ccard{
-  display:flex; flex-direction:column; align-items:flex-start; gap:var(--s2);
-  min-height:96px; padding:var(--s3); text-align:left;
-  background:var(--card); border:1px solid var(--edge); border-radius:var(--r2);
-  font-size:14px; font-weight:600; line-height:1.25;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:0; text-align:center; background:none; border:0;
+  font-size:12px; font-weight:600; line-height:1.2; color:var(--ink);
 }
-/* 44px, bigger than the 26px glyph it replaces, because a photograph
-   needs the room -- but smaller than the 64px product tile, since this
-   is a signpost for an aisle and not the thing being bought. */
+.ccard:active{background:none; opacity:.7}
+/* The full width of its column and square, so ten different packet
+   shapes line up as one set. It was 56px: sized for a signpost
+   sitting beside words, which is not what this is any more. */
 .ctile{
-  position:relative; width:56px; height:56px; border-radius:var(--r1);
+  position:relative; width:100%; height:auto; aspect-ratio:1 / 1;
+  border-radius:var(--r2); background:var(--sunk);
   display:grid; place-items:center; overflow:hidden;
 }
-.ccard svg{color:var(--leaf); width:30px; height:30px}
+.ccard svg{color:var(--leaf); width:36px; height:36px}
+/* The same inset the product tiles carry, for the same reason: the
+   photographs were framed by different people and only agree on a
+   scale if the tile gives them one. */
+.cshot{inset:8%; width:84%; height:84%}
 .cshot{
   position:absolute; inset:0; width:100%; height:100%;
   object-fit:contain; border-radius:inherit;

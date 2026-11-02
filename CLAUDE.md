@@ -87,7 +87,7 @@ app/
   data/
     shop.json         THE SHOPKEEPER'S FILE -- name, address, phone,
                       UPI id, what delivery costs
-    catalog.json      114 products
+    catalog.json      117 products
     categories.json   10 categories
     pairs.json        what goes with what -- basket suggestions
     runplan.json      the three delivery windows
@@ -641,7 +641,7 @@ order**, where the items are listed directly above the button, so
 belonged all along; on the home screen it was a feature wearing a
 database key as its label.
 
-**All 114 products have an entry** — 305 pairings — and `data.pl`
+**All 117 products have an entry** — 320 pairings — and `data.pl`
 **fails** if one does not. Without an entry a basket of that product
 alone falls through to its category rule, which offers the cheapest
 things from a neighbouring aisle: technically a suggestion, visibly a
@@ -1023,6 +1023,104 @@ being byte-identical — and a second palette without them ships holes
 that are invisible from the light one: a token defined in light and
 forgotten in dark renders as whatever it inherits, which is usually
 almost right.
+
+## Buy 2 get 1 free
+
+Six small snack packs. **Every THIRD unit of the same product is
+free** — 2 cost 2, 3 cost 2, 6 cost 4, 7 cost 5. Integer division, so
+it can never hand out part of a packet.
+
+The list lives in `shop.json` beside the coupons, because it is the
+shopkeeper's to change: add an id, remove one, or empty the list to
+switch the offer off. The offer has to sit on something a basket
+naturally holds three of, or it is decoration — which is why it is on
+the ₹20 chip packets and not on a ₹345 tin of ghee.
+
+⚠️ **Order of operations: the free unit is priced out BEFORE the
+coupon.** So the 5% discounts what is actually owed, and the two never
+multiply. `money.pl` asserts exactly that case: three packets owe ₹50,
+and the coupon takes 3 of that 50 rather than of the 75 they would
+have cost.
+
+`money.pl` checks the arithmetic against a **written table** —
+1,2,3,4,5,6,7,9,12 and what each should cost — not against a second
+copy of the formula, because a mirror that agrees with the
+implementation proves nothing. Proved by breaking it two ways (every
+second unit free; an off-by-one on the divisor) and by checking the
+half that silently *over*-discounts: a product not on the offer,
+bought nine at a time, must never get one free.
+
+The two implementations agreeing is the one thing no script here can
+check — same shape as `setpin.pl` versus `lock.js` — so it was
+verified in the browser: 1,2,3,4,6,7,9 of Lay's all charge the right
+number of packets.
+
+⚠️ **`items` is NET of the offer**, so the cart's Items line prints
+`items + offerOff`. It printed the net figure once, above a `-₹45`
+row, and the column stopped adding up: 115, minus 45, total 115. A
+person checking their own bill has to be able to do the subtraction.
+
+The badge sits **bottom right of the photograph** — where it costs
+least, since a pack shot carries its brand band across the top and
+that is the part anyone reads at tile size. The home rail shows **in
+stock only**: an offer on something that cannot be bought is a promise
+the shelf cannot keep.
+
+## The festive shelf
+
+A maroon-and-gold band and a rail of nine things, between two dates in
+`shop.json`.
+
+⚠️ **It takes itself down.** `from` and `to` are IST dates, inclusive;
+outside them neither the band nor the rail exists. That is the only
+reason a seasonal banner is safe to ship — nobody has to remember to
+remove it. Proved by moving the window to last year and watching both
+vanish while the rest of the home screen carried on.
+
+⚠️ **The shopkeeper sets the dates; the app does not compute them.**
+The festival calendar is lunar, and an app that guessed would
+eventually put a greeting on the wrong fortnight — worse than no
+greeting, because it is the shop appearing not to know its own year.
+
+**An `id` with no wording draws nothing.** `id` picks the greeting out
+of `i18n.js`; set it to a festival nobody has written strings for and
+the band is skipped entirely rather than rendering `undefined` over a
+row of sweets. Proved by setting it to `pongal`.
+
+`festivalOn()` is pure and sits in `domain.js` with every other date
+rule. It compares `YYYY-MM-DD` as **strings**, which is deliberate:
+that format sorts in calendar order, which is the one thing it exists
+for, and it keeps the function free of a clock. The caller passes
+today from `istDate()`, so there is still exactly one place in this
+app that reads the time.
+
+Three products had to exist first — a Diwali shelf made only of what
+the shop already stocked would have been incense, candles and a bar of
+Dairy Milk. **Soan Papdi, Kaju Katli and Mixed Dry Fruits**, with
+photographs.
+
+`--fest` / `--fest-ink` are **fixed, not themed**, like the veg mark:
+a season is not a surface. Measured **9.19**.
+
+## The home screen is images
+
+**Three across, photograph first, name underneath, no card.**
+
+It was two across with a 56px thumbnail beside the words and a border
+round the pair, which spent most of each tile on frame and whitespace
+and left the photograph as the smallest thing in it. An aisle is
+recognised by the packet on its shelf, not by reading ten labels —
+that is the whole reason every grocery app on a phone looks like this.
+The tinted square **is** the tile, so the eye lands on the photograph
+rather than on a box.
+
+⚠️ **Enlarging a tile exposes its photograph**, which cost three
+heroes. At 56px nobody could tell; at 109px the dairy aisle was a
+blurry blue bag, Soap & Personal Care was a Colgate box on floral
+upholstery, and Oil & Masala was a washed-out tin of ghee. They are
+**Amul Butter, Dove and Fortune** now — picked by rendering every
+photographed product in those three aisles side by side and choosing
+with eyes, not by scoring.
 
 ## Cross-tab sync — the demo
 
