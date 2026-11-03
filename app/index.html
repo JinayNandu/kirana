@@ -973,6 +973,20 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 /* Shown on the board only while this device cannot see the shop's
    orders. It is the shopkeeper's own screen, so it may say the
    technical thing plainly -- the id is here to be copied. */
+/* The order's progress. A reached step is inked and its dot filled;
+   the one it is on wears a halo. Everything below is grey with no
+   time beside it, which is the information -- not decoration. */
+.trail{list-style:none; margin:var(--s3) 0 var(--s4); padding:0}
+.trail li{display:flex; align-items:center; gap:var(--s3);
+  padding:var(--s2) 0; color:var(--ink-soft); font-size:14px}
+.trail .tdot{flex:none; width:12px; height:12px; border-radius:50%;
+  background:var(--sunk); border:2px solid var(--edge)}
+.trail .tname{flex:1}
+.trail li.on{color:var(--ink)}
+.trail li.on .tdot{background:var(--leaf); border-color:var(--leaf)}
+.trail li.now{font-weight:700}
+.trail li.now .tdot{box-shadow:0 0 0 4px var(--leaf-wash)}
+
 .nostaff{border-color:var(--spice)}
 .nostaff p{margin:0 0 var(--s2)}
 .idbox{

@@ -168,6 +168,10 @@ export const T = {
 
     // ---- statuses ----
     stPlaced: 'Placed', stPacked: 'Packed', stOut: 'On the tempo',
+    stAccepted: 'Accepted by the shop',
+    markAccepted: 'Accept this order',
+    bAccept: '{n} to accept',
+    trackProgress: 'Progress',
     stDelivered: 'Delivered', stFailed: 'Nobody home', stCancelled: 'Cancelled',
 
     // ---- run names (runplan.json points at these keys) ----
@@ -442,6 +446,10 @@ export const T = {
     runningLate: 'उशीर होतोय — कृपया फोन करा',
 
     stPlaced: 'नोंदवली', stPacked: 'बांधली', stOut: 'टेम्पोत',
+    stAccepted: 'दुकानाने स्वीकारली',
+    markAccepted: 'ही ऑर्डर स्वीकारा',
+    bAccept: '{n} स्वीकारायच्या',
+    trackProgress: 'प्रगती',
     stDelivered: 'पोहोचवली', stFailed: 'कोणी नव्हतं', stCancelled: 'रद्द',
 
     runMorning: 'सकाळ', runMidday: 'दुपार',
@@ -703,6 +711,10 @@ export const T = {
     runningLate: 'देर हो रही है — कृपया फोन करें',
 
     stPlaced: 'हो गया', stPacked: 'बँध गया', stOut: 'टेम्पो में',
+    stAccepted: 'दुकान ने स्वीकार किया',
+    markAccepted: 'यह ऑर्डर स्वीकारें',
+    bAccept: '{n} स्वीकारने हैं',
+    trackProgress: 'स्थिति',
     stDelivered: 'पहुँच गया', stFailed: 'कोई नहीं मिला', stCancelled: 'रद्द',
 
     runMorning: 'सुबह', runMidday: 'दोपहर',
@@ -971,6 +983,10 @@ export const T = {
     notLeftYet: 'હજી દુકાનેથી નીકળ્યો નથી',
     runningLate: 'મોડું થયું છે — ફોન કરો',
     stPlaced: 'ઓર્ડર થયો',
+    stAccepted: 'દુકાને સ્વીકાર્યો',
+    markAccepted: 'આ ઓર્ડર સ્વીકારો',
+    bAccept: '{n} સ્વીકારવાના',
+    trackProgress: 'પ્રગતિ',
     stPacked: 'પેક થયો',
     stOut: 'ટેમ્પોમાં',
     stDelivered: 'પહોંચાડ્યો',

@@ -90,8 +90,9 @@ registerScreen('board', async () => {
     // - pack these" was a label, and the owner could not tell from it
     // whether anything was actually owed.
     const work = (n) => {
-      if (n.byStatus.placed)  return f(c.bPack, { n: n.byStatus.placed });
-      if (n.byStatus.packed)  return f(c.bReady, { n: n.byStatus.packed });
+      if (n.byStatus.placed)   return f(c.bAccept, { n: n.byStatus.placed });
+      if (n.byStatus.accepted) return f(c.bPack,  { n: n.byStatus.accepted });
+      if (n.byStatus.packed)   return f(c.bReady, { n: n.byStatus.packed });
       if (n.byStatus.out)     return f(c.bOut,   { n: n.byStatus.out });
       if (n.byStatus.delivered && n.orders === n.byStatus.delivered) return c.bAllDone;
       return '';
@@ -125,13 +126,15 @@ registerScreen('board', async () => {
 
     // What the shop opens this screen to find out, in the order it
     // wants to know it: the money first, then the work.
-    const sum = { orders: 0, items: 0, cash: 0, paid: 0, paidCount: 0, pack: 0, out: 0 };
+    const sum = { orders: 0, items: 0, cash: 0, paid: 0, paidCount: 0,
+                  accept: 0, pack: 0, out: 0 };
     for (const r of list){
       if (!r.enabled) continue;
       const n = await runs.counts(r.id);
       sum.orders += n.orders; sum.items += n.items;
       sum.cash += n.cash; sum.paid += n.paidTotal; sum.paidCount += n.paidCount;
-      sum.pack += (n.byStatus.placed || 0);
+      sum.accept += (n.byStatus.placed || 0);
+      sum.pack   += (n.byStatus.accepted || 0);
       sum.out  += (n.byStatus.out || 0);
     }
 
@@ -145,8 +148,10 @@ registerScreen('board', async () => {
         +   (sum.paidCount
               ? '<span class="hint">' + esc(f(c.bPaid, { s: rupees(sum.paid) })) + '</span>'
               : '') + '</p>'
-        + (sum.pack || sum.out
+        + (sum.accept || sum.pack || sum.out
             ? '<p class="tdo">'
+              + (sum.accept ? '<span class="pill spice">'
+                  + esc(f(c.bAccept, { n: sum.accept })) + '</span>' : '')
               + (sum.pack ? '<span class="pill spice">'
                   + esc(f(c.bPack, { n: sum.pack })) + '</span>' : '')
               + (sum.out ? '<span class="pill sky">'
@@ -299,9 +304,10 @@ registerScreen('pick', async () => {
 
     // The one step this order can take next, named for the doing of it.
     const next = {
-      placed: ['packed', c.markPacked, ''],
-      packed: ['out',    c.dispatch,   'sky'],
-      out:    ['delivered', c.markDelivered, ''],
+      placed:   ['accepted',  c.markAccepted,  'sky'],
+      accepted: ['packed',    c.markPacked,    ''],
+      packed:   ['out',       c.dispatch,      'sky'],
+      out:      ['delivered', c.markDelivered, ''],
     }[o.status];
 
     mount(box, h1(f(c.pickTitle, { s: o.code }))
@@ -337,13 +343,13 @@ registerScreen('pick', async () => {
       // walks it round the corner himself never passes through "out
       // for delivery" and should not have to tap his way there.
       + (next
-          ? '<button type="button" class="btn ' + esc(next[2]) + '" id="adv">'
+          ? '<button type="button" class="btn ' + esc(next[2]) + '" id="oadv">'
             + esc(next[1]) + '</button>'
           : '')
       // Only while it is PACKED. Once it is out, the button above is
       // already "Mark delivered" and a second one saying the same
       // thing is just a choice between identical doors.
-      + (o.status === 'packed'
+      + (o.status === 'packed' || o.status === 'accepted'
           ? '<button type="button" class="btn ghost" id="dlv">'
             + esc(c.markDelivered) + '</button>'
           : '')
@@ -356,7 +362,7 @@ registerScreen('pick', async () => {
       try { await orders.setPaid(o.id, !o.paid, 'upi'); }
       catch (err){ toast(String(err.message)); }
     };
-    const b = $('adv');
+    const b = $('oadv');
     if (b) b.onclick = async () => {
       try { await orders.advance(o.id, next[0]); show('run', false); }
       catch (err){ toast(String(err.message)); }

@@ -178,8 +178,16 @@ export function totals(lines, byId, rules, coupon, offers){
 //  Status machines -- one table, read by the UI and by the checker.
 // =====================================================================
 
+// ACCEPTED sits between placed and packed because they are two
+// different facts and the shop used to publish only the second.
+// Accepting is a decision -- the shop has seen the order and will
+// fill it -- and packing is work that happens later. A customer
+// watching `placed` for forty minutes cannot tell a busy shop from
+// a shop that never looked, and that is the whole anxiety of
+// ordering from a small place rather than an app with a fleet.
 export const ORDER_NEXT = {
-  placed:    ['packed', 'cancelled'],
+  placed:    ['accepted', 'cancelled'],
+  accepted:  ['packed', 'cancelled'],
   packed:    ['out', 'cancelled'],
   out:       ['delivered', 'failed'],
   delivered: [],
@@ -200,11 +208,28 @@ export const RUN_NEXT = {
   cancelled: [],
 };
 
+// The steps a CUSTOMER is shown, in order. Deliberately not the keys
+// of ORDER_NEXT: `failed` and `cancelled` are endings, not stages,
+// and a progress line that lists them puts a warning on an order
+// going perfectly well.
+export const ORDER_TRAIL = ['placed', 'accepted', 'packed', 'out', 'delivered'];
+
+// A history timestamp as a clock time in Borivali. It goes through
+// the same formatter as everything else in this file for the same
+// reason: one place reads the clock, so a phone set to another zone
+// still shows the time the SHOP did the thing.
+export function istClock(iso){
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const p = parts(TP, d);
+  return p.hour + ':' + p.minute;
+}
+
 export const canAdvance   = (from, to) => (ORDER_NEXT[from] || []).includes(to);
 export const canAdvanceRun = (from, to) => (RUN_NEXT[from] || []).includes(to);
 
 export const ORDER_TONE = {
-  placed: '', packed: 'sky', out: 'spice',
+  placed: '', accepted: 'sky', packed: 'sky', out: 'spice',
   delivered: 'leaf', failed: 'bad', cancelled: 'bad',
 };
 export const RUN_TONE = {

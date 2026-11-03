@@ -21,7 +21,7 @@ import { payBlock, drawQR, wirePay } from './pay.js';
 import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
   minsToCutoff, minsToStart, fmtSoon, fmtAbout, windowOf, ORDER_TONE,
-  freeUnits,
+  freeUnits, ORDER_TRAIL, istClock,
 } from './domain.js';
 
 const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
@@ -1042,6 +1042,34 @@ registerScreen('done', async () => {
 // ---------------------------------------------------------------------
 //  s-track
 // ---------------------------------------------------------------------
+// The order's own progress, read off its append-only history rather
+// than inferred from the status -- so a step shows the time the shop
+// actually did it, and a step with no time beside it has genuinely
+// not happened. The status pill at the top says where it IS; this
+// says how it got there and what is left.
+function trail(o, c){
+  const at = new Map((o.history || []).map((h) => [h.to, h.at]));
+  const label = (s) => c['st' + s[0].toUpperCase() + s.slice(1)] || s;
+  // An order that was cancelled or nobody was home stopped going
+  // forwards, and drawing the rest of the road would promise a
+  // delivery that is not coming.
+  const stopped = o.status === 'cancelled' || o.status === 'failed';
+  const steps = ORDER_TRAIL.filter((s) => !stopped || at.has(s));
+  if (!steps.length) return '';
+  return '<h2>' + esc(c.trackProgress) + '</h2>'
+    + '<ul class="trail">'
+    + steps.map((s) => {
+        const when = at.get(s);
+        return '<li class="' + (when ? 'on' : '')
+          + (o.status === s ? ' now' : '') + '">'
+          + '<span class="tdot"></span>'
+          + '<span class="tname">' + esc(label(s)) + '</span>'
+          + '<span class="hint mono">' + esc(when ? istClock(when) : '')
+          + '</span></li>';
+      }).join('')
+    + '</ul>';
+}
+
 registerScreen('track', async () => {
   const c = t();
   const box = $('s-track');
@@ -1065,6 +1093,8 @@ registerScreen('track', async () => {
       +   (run.status === 'open' || run.status === 'cutoff'
             ? '<p class="hint">' + esc(c.notLeftYet) + '</p>' : '')
       + '</div>'
+
+      + trail(o, c)
 
       + '<h2>' + esc(c.doneItems) + '</h2>'
       + orderLines(o, c)
