@@ -105,6 +105,10 @@ export async function begin(){
 }
 
 let lastClaim = null;
+// Kept so a failed claim can be asked about from the console rather
+// than guessed at. A wrong code and a broken function both end as
+// 'no', and only one of them is the shopkeeper's fault.
+let lastError = null;
 
 export const session = {
   async whoami(){
@@ -188,7 +192,8 @@ export const session = {
     const { data, error } = await sb.rpc('claim_staff', { code });
     if (error){
       const m = (error.message || '') + ' ' + (error.code || '');
-      lastClaim = /PGRST202|could not find|does not exist/i.test(m) ? 'missing' : 'no';
+      lastError = m;
+      lastClaim = /PGRST202/i.test(m) ? 'missing' : 'no';
     } else {
       lastClaim = data ? 'ok' : 'no';
     }
@@ -200,6 +205,7 @@ export const session = {
   // who had JUST typed it to type it. This is how it tells the two
   // apart.
   async claimState(){ return lastClaim; },
+  async claimError(){ return lastError; },
 
   async isStaff(){
     const { data, error } = await sb.from('staff').select('user_id').limit(1);

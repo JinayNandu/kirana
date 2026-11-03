@@ -30,7 +30,8 @@
 --      years. Ten characters is not.
 -- ---------------------------------------------------------------------
 
-create extension if not exists pgcrypto;
+-- Supabase keeps extensions in their own schema, not in public.
+create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists shop_secret (
   id         int primary key default 1,
@@ -45,7 +46,14 @@ alter table shop_secret enable row level security;
 -- A policy here would be a way in; its absence is the lock.
 
 create or replace function claim_staff(code text) returns boolean
-  language plpgsql volatile security definer set search_path = public as $$
+  -- ⚠️ `extensions` IS LOAD-BEARING. pgcrypto lives there on
+  -- Supabase, and a SECURITY DEFINER function pins its own
+  -- search_path -- so with `public` alone, crypt() is invisible
+  -- INSIDE this function while working perfectly in the SQL
+  -- editor, which has a wider path. The file then runs clean and
+  -- every claim fails at the counter.
+  language plpgsql volatile security definer
+  set search_path = public, extensions as $$
 declare hash text;
 begin
   -- No session, nothing to put in `staff`.
@@ -71,10 +79,31 @@ revoke all on function claim_staff(text) from public;
 grant execute on function claim_staff(text) to authenticated;
 
 -- ---------------------------------------------------------------------
---  SET THE CODE. Change it here before running.
---  It must match the code in app/data/shop.json, which
---  `perl tools/setpin.pl <code>` writes.
+--  SET THE CODE. Change it on the `code :=` line before running.
+--
+--  It must be the SAME code you pass to `perl tools/setpin.pl`, and
+--  the same shape: 4 to 12 LOWERCASE letters or digits. The app
+--  trims and lowercases whatever is typed before it gets here (a
+--  phone capitalises the first letter on its own), so an uppercase
+--  or hyphenated code set here could never be matched by anything
+--  the gate sends -- it would simply never open the board.
+--
+--  Running this file unchanged used to store the hash of the literal
+--  word CHANGE-ME, which looks exactly like success: "Success. No
+--  rows returned". The check below is here so that it cannot.
 -- ---------------------------------------------------------------------
-insert into shop_secret (id, code_hash)
-values (1, crypt('CHANGE-ME', gen_salt('bf', 10)))
-on conflict (id) do update set code_hash = excluded.code_hash, set_at = now();
+do $guard$
+declare code text := 'CHANGE-ME';
+begin
+  if code !~ '^[a-z0-9]{4,12}$' then
+    raise exception
+      'Set a real code first. Edit the `code :=` line above: 4-12 lowercase letters or digits, the same code you give tools/setpin.pl. Got "%".', code;
+  end if;
+
+  insert into shop_secret (id, code_hash)
+  values (1, crypt(code, gen_salt('bf', 10)))
+  on conflict (id) do update set code_hash = excluded.code_hash, set_at = now();
+
+  raise notice 'Store code set. Now run: perl tools/setpin.pl %', code;
+end
+$guard$;

@@ -148,7 +148,7 @@ export function waiting(){
 // capitalises the first letter of a word on its own, and a code
 // refused because the keyboard helped is indistinguishable, from
 // the counter, from a code that is simply wrong.
-const tidy = (s) => String(s == null ? '' : s).trim().toLowerCase();
+export const tidy = (s) => String(s == null ? '' : s).trim().toLowerCase();
 
 // Resolves 'ok' | 'wrong' | 'wait' | 'stuck'.
 export async function tryCode(code){

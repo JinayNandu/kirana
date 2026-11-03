@@ -12,7 +12,7 @@
 import { T, TXT, t, setLang, getLang, bootLang, LANGS,
          LANG_NAMES } from './i18n.js';
 import { icon } from './icons.js';
-import { gated, passed, stuck, tryCode, waiting, forget } from './lock.js';
+import { gated, passed, stuck, tryCode, waiting, forget, tidy } from './lock.js';
 import { session, shared } from './store.js';
 
 export const $ = (id) => document.getElementById(id);
@@ -360,7 +360,13 @@ async function submitLock(){
     // nothing, which is a shop-shaped screen with no shop in it.
     let claim = 'ok';
     if (shared() && session.claimStaff){
-      try { claim = await session.claimStaff(code); }
+      // tidy(), not the raw field. tryCode() normalises before it
+      // derives, so a pasted trailing space or a phone's capital
+      // first letter opens the GATE and would then have been sent
+      // to the server as typed -- bcrypt compares bytes, so the
+      // claim fails and the board comes up empty with nothing on
+      // screen to explain why. Same string to both or neither.
+      try { claim = await session.claimStaff(tidy(code)); }
       catch (e){ claim = 'no'; }
     }
     setRole('shop');
