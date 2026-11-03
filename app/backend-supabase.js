@@ -197,6 +197,15 @@ export const session = {
     } else {
       lastClaim = data ? 'ok' : 'no';
     }
+    // EVERYTHING FETCHED BEFORE THIS WAS FETCHED AS A STRANGER.
+    // Boot renders the customer home even on the store link, and
+    // that render asks for orders -- which row-level security
+    // answers with nothing, because this session was not staff a
+    // moment ago. The answer is then cached, and the board drawn
+    // seconds later reads the cache rather than the database: an
+    // empty board that fills the instant you reload, which is
+    // exactly what it looked like.
+    if (lastClaim === 'ok'){ bust(); fire('orders'); }
     return lastClaim;
   },
 

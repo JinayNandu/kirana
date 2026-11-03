@@ -369,8 +369,25 @@ async function submitLock(){
       try { claim = await session.claimStaff(tidy(code)); }
       catch (e){ claim = 'no'; }
     }
+    // START THE PAGE AGAIN. claimStaff() clears the order cache it
+    // knows about, but this session just changed WHO IT IS to the
+    // database, and anything read before that was read as somebody
+    // else. A reload is the only thing that cannot miss one: it
+    // costs a second, once per device, at the one moment the
+    // person is expecting something to happen anyway.
+    //
+    // markLocked() has already run, so the gate does not come back.
+    // passed() guards a LOOP: where storage is blocked, markLocked()
+    // cannot persist, and a reload would land back on the gate with
+    // the code typed again and again. The cache bust in claimStaff()
+    // already covers that case well enough to render a board.
+    if (claim === 'ok' && shared() && passed()){ location.reload(); return; }
     setRole('shop');
-    toast(claim === 'missing' ? c.bNoSetup : c.lockOpened);
+    // 'no' means the code opened the gate and the DATABASE did not
+    // recognise it -- the two halves have drifted apart, and the
+    // remedy is the same one: run db/store-code.sql with the code
+    // that setpin.pl was given.
+    toast(claim === 'ok' ? c.lockOpened : c.bNoSetup);
     return;
   }
   field.value = '';
