@@ -17,7 +17,7 @@ import {
 } from './ui.js';
 import { t, f, getLang } from './i18n.js';
 import { icon } from './icons.js';
-import { ready, runs, orders, catalog, live } from './store.js';
+import { ready, runs, orders, catalog, live, session, shared } from './store.js';
 import {
   rupees, packLabel, istDate, istMins, addDays,
   runState, windowOf, ORDER_TONE, RUN_TONE,
@@ -34,6 +34,33 @@ const rsName = (s) => t()['rs' + s[0].toUpperCase() + s.slice(1)] || s;
 export function addressOf(o){
   return [o.customer.flat, o.customer.society, o.customer.area]
     .filter((x) => x && String(x).trim()).join(', ');
+}
+
+// The board shows what row-level security allows and nothing else:
+// your own orders, or EVERY order once this user is on the staff
+// list. A device that is neither gets an empty result -- which the
+// board rendered as "No orders yet today.", a sentence that is
+// indistinguishable from a genuinely quiet morning and sent us
+// looking for a bug in the orders instead of the session.
+//
+// session.isStaff() existed for this from the start and was called
+// by nothing.
+async function notStaffHtml(c){
+  if (!shared()) return '';
+  let staff = false, me = null;
+  try { staff = await session.isStaff(); me = await session.whoami(); }
+  catch (e){ return ''; }              // never let a notice break the board
+  if (staff) return '';
+  const id = (me && me.id) || '';
+  return '<div class="card nostaff">'
+    + '<p>' + esc(c.bNotStaff) + '</p>'
+    + '<p class="hint">' + esc(c.acctIdLabel) + '</p>'
+    + '<code class="mono idbox">' + esc(id) + '</code>'
+    // The apostrophes are HTML entities so no quote character has to
+    // survive a JS string literal on its way to the clipboard.
+    + '<code class="mono idbox">insert into staff (user_id) values (&#39;'
+      + esc(id) + '&#39;);</code>'
+    + '</div>';
 }
 
 // ---------------------------------------------------------------------
@@ -128,7 +155,7 @@ registerScreen('board', async () => {
     const b = [];
     for (const r of tmrw) if (r.enabled) b.push(await card(r));
 
-    mount(box, h1(c.boardTitle) + head
+    mount(box, h1(c.boardTitle) + (await notStaffHtml(c)) + head
       + '<h2>' + esc(c.boardToday) + '</h2>' + a.join('')
       + '<h2>' + esc(c.boardTomorrow) + '</h2>' + b.join(''));
 

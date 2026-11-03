@@ -969,6 +969,17 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
   font-size:13px; font-weight:600; text-align:center;
 }
 .paybox .btn{margin-top:var(--s3)}
+
+/* Shown on the board only while this device cannot see the shop's
+   orders. It is the shopkeeper's own screen, so it may say the
+   technical thing plainly -- the id is here to be copied. */
+.nostaff{border-color:var(--spice)}
+.nostaff p{margin:0 0 var(--s2)}
+.idbox{
+  display:block; margin-top:var(--s2); padding:var(--s2) var(--s3);
+  border-radius:var(--r1); background:var(--sunk); color:var(--ink);
+  font-size:12px; line-height:1.5; word-break:break-all; user-select:all;
+}
 .qrwrap{margin-top:var(--s4); text-align:center}
 /* The QR is black on white in BOTH themes, on its own tile. A code
    themed to the page loses the contrast a scanner needs, so this is
