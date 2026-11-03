@@ -1,7 +1,6 @@
 # Showing it to Milan
 
-Twenty minutes, one phone. Read this once beforehand; do not read it
-to him.
+Twenty minutes. Read this once beforehand; do not read it to him.
 
 The app is live at **https://jinaynandu.github.io/kirana/**
 
@@ -22,31 +21,32 @@ repository is public, and a code committed to it is a key left in the
 lock — including in the history, where deleting it later does not
 help. You know it; tell Milan out loud.
 
-Then, on the phone you will hand him:
+Then:
 
 1. Open the Shop link. **Settings → Clear all data** (it asks twice).
    The basket has test items in it and a saved address in somebody
    else's name.
 2. Check it loads and the Diwali band is showing.
-3. **Now** open the Store link, type the code, confirm the board
-   opens. Leave that tab open — you will come back to it.
-4. Open the Shop link in a **second tab**, and start there.
+3. Open the Store link, type the code, confirm the board opens.
 
-⚠️ **That order is not arbitrary.** Clearing data wipes all of this
-phone's local storage, including the fact that the Store view has
-been unlocked. Clear first and set up second, or you will be typing
-the code again in front of him.
+⚠️ **Clear data FIRST, then open the Store link.** Clearing wipes all
+of this phone's local storage, the Store unlock among it. Do it the
+other way round and you will be typing the code again in front of
+him. It is not fatal — typing the code is all it takes to get back
+in — but it is a fumble you do not need.
 
-⚠️ **One phone, TWO TABS.** There is no Shop/Store button any more —
-the two links are completely separate, which is the point of them.
-Keep the Shop link in one tab and the Store link in another, and
-move between them by switching tabs.
+### Two devices now work, and that is the better demo
 
-⚠️ **And one phone, not two.** The database shows the board only the
-orders placed by that same device, until Milan's own user id is in
-the `staff` table — and that cannot happen until he has signed in
-once. Two devices would show him an empty board. See the end of this
-file.
+**Use two if you can**: the Shop link on his phone, the Store link on
+yours. He places an order on his own phone and watches it appear on
+yours. That is the whole product in one gesture, and it is far more
+convincing than switching tabs.
+
+This used to be impossible — the board only ever showed orders placed
+on that same device. Typing the Store code now tells the *database*,
+not just the screen, that this device is the shop, so any phone that
+knows the code sees every order. One phone and two tabs still works
+if you only have one.
 
 ---
 
@@ -67,7 +67,7 @@ What he should notice without being told:
 If he says nothing, ask: *"Does this look like your shop?"* That is
 the only question that matters in the first two minutes.
 
-## 2. Let him order — 4 minutes
+## 2. Let him order — 5 minutes
 
 **Do not demo this. Hand him the phone and let him do it.** A
 shopkeeper who has placed one order understands the whole thing; a
@@ -86,24 +86,59 @@ Steer him only this far:
    *This is the pitch.* Say it plainly: **Blinkit cannot promise a
    window, and you can.**
 5. **Address, then Place order.** Let him type his own address.
+6. **Pay by UPI → "I have paid".** Do this one yourself if he does
+   not. It is worth four sentences — see below.
 
-## 3. The counter — 4 minutes
+### What "I have paid" does, and why he should like it
 
-Switch to the Store tab. If it has gone to sleep, reopen the Store
-link and type the code.
+Tapping it does **not** mark the order paid. The app cannot see a UPI
+payment; there is no way for a static page to be told the money
+arrived. So it records what it actually knows — *the customer says
+they have paid* — and tells them to **show the payment screenshot to
+the delivery partner.**
 
-His order is sitting there. Walk him through it in his own words:
+On his board the money stays in **"to collect"**, and the order wears
+a **"Says paid"** flag. Nothing is settled until somebody looks.
 
-- **The board** — money to collect today, what is still to pack.
+Say this out loud, because it is the opposite of what he expects
+software to do: **the app will never tell him he has been paid when
+he has not.** A shopkeeper has been burned by a screenshot before.
+
+## 3. The counter — 5 minutes
+
+Switch to the Store view. His order is sitting there. Walk him
+through it in his own words:
+
+- **The board** — money to collect today, and what is waiting:
+  *1 to accept*.
 - **Open the window** → his order → **the picking list**. This is the
-  screen he will actually hold while walking his own shelves.
-- **Close orders and start packing** → **Send out for delivery** →
-  **Mark delivered.** Three taps, named for what to do next rather
-  than for a status.
+  screen he will actually hold while walking his own shelves. If the
+  customer tapped "I have paid", it says here: *"Customer says they
+  paid by UPI. Ask to see the screenshot."*
+- **Accept this order.** One tap. This is new and it matters: it tells
+  the customer a person has seen the order and it is being filled.
+  Before, the first thing they heard back was that it had been packed,
+  and forty minutes of silence before that.
+- **Mark packed** → **Send out for delivery** → **Delivered and
+  payment received.** Named for what to do next rather than for a
+  status. That last one closes both halves in one tap, because at a
+  doorstep handing the bag over and being paid for it are one moment.
 - **What to load** — every product across every order in that window,
   summed. Ask him whether that is how he would want it grouped.
 
-## 4. What it costs — 1 minute
+## 4. Show him the customer's side of that — 2 minutes
+
+Go back to the Shop link and open the order he just placed.
+
+**Progress**: Placed · Accepted by the shop · Packed · On the tempo ·
+Delivered — each with the time the shop actually did it, and the ones
+that have not happened sitting grey with no time beside them.
+
+This is the answer to *"where is my order?"*, which is the only
+question a customer ever phones a shop about. He will recognise the
+phone call immediately.
+
+## 5. What it costs — 1 minute
 
 **Nothing.** No commission, no per-order fee, no monthly charge. The
 hosting is free and the database is free at this size.
@@ -121,9 +156,9 @@ Say them yourself. Every one of them makes the rest more believable.
 |---|---|
 | **Prices are made up** | Realistic Mumbai MRPs, not his. He must correct them — it is one file, and there is a tool that prints a price list for him to mark up. |
 | **The UPI id takes no money** | `demo.not.real@example` cannot resolve. The QR, the amount and the order code are all real; only the payee is not. His real id is a one-line change. |
-| **The Marathi and Hindi have never been read by a speaker** | **Ask him to read them.** Switch to मराठी in front of him. This is the single most valuable thing he can give you in twenty minutes and it costs him nothing. |
+| **The Marathi, Hindi and Gujarati have never been read by a speaker** | **Ask him to read them.** Switch to मराठी in front of him. This is the single most valuable thing he can give you in twenty minutes and it costs him nothing. |
 | **The photographs are not his stock** | They are openly-licensed pack shots. 106 of 117 products have one; the rest are drawn. His own shelf, photographed on a phone against a sheet of white paper, would beat all of them. |
-| **Sign-in is not proven yet** | The pill at the bottom right offers it. **Do not demo it** — the six-digit email has not been tested end to end. |
+| **Customer sign-in is not proven** | The pill at the bottom right offers it, and the six-digit email has never been tested end to end. **Do not demo it.** It is only for a customer who wants their past orders on a second phone — nothing about the shop's side depends on it. |
 
 ---
 
@@ -141,6 +176,9 @@ The app is a prop. The answers are the product.
 6. **Would he want a minimum order?** There is none right now.
 7. **Which products should "buy 2 get 1" sit on?** Six snack packs is
    a guess.
+8. **When a customer says they paid and they have not** — what does he
+   want the delivery person to do? Right now the app can only record
+   the claim and leave the money owed.
 
 Write the answers down in the room. Most of them are one number in
 one file.
@@ -153,32 +191,45 @@ In rough order of what it buys you:
 
 1. **His price corrections** — `perl tools/pricelist.pl > prices.txt`,
    hand him the file, read it back with `setprice.pl`.
-2. **Change the Store code. This one is not optional.**
 
-   Two reasons, and the second is the real one. The name on the shop
-   sign is the first thing anybody would try — and worse, the code
-   was written into a commit message and pushed, so it is sitting in
-   this repository's public history and can simply be read. That is
-   my mistake, not a design decision.
+2. **Change the Store code. This one is not optional, and it is now
+   more urgent than it was.**
 
-   It costs nothing today, because the orders table is empty and
-   there is nothing behind the door. It costs a customer's name,
-   phone and address the moment there is a real order. So this runs
-   **before** the shop takes its first one, not "soon":
+   The code used to decide only whether a *button* was drawn — the
+   database refused a stranger regardless, so leaking it got you a
+   shop-shaped screen with nothing in it. That is no longer true. The
+   code is now the actual credential: whoever types it reads every
+   customer's name, phone and address.
+
+   Two things make the current one unusable for real customers.
+   Anybody standing in front of the shop would get it inside three
+   guesses. And it was written into a commit message and pushed, so
+   it is sitting in this repository's public history and does not
+   need guessing at all.
+
+   Costs nothing today, with invented orders. Costs a customer's
+   address the moment there is a real one. So this runs **before** the
+   shop takes its first order, not "soon":
 
    ```bash
-   perl tools/setpin.pl <6 digits>
+   perl tools/setpin.pl <a long code>
    git add -A && git commit -m "new Store code" && git push
    ```
+
+   Then run the SQL it prints, in Supabase → SQL Editor. **Both
+   halves, or neither.** `shop.json` decides whether the gate opens
+   and the database decides whether the board has anything in it;
+   setting one without the other gives a Store view that opens onto
+   an empty board.
+
+   Make it **long** — ten characters, not six digits. bcrypt makes
+   each guess slow, but a million guesses is hours, not years.
 
    Do not try to scrub the old one out of the history. It is pushed
    and public; forks and the API keep serving old objects, so a
    force-push buys a feeling rather than a fix. Rotating the code is
-   what actually makes the leaked one worthless.
-3. **Sign in once on his phone**, then put his user id from Supabase
-   → Authentication → Users into the `staff` table:
-   `insert into staff (user_id) values ('<uuid>');`
-   Until that row exists his board only shows orders placed on his own
-   phone — which is why this demo is on one device.
-4. **His real UPI id** in `shop.json`, and `upi.demo` to false.
-5. **Photographs of his own stock**, if he is willing.
+   what makes the leaked one worthless.
+
+3. **His real UPI id** in `shop.json`, and `upi.demo` to false.
+
+4. **Photographs of his own stock**, if he is willing.
