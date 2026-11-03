@@ -51,10 +51,20 @@ async function notStaffHtml(c){
   try { staff = await session.isStaff(); me = await session.whoami(); }
   catch (e){ return ''; }              // never let a notice break the board
   if (staff) return '';
-  const id = (me && me.id) || '';
+  // NOT SIGNED IN is a different problem from SIGNED IN AND NOT STAFF,
+  // and the fix for one is wrong for the other. A second browser has
+  // no session, so it mints its own anonymous user -- telling that
+  // browser to add ITS id to `staff` would staff a throwaway session,
+  // leave a dead row behind, and have to be done again on the next
+  // device. The staff list goes by account; the road in is signing in.
+  if (!me || me.guest){
+    return '<div class="card nostaff"><p>' + esc(c.bNotSignedIn) + '</p></div>';
+  }
+  const id = me.id || '';
   return '<div class="card nostaff">'
     + '<p>' + esc(c.bNotStaff) + '</p>'
-    + '<p class="hint">' + esc(c.acctIdLabel) + '</p>'
+    + '<p class="hint">' + esc(c.acctIdLabel)
+      + (me.email ? ' &#183; ' + esc(me.email) : '') + '</p>'
     + '<code class="mono idbox">' + esc(id) + '</code>'
     // The apostrophes are HTML entities so no quote character has to
     // survive a JS string literal on its way to the clipboard.
