@@ -21,7 +21,8 @@ import { payBlock, drawQR, wirePay } from './pay.js';
 import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
   minsToCutoff, minsToStart, fmtSoon, fmtAbout, windowOf, ORDER_TONE,
-  freeUnits, ORDER_TRAIL, istClock,
+  freeUnits, ORDER_TRAIL, istClock, canEditOrder, matchCoupon,
+  totals as calcTotals,
 } from './domain.js';
 
 const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
@@ -1112,6 +1113,16 @@ registerScreen('track', async () => {
       // looking at, and not on the home screen as a card showing an
       // order code. Here the items are listed right above the button,
       // so "this again" means something you can see.
+      // Only while the shop could still act on a change: an hour
+      // before the window, and before the order leaves `placed` or
+      // `accepted`. The server checks the second of those; the hour
+      // is checked here, which is exactly where place() checks the
+      // cut-off -- see db/order-edit.sql.
+      + (canEditOrder(run, istDate(), istMins())
+         && (o.status === 'placed' || o.status === 'accepted')
+          ? '<button type="button" class="btn ghost" id="oedit">'
+            + esc(c.editOrder) + '</button>'
+          : '')
       + '<button type="button" class="btn ghost" id="again">'
         + esc(c.reorder) + '</button>'
 
@@ -1119,6 +1130,8 @@ registerScreen('track', async () => {
 
     drawQR('trackqr', d.upi, o);
     wirePay(box, o, orders);
+    const oe = $('oedit');
+    if (oe) oe.onclick = () => { S.edit = null; show('oedit'); };
     $('again').onclick = async () => {
       for (const l of o.lines) await cart.add(l.pid, l.qty);
       toast(f(c.nItems, { n: o.lines.length }));
@@ -1128,6 +1141,95 @@ registerScreen('track', async () => {
   await draw();
   onLeave(live.subscribe('orders', draw));
   onLeave(live.subscribe('runs', draw));
+});
+
+// ---------------------------------------------------------------------
+//  s-oedit -- the customer changing their own order
+//
+//  A working copy in S.edit, not the order itself: nothing is written
+//  until Save, so backing out costs a tap and leaves no trace. The
+//  totals are recomputed by the SAME calcTotals() the cart uses, so
+//  an edited order is priced by the rules a new one would be -- offer
+//  first, then the coupon, rounded once.
+// ---------------------------------------------------------------------
+registerScreen('oedit', async () => {
+  const c = t();
+  const box = $('s-oedit');
+
+  const draw = async () => {
+    const o = await orders.byId(S.orderId);
+    if (!o){ show('orders', false); return; }
+    const d = await ready();
+    const run = await runs.byId(o.runId);
+
+    // Seeded once per visit. Re-seeding on every repaint would undo
+    // the tap that caused the repaint.
+    if (!S.edit || S.edit.id !== o.id){
+      S.edit = { id: o.id, q: {} };
+      for (const l of o.lines) S.edit.q[l.pid] = l.qty;
+    }
+    const q = S.edit.q;
+    const lines = o.lines
+      .map((l) => ({ pid: l.pid, qty: q[l.pid] || 0 }))
+      .filter((l) => l.qty > 0);
+    // The coupon that was on the order, re-matched -- a code
+    // withdrawn since it was placed must not still apply.
+    const coupon = matchCoupon(o.coupon, d.coupons);
+    const tot = calcTotals(lines, d.byId, d.delivery, coupon, d.offers);
+
+    mount(box, h1(f(c.editTitle, { s: o.code }))
+      + '<p class="sub">' + esc(c.editSub) + '</p>'
+      + '<ul class="plist flat">' + o.lines.map((l) => {
+          const n = q[l.pid] || 0;
+          return '<li class="erow' + (n ? '' : ' egone') + '">'
+            + '<span class="ebody"><b>' + esc(l.nameEn) + '</b>'
+            +   '<span class="hint">' + esc(packLabel(l.pack, c)) + '</span></span>'
+            + '<span class="estep">'
+            +   '<button type="button" data-q="' + esc(l.pid) + '" data-d="-1"'
+            +     ' aria-label="-">&minus;</button>'
+            +   '<span class="mono eq">' + esc(String(n)) + '</span>'
+            +   '<button type="button" data-q="' + esc(l.pid) + '" data-d="1"'
+            +     ' aria-label="+">+</button>'
+            + '</span></li>';
+        }).join('') + '</ul>'
+      + '<div class="card totals">'
+      +   row(c.itemsTotal, rupees(tot.items + tot.offerOff))
+      +   (tot.offerOff > 0
+            ? row(f(c.offerRow, { n: tot.freeCount }),
+                  '-' + rupees(tot.offerOff), 'leaf') : '')
+      +   (tot.discount > 0
+            ? row(f(c.couponSaved, { s: tot.coupon }),
+                  '-' + rupees(tot.discount), 'leaf') : '')
+      +   row(c.deliveryFee, c.feeFree, 'leaf')
+      +   row('<b>' + esc(c.toPay) + '</b>', '<b>' + esc(rupees(tot.grand)) + '</b>', '', true)
+      + '</div>'
+      + '<button type="button" class="btn" id="esave">' + esc(c.editSave) + '</button>'
+      + '<button type="button" class="btn ghost" id="ecancel">'
+        + esc(c.editCancel) + '</button>');
+
+    // One handler on the list, not one per button: the list is
+    // rebuilt on every tap and a per-button handler would be bound
+    // to a node that no longer exists.
+    box.onclick = async (e) => {
+      const b = e.target.closest('[data-q]');
+      if (b){
+        const pid = b.dataset.q, dq = Number(b.dataset.d);
+        q[pid] = Math.max(0, (q[pid] || 0) + dq);
+        draw();
+        return;
+      }
+      if (e.target.closest('#ecancel')){ S.edit = null; show('track', false); return; }
+      if (!e.target.closest('#esave')) return;
+      if (!lines.length){ toast(c.editEmpty); return; }
+      try {
+        await orders.edit(o.id, lines);
+        S.edit = null;
+        toast(c.editDone);
+        show('track', false);
+      } catch (err){ toast(String(err.message)); }
+    };
+  };
+  await draw();
 });
 
 // ---------------------------------------------------------------------

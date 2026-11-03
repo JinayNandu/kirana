@@ -638,6 +638,43 @@ export const orders = {
   // like it worked. The table lives in domain.js and nowhere else --
   // deliberately NOT copied into SQL, which would be a second source
   // of truth for the one thing that must have only one.
+  // Re-priced here for the same reason the local one re-prices: the
+  // figures are computed from the catalogue, not taken from the
+  // screen. edit_order() does trust them, exactly as ord_insert
+  // trusts the ones place() sends -- see db/order-edit.sql for what
+  // the server DOES guarantee, which is ownership and status.
+  async edit(id, lines){
+    const d = await DATA;
+    const o = await orders.byId(id);
+    if (!o) throw new Error('NO_SUCH_ORDER');
+    const b2g1 = new Set((d.offers && d.offers.b2g1) || []);
+    const keep = [];
+    for (const w of (lines || [])){
+      if (!(w.qty > 0)) continue;
+      const was = o.lines.find((l) => l.pid === w.pid);
+      const p = d.byId[w.pid];
+      if (!was || !p) continue;
+      const free = b2g1.has(w.pid) ? freeUnits(w.qty) : 0;
+      keep.push({
+        pid: w.pid, name_en: was.nameEn, pack: was.pack, qty: w.qty,
+        unit_price: p.price, unit_mrp: p.mrp,
+        line_total: p.price * (w.qty - free),
+      });
+    }
+    if (!keep.length) throw new Error('EMPTY');
+    const coupon = matchCoupon(o.coupon, d.coupons);
+    const t = calcTotals(keep.map((l) => ({ pid: l.pid, qty: l.qty })),
+      d.byId, d.delivery, coupon, d.offers);
+    const { error } = await sb.rpc('edit_order', {
+      oid: id, newlines: keep,
+      t: { items_total: t.items, mrp_total: t.mrp, saved: t.saved,
+           discount: t.discount, fee: t.fee, grand: t.grand },
+    });
+    oops(error);
+    bust(); fire('orders');
+    return orders.byId(id);
+  },
+
   async advance(id, to, note){
     const o = await orders.byId(id);
     if (!o) throw new Error('NO_SUCH_ORDER');

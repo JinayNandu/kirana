@@ -721,6 +721,47 @@ export const orders = {
 
   // Invalid transitions THROW. A silent no-op is a button that looks
   // like it worked.
+  // Re-price from the catalogue, never from what the browser sent.
+  // An order's line total is the one number a customer could profit
+  // from choosing, and `place()` already treats placement as the
+  // moment a price freezes -- an edit is a second such moment, not
+  // an excuse to trust a figure that arrived from a screen.
+  async edit(id, lines){
+    const d = await ready();
+    const want = (lines || []).filter((l) => l.qty > 0);
+    if (!want.length) throw new Error('EMPTY');
+    let err = null, out = null;
+    commit('orders', K.orders, (list) => list.map((o) => {
+      if (o.id !== id) return o;
+      if (o.status !== 'placed' && o.status !== 'accepted'){
+        err = 'TOO_LATE'; return o;
+      }
+      const b2g1 = new Set((d.offers && d.offers.b2g1) || []);
+      const keep = [];
+      for (const w of want){
+        const was = o.lines.find((l) => l.pid === w.pid);
+        const p = d.byId[w.pid];
+        if (!was || !p) continue;
+        const free = b2g1.has(w.pid) ? freeUnits(w.qty) : 0;
+        keep.push({ ...was, qty: w.qty,
+          lineTotal: p.price * (w.qty - free) });
+      }
+      if (!keep.length){ err = 'EMPTY'; return o; }
+      const coupon = matchCoupon(o.coupon, d.coupons);
+      const t = calcTotals(keep.map((l) => ({ pid: l.pid, qty: l.qty })),
+        d.byId, d.delivery, coupon, d.offers);
+      out = { ...o, lines: keep,
+        itemsTotal: t.items, mrpTotal: t.mrp, saved: t.saved,
+        discount: t.discount, fee: t.fee, grand: t.grand,
+        history: o.history.concat(
+          [{ at: new Date().toISOString(), to: 'edited', note: '' }]) };
+      return out;
+    }));
+    if (err) throw new Error(err);
+    if (!out) throw new Error('NO_SUCH_ORDER');
+    return clone(out);
+  },
+
   async advance(id, to, note){
     let err = null, out = null;
     commit('orders', K.orders, (list) => list.map((o) => {

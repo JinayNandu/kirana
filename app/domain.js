@@ -249,6 +249,18 @@ export function istClock(iso){
 export const runEnded = (run, nowDate, nowMins) =>
   run.date < nowDate || (run.date === nowDate && mins(run.to) <= nowMins);
 
+// An order can be changed until an hour before its window opens.
+// After that the shop is already filling it, and a basket that
+// moves while somebody is walking the shelves with it is worse
+// than no edit at all.
+//
+// minsToStart() compares date AND minute, which is the whole reason
+// it exists: tomorrow's 11 AM is LATER than tonight's 8 PM, and a
+// bare clock comparison says the opposite.
+export const EDIT_LEAD_MINS = 60;
+export const canEditOrder = (run, nowDate, nowMins) =>
+  !!run && minsToStart(run, nowDate, nowMins) > EDIT_LEAD_MINS;
+
 export const canAdvance   = (from, to) => (ORDER_NEXT[from] || []).includes(to);
 export const canAdvanceRun = (from, to) => (RUN_NEXT[from] || []).includes(to);
 

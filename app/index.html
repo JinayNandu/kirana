@@ -821,6 +821,22 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 .runcard{display:block; width:100%; text-align:left; margin-bottom:var(--s2)}
 .rcwrap .runcard{margin-bottom:0}
 /* Every status, one tap each, the current one filled. */
+/* Changing an order. One row per line, the count between two taps,
+   and nought takes it out -- which is why the minus is never
+   disabled and the row simply leaves when it reaches zero. */
+.erow{display:flex; align-items:center; gap:var(--s3); padding:var(--s3) 0}
+.erow .ebody{flex:1; min-width:0}
+.erow b{display:block; font-weight:600}
+.estep{display:flex; align-items:center; gap:var(--s2); flex:none}
+.estep button{
+  width:40px; height:40px; border-radius:var(--r1);
+  background:var(--leaf-wash); color:var(--leaf-ink);
+  border:1px solid var(--leaf-wash); font-size:19px; line-height:1;
+}
+.estep .eq{min-width:26px; text-align:center; font-weight:700}
+.egone{opacity:.45}
+.egone .eq{color:var(--ink-dim)}
+
 .statusrow{display:flex; flex-wrap:wrap; gap:var(--s2); margin:var(--s2) 0 var(--s4)}
 .statusrow .btn{
   flex:1 1 auto; min-width:94px; min-height:42px;
@@ -1090,6 +1106,7 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
   <section id="s-aedit"  hidden></section>
   <section id="s-done"   hidden></section>
   <section id="s-track"  hidden></section>
+  <section id="s-oedit" hidden></section>
   <section id="s-orders" hidden></section>
 
   <!-- ============ SHOPKEEPER ============ -->
