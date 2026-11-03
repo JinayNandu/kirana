@@ -223,10 +223,34 @@ quietly paying for the shortfall. `money.pl` asserts that case against a
 it was building a product priced at `0 - 10` and passing on a basket of
 −10.
 
-### Invalid status transitions throw
+### Any status, any time -- and the tables that used to stop you
 
-`ORDER_NEXT` and `RUN_NEXT` in `domain.js` are the only tables. A silent
-no-op is a button that looks like it worked.
+`ORDER_NEXT` and `RUN_NEXT` in `domain.js` are the only tables, and
+they are now built rather than written out:
+
+```js
+export const ORDER_NEXT = Object.fromEntries(
+  ORDER_STATES.map((s) => [s, ORDER_STATES.filter((x) => x !== s)]));
+```
+
+Every status reachable from every other. The picking list draws all
+five, one tap each, with the current one filled.
+
+⚠️ **This replaces a rule that used to be in this file**: that the
+tables walk a chain and an invalid move throws. They did, and the
+cost showed up in use -- tomorrow's order could not be marked
+delivered today, and a tap made by mistake could not be taken back.
+A machine telling a shopkeeper he has not done the thing he just did
+is worse than any ordering it was protecting. The owner asked for
+the policing to go; the STAGES below are unchanged.
+
+What is still refused is a move to the status already set, which is
+the one genuinely empty action: a silent no-op is a button that
+looks like it worked.
+
+**Declining is a status, not a feature.** `cancelled` was already in
+the table; once every status has a button, the shop can decline an
+order without anything being built for it.
 
 `placed -> accepted -> delivered`. **Three stages, on the owner's
 call.** He was looking at five things to tap on one screen -- accept,
@@ -281,9 +305,57 @@ instructions, and the owner could not tell what they meant. `loaded`
 went with the tempo view and `out` went with `packed`: **a state
 nobody acts on is a button nobody understands.**
 
+**Both moves live on the BOARD as well**, on every window that has
+orders, tomorrow's included. They were a screen deeper, which is a
+tap and a scroll before the thing the shop actually wants. `bulk()`
+in shop.js is shared by the board and the run screen so the two
+cannot drift apart. Empty windows get no buttons, which is what
+stops six cards becoming twelve.
+
+⚠️ **A window whose hour has gone with work still on it goes red** --
+the pill reads *Delayed*, the card takes a `--bad` border, and it is
+the only red on that screen so it cannot be mistaken for anything
+else. `runEnded()` compares date AND minute like everything else in
+domain.js: yesterday's 8 PM is earlier than today's 11 AM and a bare
+clock comparison says the opposite.
+
 The board also stops shouting at empty windows. A window past its
 cut-off with nothing in it says **No orders**, not *Closed · pack
 these* — an instruction to do nothing is worse than silence.
+
+### A customer can change their own order, up to an hour before
+
+`canEditOrder()` in domain.js: more than `EDIT_LEAD_MINS` (60) from
+the window opening, and the order still `placed` or `accepted`. The
+track screen then offers **Change this order**, which opens `s-oedit`
+-- its own screen, touching neither the cart nor checkout.
+
+A working copy lives in `S.edit`; nothing is written until Save, so
+backing out costs a tap and leaves no trace. Totals recompute through
+the SAME `calcTotals()` the cart uses, so an edited order is priced
+by the rules a new one would be. **Both backends re-price from the
+catalogue** rather than trusting the figures the screen sent: a line
+total is the one number a customer could profit from choosing.
+
+⚠️ **The hour is enforced in the BROWSER, and cannot be enforced
+anywhere else.** The timetable lives in `app/data/runplan.json`, not
+in Postgres, so there is no window time on the row for
+`edit_order()` to compare against. What the server does guarantee is
+ownership, a status that is still `placed` or `accepted`, and at
+least one line. That is exactly the standing of the existing
+cut-off -- `place()` checks `isBookable()` in the browser too -- so
+it is no weaker than the rest of the app and no stronger. Nobody
+should build on it believing the hour is a hard edge.
+
+A customer has no UPDATE on `orders` at all, so the write goes
+through `edit_order()` in `db/order-edit.sql`, the same shape as
+`mark_paid()`: a SECURITY DEFINER function that can do one thing.
+**Run it once by hand**, like `db/store-code.sql`.
+
+The hour falls exactly where the order cut-off already falls. That
+is not a coincidence worth hiding: the shop stops taking orders and
+stops accepting changes at the same moment, because that is the
+moment it starts packing.
 
 ### There is no live GPS tracking, and there should not be
 

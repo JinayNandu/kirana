@@ -125,11 +125,18 @@ through it in his own words:
   five until he said it was confusing, and he was right -- packing
   and loading are things he does between those two moments, not
   things the app needs him to report.
-- **The window does all of them at once** with the same two buttons:
-  *Accept all and schedule for delivery*, then *Mark all delivered
-  and paid*. Twelve orders, two taps. Show him this one.
-- *Nobody home* sits beside the delivery button, because that is the
-  one thing a doorstep produces that is neither.
+- **Every status is there, all the time** -- Placed, Accepted,
+  Delivered, Nobody home, Cancelled -- and any of them can be set at
+  any moment. Tomorrow's order can be marked delivered today, and a
+  tap made by mistake can be taken straight back. **Cancelled is how
+  he declines an order**; it needed no button of its own.
+- **He never has to open a window to do the lot.** Both bulk buttons
+  -- *Accept all* and *All delivered & paid* -- sit on each window
+  card on the board itself. Twelve orders, one tap, without leaving
+  the first screen. **Show him this one.**
+- **A window whose hour has gone with orders still on it turns red**
+  and says *Delayed*. Point at it and say nothing; he will tell you
+  what it means.
 - **What to load** — every product across every order in that window,
   summed. Ask him whether that is how he would want it grouped.
 
@@ -145,6 +152,15 @@ beside them.
 This is the answer to *"where is my order?"*, which is the only
 question a customer ever phones a shop about. He will recognise the
 phone call immediately.
+
+**Then tap "Change this order".** The customer can change amounts
+or take something out, on their own, up to an hour before the
+window -- the same moment his orders close, because that is when he
+starts packing. This is the answer to the OTHER phone call.
+
+Ask him whether he wants that at all. A shopkeeper who would rather
+be telephoned about a change is telling you something about his
+customers, and it is one line to switch off.
 
 ## 5. What it costs — 1 minute
 
