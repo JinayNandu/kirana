@@ -228,13 +228,25 @@ it was building a product priced at `0 - 10` and passing on a basket of
 `ORDER_NEXT` and `RUN_NEXT` in `domain.js` are the only tables. A silent
 no-op is a button that looks like it worked.
 
-`placed -> accepted -> packed -> out -> delivered`. **`accepted` is
-its own step** because accepting and packing are two different facts
-and the shop used to publish only the second: a customer watching
-"Placed" for forty minutes cannot tell a busy shop from a shop that
-never looked. It needed no migration -- `status` is free text with no
-enum and no check constraint, and the labels resolve as
-`c['st' + Status]`.
+`placed -> accepted -> delivered`. **Three stages, on the owner's
+call.** He was looking at five things to tap on one screen -- accept,
+mark packed, send out, mark delivered, mark paid -- for work with two
+moments in it: deciding to fill the order, and handing it over.
+Packing and loading happen BETWEEN those; they are not states anybody
+needs to publish, and each one was a tap taken in front of a customer
+standing at a counter.
+
+`accepted` is a stage because accepting and delivering are two
+different facts and the shop used to publish only the second: a
+customer watching "Placed" for forty minutes cannot tell a busy shop
+from a shop that never looked.
+
+None of it needed a migration -- `status` is free text with no enum
+and no check constraint, and the labels resolve as `c['st' + Status]`.
+⚠️ That also means a row left over from the old five can still say
+`packed`, and nothing will reject it. Such a row draws no trail step
+and offers no button, which is the right failure, but it is why
+`ORDER_NEXT` keeps no entry for a state it can no longer reach.
 
 `ORDER_TRAIL` is the subset a CUSTOMER is shown, and deliberately not
 the keys of `ORDER_NEXT`: `failed` and `cancelled` are endings rather
@@ -243,20 +255,31 @@ order going perfectly well. The track screen reads it off the order's
 append-only `history`, so each step carries the time the shop did it
 and a step with no time beside it has genuinely not happened.
 
-`failed` ("Nobody home") earns its place: whoever delivers *will* arrive and
-find nobody in, and a board where that order sits in `out` forever is a
-board nobody trusts by day three.
+**The trail has its own labels, `tr*` rather than `st*`.** It has room
+for the whole sentence -- *"Accepted and scheduled for delivery"* --
+and a pill has room for one word. Sharing one key forced the pill to
+carry the sentence, and "Delivered - paid" then sat beside a separate
+"Paid" pill saying the same thing twice.
 
-### A delivery window has three states, named for what to do next
+`failed` ("Nobody home") earns its place and survived the cut to three
+stages, as a ghost button on an accepted order. It is not a stage: it
+is the delivery that did not happen. Whoever delivers *will* arrive
+and find nobody in, and a board where that order sits in `accepted`
+forever is a board nobody trusts by day three.
 
-`open` → `cutoff` → `out` → `done`, and the buttons say *Close orders
-and start packing*, *Send out for delivery*, *Mark all delivered*.
+### A delivery window moves in step with the orders on it
 
-That is a rewrite. They used to read *Taking orders*, *Pack now*,
-*Loaded*, *On the road* — status names rather than instructions, and
-the owner could not tell what they meant. The `loaded` state went with
-the tempo view: **a state nobody acts on is a button nobody
-understands.**
+`open` → `cutoff` → `done`, and the buttons say *Accept all and
+schedule for delivery* and *Mark all delivered and paid* -- the same
+two moves a single order makes, done to every order in the window at
+once. **That is the whole reason the button exists**: a window of
+twelve orders is twelve identical taps otherwise.
+
+It has been cut twice. The states used to read *Taking orders*, *Pack
+now*, *Loaded*, *On the road* -- status names rather than
+instructions, and the owner could not tell what they meant. `loaded`
+went with the tempo view and `out` went with `packed`: **a state
+nobody acts on is a button nobody understands.**
 
 The board also stops shouting at empty windows. A window past its
 cut-off with nothing in it says **No orders**, not *Closed · pack
@@ -292,20 +315,25 @@ field takes focus with the caret after whatever was typed on the
 previous screen, so a word begun in the shop header simply continues.
 **An input must never sit inside the region its own handler repaints.**
 
-### Packing is one tap
+### The picking list is one button
 
-Every line of a picking list carried a tick, and the packed button
-stayed disabled until all of them were ticked -- so a four-item order
-took five taps, and a shopkeeper holding the bag had to tell the app
-what he could already see. The list is what to put in the bag, not a
-form to fill in. The ticks are gone and the button is always live.
+Every line of it once carried a tick, and the packed button stayed
+disabled until all of them were ticked -- so a four-item order took
+five taps, and a shopkeeper holding the bag had to tell the app what
+he could already see. The list is what to put in the bag, not a form
+to fill in. The ticks went, then the packed button itself.
 
-An order also gets **Mark delivered** while it is packed, because the
-shopkeeper who walks it round the corner himself never passes through
-"out for delivery" and should not have to tap his way there. It steps
-the order through `out` on the way rather than jumping, since
-`ORDER_NEXT` is right that a thing must leave before it arrives -- and
-the customer's track screen reads that history.
+One button per stage now: *Accept and schedule for delivery*, then
+*Delivered and payment received*. `failed` is a ghost beside the
+second.
+
+⚠️ **The paid toggle is drawn only once an order is DELIVERED.**
+Paying is part of the last stage, so a separate "Mark paid" standing
+next to "Accept" was a third decision at the one moment there is
+nothing to decide. After delivery it has a job again, and only one:
+the customer who in the end did not pay. `settle()` only ever marks
+paid ON the move to delivered -- it once ran after every advance, so
+accepting an order marked it paid.
 
 ### The board answers "how much, and what do I pack"
 

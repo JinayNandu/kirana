@@ -115,14 +115,21 @@ through it in his own words:
   screen he will actually hold while walking his own shelves. If the
   customer tapped "I have paid", it says here: *"Customer says they
   paid by UPI. Ask to see the screenshot."*
-- **Accept this order.** One tap. This is new and it matters: it tells
-  the customer a person has seen the order and it is being filled.
-  Before, the first thing they heard back was that it had been packed,
-  and forty minutes of silence before that.
-- **Mark packed** → **Send out for delivery** → **Delivered and
-  payment received.** Named for what to do next rather than for a
-  status. That last one closes both halves in one tap, because at a
-  doorstep handing the bag over and being paid for it are one moment.
+- **Accept and schedule for delivery.** One tap, and it matters: it
+  tells the customer a person has seen the order and it is being
+  filled. Before, they heard nothing back until it was already out.
+- **Delivered and payment received.** The second and last tap. It
+  closes both halves at once, because at a doorstep handing the bag
+  over and being paid for it are one moment.
+- **Two taps, and that is the whole lifecycle.** Say so. There were
+  five until he said it was confusing, and he was right -- packing
+  and loading are things he does between those two moments, not
+  things the app needs him to report.
+- **The window does all of them at once** with the same two buttons:
+  *Accept all and schedule for delivery*, then *Mark all delivered
+  and paid*. Twelve orders, two taps. Show him this one.
+- *Nobody home* sits beside the delivery button, because that is the
+  one thing a doorstep produces that is neither.
 - **What to load** — every product across every order in that window,
   summed. Ask him whether that is how he would want it grouped.
 
@@ -130,9 +137,10 @@ through it in his own words:
 
 Go back to the Shop link and open the order he just placed.
 
-**Progress**: Placed · Accepted by the shop · Packed · On the tempo ·
-Delivered — each with the time the shop actually did it, and the ones
-that have not happened sitting grey with no time beside them.
+**Progress**: Order placed · Accepted and scheduled for delivery ·
+Delivered and payment received — each with the time the shop actually
+did it, and the ones that have not happened sitting grey with no time
+beside them.
 
 This is the answer to *"where is my order?"*, which is the only
 question a customer ever phones a shop about. He will recognise the
