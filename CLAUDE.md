@@ -74,10 +74,12 @@ app/
   index.html        one document: all CSS, 17 <section id="s-*">, role switch
   app.js            entry -- the only module that knows both roles
   ui.js             $, esc, show/goBack/teardown, per-role NAV, paint, boot
-  i18n.js           T = {en, hi, gu, mr}, 270 keys each
+  i18n.js           T = {en, hi, gu, mr}, 284 keys each
   domain.js         PURE -- IST clock, window derivation, status tables, money
   store.js          the facade; ONE import line is the Supabase swap
   backend-local.js  localStorage + cross-tab storage events
+  backend-supabase.js  the same four rules over Postgres + Realtime
+  account.js        the sign-in overlay, the pill, the checkout offer
   customer.js shop.js settings.js
   lock.js           PURE -- the code that opens the Store view
   pay.js            UPI link + QR. Takes no money -- see below.
@@ -91,6 +93,10 @@ app/
     categories.json   10 categories
     pairs.json        what goes with what -- basket suggestions
     runplan.json      the three delivery windows
+db/
+  schema.sql        tables, row-level security, the SECURITY DEFINER
+                    functions a customer is allowed to call
+  store-code.sql    shop_secret + claim_staff(). Run once, by hand.
 tools/
   serve.pl          static server, both loopback families
   pricelist.pl      prints the catalogue as an editable price list
@@ -221,6 +227,21 @@ it was building a product priced at `0 - 10` and passing on a basket of
 
 `ORDER_NEXT` and `RUN_NEXT` in `domain.js` are the only tables. A silent
 no-op is a button that looks like it worked.
+
+`placed -> accepted -> packed -> out -> delivered`. **`accepted` is
+its own step** because accepting and packing are two different facts
+and the shop used to publish only the second: a customer watching
+"Placed" for forty minutes cannot tell a busy shop from a shop that
+never looked. It needed no migration -- `status` is free text with no
+enum and no check constraint, and the labels resolve as
+`c['st' + Status]`.
+
+`ORDER_TRAIL` is the subset a CUSTOMER is shown, and deliberately not
+the keys of `ORDER_NEXT`: `failed` and `cancelled` are endings rather
+than stages, and a progress line listing them puts a warning on an
+order going perfectly well. The track screen reads it off the order's
+append-only `history`, so each step carries the time the shop did it
+and a step with no time beside it has genuinely not happened.
 
 `failed` ("Nobody home") earns its place: whoever delivers *will* arrive and
 find nobody in, and a board where that order sits in `out` forever is a
@@ -374,12 +395,25 @@ way his customers do. **The unlock is still remembered**
 (`kirana.storeopen`), so reopening the staff link goes straight to the
 board without the code.
 
-⚠️ **This is not a lock and nothing may ever be built on the belief
-that it is.** Same file, same JavaScript, and `?store` is five
-characters anybody could guess or read in the source. What keeps a
-stranger off the board is the six-digit code, and after the Supabase
-swap the server refusing to hand them anybody's orders. All this
-decides is whether a BUTTON is drawn.
+⚠️ **`?store` is not a lock and nothing may ever be built on the
+belief that it is.** Same file, same JavaScript, and `?store` is five
+characters anybody could guess or read in the source. All the URL
+decides is which half of the app draws.
+
+⚠️ **The CODE, however, is now a real credential**, which it was
+not when the paragraph above was first written. It used to decide
+only whether a button appeared -- the database refused a stranger
+regardless, so leaking it bought a shop-shaped screen with nothing
+in it. Typing it now calls `claim_staff()`, which puts THIS session
+into `staff`, so whoever has the code reads every customer's name,
+phone and address.
+
+That trade was made deliberately and on the owner's call. The
+alternative on offer was an email sign-in plus a uuid pasted into a
+database console, per device -- a developer's errand standing in for
+a feature. What it costs is that **length is now the only defence
+that survives**: bcrypt makes a guess slow, but six digits is a
+million guesses and that is hours. See "Changing the code".
 
 **`?store`, not `?shop`.** In this app "Shop" is the CUSTOMER's half
 and "Store" is the staff half — the same trap that made the gate say
@@ -402,15 +436,23 @@ It is **not** a safe, and three things are true about that:
 
 - Every line of this app is served to whoever opens it, so the
   mechanism is public by construction. What is not public is the code.
-- Orders live in this browser's localStorage, so anyone who can open a
-  developer console on a device can read them without going near the
-  gate. Today that is only ever that device's OWN orders -- there is
-  nothing of anybody else's on a customer's phone to reach.
-- ⚠️ **The day the Supabase swap happens that stops being true**,
-  and a check running in the browser becomes the wrong place for it
-  entirely. The server has to refuse to send a stranger the orders at
-  all. This gate then becomes the UI in front of that, not the thing
-  holding the door.
+- A customer's own orders are readable from a developer console on
+  their own device, gate or no gate. That has always been true and
+  costs nothing: there is nothing of anybody else's on a customer's
+  phone to reach.
+- ⚠️ **The Supabase swap HAS happened**, and this section used to
+  predict what it would change. Orders live in Postgres now, so the
+  browser is no longer anywhere near the right place to decide who
+  may read them -- and it does not. `ord_read` is
+  `user_id = auth.uid() or is_staff()`, enforced per row by the
+  server, and a session that is neither gets an empty result rather
+  than a refusal.
+- ⚠️ **An empty result is indistinguishable from a quiet
+  morning**, which cost an evening: the board rendered "No orders yet
+  today." over a shop full of orders, and sent us hunting a bug in
+  the orders rather than in the session. It says which it is now --
+  `notStaffHtml()` in shop.js, built on `session.isStaff()`, which
+  had existed from the start and was called by nothing.
 
 #### Why the code is not written in shop.json
 
@@ -448,9 +490,23 @@ tools.
 #### Changing the code
 
 ```bash
-perl tools/setpin.pl 418306      # then commit and push
+perl tools/setpin.pl <code>      # then commit and push
 perl tools/setpin.pl --off       # remove the gate entirely
 ```
+
+⚠️ **THE CODE LIVES IN TWO PLACES AND THEY MUST AGREE.**
+`shop.json` decides whether the gate opens; `shop_secret` in Postgres
+decides whether the board has anything in it. Setting one without the
+other gives a Store view that opens onto an empty board -- which is
+the exact bug this mechanism was built to end, rebuilt by hand.
+`setpin.pl` prints the matching SQL for that reason; run it in
+Supabase -> SQL Editor. `db/store-code.sql` is the whole thing,
+table and function included, and it REFUSES to run with its
+placeholder still in place -- storing the hash of the literal word
+CHANGE-ME looks exactly like success, and did.
+
+Use a long code. Both halves accept 4-12 lowercase letters or digits;
+ten random ones are not brute-forceable and six digits are.
 
 **The code is nowhere in this repository and cannot be recovered from
 it** -- not from `shop.json`, not from here. If it is forgotten, set a
@@ -727,9 +783,28 @@ anywhere near this code.
 
 ⚠️ **What it cannot do is know whether the payment happened.** UPI
 sends no callback to a static page. So `paid` is a note somebody
-makes, not a fact the app observed — the customer can tap "I have
-paid", the shopkeeper can mark it from the picking list, the driver
-can mark it as cash. The shop's own UPI app stays the source of truth.
+makes, not a fact the app observed.
+
+⚠️ **So the customer's "I have paid" is recorded as a CLAIM and
+not as payment.** It writes `pay_method = 'upi_said'` and leaves
+`paid` alone, so the money stays in the shop's "to collect" and the
+order wears a "Says paid" flag until somebody has looked at the
+screenshot. It used to set `paid = true`, which dropped the figure
+the shop collects on the customer's word alone -- of every error
+available here, the one that costs the shop actual money.
+
+No migration for that either: `mark_method()` already existed, is
+already granted to `authenticated`, and cannot touch `paid` -- so the
+claim survives a reload without widening what a customer may do to
+their own order.
+
+Only the SHOP marks `paid`: from the picking list, or in the one tap
+that closes a delivery, since at a doorstep handing the bag over and
+being paid for it are one moment. That tap is **"Delivered and
+payment received"**, and `settle()` in shop.js runs it ONLY on the
+move to `delivered` -- it once ran after every advance, so accepting
+an order marked it paid. The shop's own UPI app stays the source of
+truth.
 Anything else needs a server and a gateway; see "Why not a real
 gateway" below.
 
@@ -1170,7 +1245,7 @@ with eyes, not by scoring.
 
 The order is the shop's, not the alphabet's: Borivali West speaks all
 three, and whoever sits last on the row is the one who has to look
-hardest. 270 keys each, and `i18n.pl` fails if any block is missing
+hardest. 284 keys each, and `i18n.pl` fails if any block is missing
 one.
 
 **Everything is translated** — the shop's name and address, eleven
@@ -1262,9 +1337,19 @@ It works because both backends obey four rules — **every method is
 unsubscribe function**. A fifth, quieter one: `backend-local.js` imports
 nothing secret, so the app runs with no credentials file at all.
 
-**`backend-supabase.js` is deliberately not written.** Several hundred
-lines of untested code against a schema that does not exist is
-speculation, not preparation.
+**`backend-supabase.js` is written now**, against the schema in
+`db/schema.sql`. It was deliberately NOT written for a long time, on
+the grounds that several hundred lines of untested code against a
+schema that does not exist is speculation rather than preparation.
+That was right, and is why the seam held when the schema finally
+existed.
+
+⚠️ **The swap is no longer a commented import line.** `store.js`
+chooses on whether `config.js` names a project, so an app with no
+credentials still runs entirely in one browser -- which is what keeps
+it demoable, and what lets a change be tested without writing rows
+into the shop's real database. `shared()` reports which, and the UI
+uses it rather than promising things one browser cannot do.
 
 ---
 
