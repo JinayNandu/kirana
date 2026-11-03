@@ -63,6 +63,28 @@ export function payBlock(upi, order, c, opts){
       + '<p class="hint">' + esc(c.payDoneSub) + '</p></div>';
   }
 
+  // SAID they have paid, which is not the same as paid and must not
+  // be stored as if it were. Nothing in this app can see a UPI
+  // payment -- there is no callback to a static page -- so the only
+  // confirmation that exists is a person at a door looking at a
+  // screenshot. Recording it as `paid` took the order off the
+  // shop's money-to-collect before anybody had checked anything,
+  // which is the one error here that costs the shop actual money.
+  //
+  // It writes pay_method, not paid: mark_method() is a write the
+  // customer already has and it cannot touch `paid`, so the claim
+  // persists across a reload without widening what a customer may
+  // do to their own order.
+  if (order.payMethod === 'upi_said'){
+    return '<div class="card paybox issaid">'
+      + '<p><b>' + esc(c.paySaidHead) + '</b></p>'
+      + '<p class="proof">' + esc(c.paySaidSub) + '</p>'
+      + '<p class="hint">' + esc(c.paySaidStill) + '</p>'
+      + (can ? '<button type="button" class="btn ghost" data-pay="upi">'
+          + esc(c.paySaidBack) + '</button>' : '')
+      + '</div>';
+  }
+
   // Chosen cash.
   if (order.payMethod === 'cod'){
     return '<div class="card paybox">'
@@ -156,7 +178,13 @@ export function wirePay(box, order, orders, after){
     if (!b) return;
     const what = b.dataset.pay;
     try {
-      if (what === 'done') await orders.setPaid(order.id, true, 'upi');
+      // 'done' is the customer SAYING so. It moves pay_method and
+      // leaves `paid` alone, so the shop's figures do not move
+      // until somebody has seen the screenshot.
+      if (what === 'done'){
+        await orders.setPayMethod(order.id, 'upi_said');
+        toast(t().paySaidSub);
+      }
       else await orders.setPayMethod(order.id, what);
       if (after) after();
     } catch (err){

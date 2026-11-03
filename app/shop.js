@@ -247,7 +247,9 @@ registerScreen('run', async () => {
           +       esc(rupees(o.grand)) + '</span></span>'
           +   '<span class="hint">' + esc(o.customer.name + ' · ' + addressOf(o)) + '</span>'
           +   '<span class="opills">'
-          +     (o.paid ? '<span class="pill leaf">' + esc(c.payDone) + '</span>' : '')
+          +     (o.paid ? '<span class="pill leaf">' + esc(c.payDone) + '</span>'
+                : o.payMethod === 'upi_said'
+                  ? '<span class="pill spice">' + esc(c.pillSaidPaid) + '</span>' : '')
           +     '<span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
           +       esc(stName(o.status)) + '</span>'
           +   '</span>'
@@ -288,6 +290,15 @@ registerScreen('run', async () => {
   onLeave(live.subscribe('runs', draw));
 });
 
+// Handing the bag over and being paid for it are one moment at a
+// doorstep, so one tap closes both. Only ever ON the way to
+// delivered, and never a way to UN-pay: the separate toggle above
+// is there for the customer who did not, in the end, pay.
+async function settle(o, orders, to){
+  if (to !== 'delivered' || o.paid) return;
+  await orders.setPaid(o.id, true, o.payMethod === 'cod' ? 'cash' : 'upi');
+}
+
 // ---------------------------------------------------------------------
 //  s-pick -- a card list, never a table. This is the one screen used
 //  on a phone while standing at a shelf, and a table at 375px either
@@ -307,7 +318,7 @@ registerScreen('pick', async () => {
       placed:   ['accepted',  c.markAccepted,  'sky'],
       accepted: ['packed',    c.markPacked,    ''],
       packed:   ['out',       c.dispatch,      'sky'],
-      out:      ['delivered', c.markDelivered, ''],
+      out:      ['delivered', o.paid ? c.markDelivered : c.markDeliveredPaid, ''],
     }[o.status];
 
     mount(box, h1(f(c.pickTitle, { s: o.code }))
@@ -336,6 +347,11 @@ registerScreen('pick', async () => {
       + '<div class="card totals">'
       +   '<p class="trow"><span><b>' + esc(o.paid ? c.payDone : c.toPay) + '</b></span>'
       +     '<span class="mono"><b>' + esc(rupees(o.grand)) + '</b></span></p></div>'
+      // The customer has said they paid. The money is still owed as
+      // far as this app is concerned, and the only way to settle
+      // that is to look at their screen.
+      + (!o.paid && o.payMethod === 'upi_said'
+          ? '<p class="saidpaid">' + esc(c.sSaidPaid) + '</p>' : '')
       + '<button type="button" class="btn ' + (o.paid ? 'ghost' : 'sky') + '" id="paid">'
         + esc(o.paid ? c.markUnpaid : c.markPaid) + '</button>'
       // One button for the next step, and -- once it is packed -- a
@@ -351,7 +367,7 @@ registerScreen('pick', async () => {
       // thing is just a choice between identical doors.
       + (o.status === 'packed' || o.status === 'accepted'
           ? '<button type="button" class="btn ghost" id="dlv">'
-            + esc(c.markDelivered) + '</button>'
+            + esc(o.paid ? c.markDelivered : c.markDeliveredPaid) + '</button>'
           : '')
       + (o.status === 'delivered'
           ? '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
@@ -364,7 +380,11 @@ registerScreen('pick', async () => {
     };
     const b = $('oadv');
     if (b) b.onclick = async () => {
-      try { await orders.advance(o.id, next[0]); show('run', false); }
+      try {
+        await orders.advance(o.id, next[0]);
+        await settle(o, orders, next[0]);
+        show('run', false);
+      }
       catch (err){ toast(String(err.message)); }
     };
     const d = $('dlv');
@@ -374,8 +394,16 @@ registerScreen('pick', async () => {
         // the table is right: an order has to go out before it can
         // arrive. So step it through rather than widen the table and
         // lose the history that the track screen reads.
-        if (o.status === 'packed') await orders.advance(o.id, 'out');
+        // From `accepted` as well as `packed` now, and ORDER_NEXT is
+        // right to refuse a jump: an order has to be packed and go
+        // out before it can arrive, and the track screen reads that
+        // history back to the customer. So walk it.
+        if (o.status === 'accepted') await orders.advance(o.id, 'packed');
+        if (o.status === 'accepted' || o.status === 'packed'){
+          await orders.advance(o.id, 'out');
+        }
         await orders.advance(o.id, 'delivered');
+        await settle(o, orders, 'delivered');
         show('run', false);
       } catch (err){ toast(String(err.message)); }
     };

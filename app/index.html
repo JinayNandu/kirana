@@ -976,6 +976,16 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 /* The order's progress. A reached step is inked and its dot filled;
    the one it is on wears a halo. Everything below is grey with no
    time beside it, which is the information -- not decoration. */
+/* A claim the shop has not checked. Amber, like every other
+   not-yet-true thing in this app -- it is an instruction to go and
+   look, not a confirmation. */
+.saidpaid{
+  margin:var(--s3) 0 0; padding:var(--s3);
+  border-radius:var(--r1); background:var(--spice-wash); color:var(--spice-ink);
+  font-size:13px; line-height:1.5;
+}
+.paybox.issaid .proof{font-weight:600; color:var(--ink)}
+
 .trail{list-style:none; margin:var(--s3) 0 var(--s4); padding:0}
 .trail li{display:flex; align-items:center; gap:var(--s3);
   padding:var(--s2) 0; color:var(--ink-soft); font-size:14px}
