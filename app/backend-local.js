@@ -446,7 +446,6 @@ export const runs = {
     if (!canAdvanceRun(from, to)) throw new Error('BAD_RUN_STATE:' + from + '>' + to);
     const patch = { status: to };
     if (to === 'cutoff')  patch.closedAt  = new Date().toISOString();
-    if (to === 'out')     patch.sentAt    = new Date().toISOString();
     if (to === 'done')    patch.doneAt    = new Date().toISOString();
     return runs.patch(runId, patch);
   },

@@ -1049,7 +1049,10 @@ registerScreen('done', async () => {
 // says how it got there and what is left.
 function trail(o, c){
   const at = new Map((o.history || []).map((h) => [h.to, h.at]));
-  const label = (s) => c['st' + s[0].toUpperCase() + s.slice(1)] || s;
+  // The trail has room for the whole sentence; the pills do not, so
+  // they keep their own short words. tr*, not st*.
+  const label = (s) => c['tr' + s[0].toUpperCase() + s.slice(1)]
+    || c['st' + s[0].toUpperCase() + s.slice(1)] || s;
   // An order that was cancelled or nobody was home stopped going
   // forwards, and drawing the rest of the road would promise a
   // delivery that is not coming.

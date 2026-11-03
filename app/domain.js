@@ -185,13 +185,21 @@ export function totals(lines, byId, rules, coupon, offers){
 // watching `placed` for forty minutes cannot tell a busy shop from
 // a shop that never looked, and that is the whole anxiety of
 // ordering from a small place rather than an app with a fleet.
+// THREE STAGES. `packed` and `out` are gone, on the owner's call --
+// he was looking at five buttons where the work has two moments in
+// it: deciding to fill the order, and handing it over. Packing and
+// loading are things he does between them, not states anybody needs
+// to publish, and every extra tap was a tap in front of a customer
+// waiting at a counter.
+//
+// `failed` survives because it is not a stage, it is the delivery
+// that did not happen, and a board where that order sits in
+// `accepted` forever is a board nobody trusts by day three.
 export const ORDER_NEXT = {
   placed:    ['accepted', 'cancelled'],
-  accepted:  ['packed', 'cancelled'],
-  packed:    ['out', 'cancelled'],
-  out:       ['delivered', 'failed'],
+  accepted:  ['delivered', 'failed', 'cancelled'],
   delivered: [],
-  failed:    ['out', 'cancelled'],   // retried on a later run, or written off
+  failed:    ['delivered', 'cancelled'],  // tried again, or written off
   cancelled: [],
 };
 
@@ -200,10 +208,12 @@ export const ORDER_NEXT = {
 // separate "loaded" step for loading a tempo, which went when the
 // tempo view did -- a state nobody acts on is a button nobody
 // understands.
+// The window moves in step with the orders on it, which is the
+// point of doing all of them at once: close and accept the lot,
+// then mark the lot delivered.
 export const RUN_NEXT = {
   open:      ['cutoff', 'cancelled'],
-  cutoff:    ['out', 'cancelled'],
-  out:       ['done'],
+  cutoff:    ['done', 'cancelled'],
   done:      [],
   cancelled: [],
 };
@@ -212,7 +222,7 @@ export const RUN_NEXT = {
 // of ORDER_NEXT: `failed` and `cancelled` are endings, not stages,
 // and a progress line that lists them puts a warning on an order
 // going perfectly well.
-export const ORDER_TRAIL = ['placed', 'accepted', 'packed', 'out', 'delivered'];
+export const ORDER_TRAIL = ['placed', 'accepted', 'delivered'];
 
 // A history timestamp as a clock time in Borivali. It goes through
 // the same formatter as everything else in this file for the same
@@ -229,11 +239,11 @@ export const canAdvance   = (from, to) => (ORDER_NEXT[from] || []).includes(to);
 export const canAdvanceRun = (from, to) => (RUN_NEXT[from] || []).includes(to);
 
 export const ORDER_TONE = {
-  placed: '', accepted: 'sky', packed: 'sky', out: 'spice',
+  placed: '', accepted: 'sky',
   delivered: 'leaf', failed: 'bad', cancelled: 'bad',
 };
 export const RUN_TONE = {
-  open: 'leaf', cutoff: 'spice', out: 'sky', done: '', cancelled: 'bad',
+  open: 'leaf', cutoff: 'sky', done: '', cancelled: 'bad',
 };
 
 // =====================================================================
