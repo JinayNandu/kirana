@@ -13,6 +13,7 @@ import { T, TXT, t, setLang, getLang, bootLang, LANGS,
          LANG_NAMES } from './i18n.js';
 import { icon } from './icons.js';
 import { gated, passed, stuck, tryCode, waiting, forget } from './lock.js';
+import { session, shared } from './store.js';
 
 export const $ = (id) => document.getElementById(id);
 
@@ -353,8 +354,17 @@ async function submitLock(){
   if (r === 'ok'){
     closeLock();
     markLocked();
+    // The code has opened the UI. Now hand it to the server, which
+    // is the only place it can open the DATA -- see claimStaff().
+    // Without this the board opens and row-level security hands it
+    // nothing, which is a shop-shaped screen with no shop in it.
+    let claim = 'ok';
+    if (shared() && session.claimStaff){
+      try { claim = await session.claimStaff(code); }
+      catch (e){ claim = 'no'; }
+    }
     setRole('shop');
-    toast(c.lockOpened);
+    toast(claim === 'missing' ? c.bNoSetup : c.lockOpened);
     return;
   }
   field.value = '';

@@ -138,7 +138,23 @@ print "Wrote app/data/shop.json.\n\n";
 print "  The code for the Store view is now:  $code\n\n";
 print "Tell the shopkeeper, and nobody else. It cannot be read back out\n";
 print "of the file -- if it is forgotten, set a new one.\n\n";
-print "Then:  git add -A && git commit -m \"new Store code\" && git push\n";
+print "Then:  git add -A && git commit -m \"new Store code\" && git push\n\n";
+
+# The code now lives in TWO places and they have to agree. shop.json
+# decides whether the gate opens; the database decides whether the
+# board has anything in it. Setting one and not the other gives you a
+# Store view that opens onto nothing, which is the exact failure this
+# whole mechanism was built to end -- so the second half is printed
+# here rather than left in a README for somebody to remember.
+print "-" x 62, "\n";
+print "ALSO run this once in Supabase -> SQL Editor, or the board will\n";
+print "open empty. It is db/store-code.sql with the code filled in:\n\n";
+print "  insert into shop_secret (id, code_hash)\n";
+print "  values (1, crypt('$code', gen_salt('bf', 10)))\n";
+print "  on conflict (id) do update set code_hash = excluded.code_hash,\n";
+print "                                 set_at = now();\n\n";
+print "If claim_staff() is not there yet, run all of db/store-code.sql\n";
+print "first -- it creates the table and the function.\n";
 
 sub write_out {
   my ($data) = @_;

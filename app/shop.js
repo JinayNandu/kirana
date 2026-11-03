@@ -18,6 +18,7 @@ import {
 import { t, f, getLang } from './i18n.js';
 import { icon } from './icons.js';
 import { ready, runs, orders, catalog, live, session, shared } from './store.js';
+import { forget } from './lock.js';
 import {
   rupees, packLabel, istDate, istMins, addDays,
   runState, windowOf, ORDER_TONE, RUN_TONE,
@@ -47,29 +48,28 @@ export function addressOf(o){
 // by nothing.
 async function notStaffHtml(c){
   if (!shared()) return '';
-  let staff = false, me = null;
-  try { staff = await session.isStaff(); me = await session.whoami(); }
+  let staff = false;
+  try { staff = await session.isStaff(); }
   catch (e){ return ''; }              // never let a notice break the board
   if (staff) return '';
-  // NOT SIGNED IN is a different problem from SIGNED IN AND NOT STAFF,
-  // and the fix for one is wrong for the other. A second browser has
-  // no session, so it mints its own anonymous user -- telling that
-  // browser to add ITS id to `staff` would staff a throwaway session,
-  // leave a dead row behind, and have to be done again on the next
-  // device. The staff list goes by account; the road in is signing in.
-  if (!me || me.guest){
-    return '<div class="card nostaff"><p>' + esc(c.bNotSignedIn) + '</p></div>';
+  // One cause now, so one notice. This used to print a uuid and an
+  // INSERT statement, which was a developer's answer to a
+  // shopkeeper's problem: it asked the person holding the phone to
+  // copy an id into a database console, and on a second device it
+  // asked them to do it again. The code does it now.
+  let claim = null;
+  try { claim = session.claimState ? await session.claimState() : null; }
+  catch (e){ claim = null; }
+  // Nothing on this screen can fix a missing function, so it gets the
+  // setup line and no button. Offering 'Enter the Store code' to
+  // somebody who just entered it is a loop with no way out of it.
+  if (claim === 'missing'){
+    return '<div class="card nostaff"><p>' + esc(c.bNoSetup) + '</p></div>';
   }
-  const id = me.id || '';
   return '<div class="card nostaff">'
     + '<p>' + esc(c.bNotStaff) + '</p>'
-    + '<p class="hint">' + esc(c.acctIdLabel)
-      + (me.email ? ' &#183; ' + esc(me.email) : '') + '</p>'
-    + '<code class="mono idbox">' + esc(id) + '</code>'
-    // The apostrophes are HTML entities so no quote character has to
-    // survive a JS string literal on its way to the clipboard.
-    + '<code class="mono idbox">insert into staff (user_id) values (&#39;'
-      + esc(id) + '&#39;);</code>'
+    + '<button type="button" class="btn ghost" id="recode">'
+      + esc(c.bEnterCode) + '</button>'
     + '</div>';
 }
 
@@ -170,6 +170,10 @@ registerScreen('board', async () => {
       + '<h2>' + esc(c.boardTomorrow) + '</h2>' + b.join(''));
 
     box.onclick = (e) => {
+      // Forget the unlock and reload: boot re-runs, sees the store
+      // link with the gate unpassed, and asks for the code -- which
+      // is the one thing that can make this session the shop.
+      if (e.target.closest('#recode')){ forget(); location.reload(); return; }
       const btn = e.target.closest('[data-run]');
       if (!btn) return;
       S.runId = btn.dataset.run;

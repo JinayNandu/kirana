@@ -44,7 +44,7 @@ registerScreen('set', async () => {
     // Only where there is something to sign IN to. With no database
     // behind the app, an account would be an account on one phone,
     // which is what the address book already is.
-    + (shared()
+    + (theRole() === 'customer' && shared()
         ? '<hr class="rule">'
           + '<h2>' + esc(c.acctTitle) + '</h2>'
           + (me && !me.guest
@@ -54,7 +54,7 @@ registerScreen('set', async () => {
                 + '<p class="sub">' + esc(c.acctInSub) + '</p>'
                 + '<button type="button" class="btn ghost" id="signout">'
                   + esc(c.acctOut) + '</button>'
-              : '<p class="sub">' + esc(theRole() === 'shop' ? c.acctShopSub : c.acctGuest) + '</p>'
+              : '<p class="sub">' + esc(c.acctGuest) + '</p>'
                 + '<button type="button" class="btn ghost" id="dosignin">'
                   + esc(c.acctGuestBtn) + '</button>')
         : '')

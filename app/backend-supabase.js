@@ -104,6 +104,8 @@ export async function begin(){
   return s;
 }
 
+let lastClaim = null;
+
 export const session = {
   async whoami(){
     const { data } = await sb.auth.getUser();
@@ -167,6 +169,37 @@ export const session = {
     await begin();
     return session.whoami();
   },
+
+  // THE STORE CODE, HANDED TO THE SERVER.
+  //
+  // lock.js checks the code in the browser, which can only ever
+  // decide whether a BUTTON is drawn -- the database never heard
+  // about it, so whoever got past the gate still read `orders` as a
+  // stranger and saw an empty board. claim_staff() checks the same
+  // code against a bcrypt hash nothing can read and, on a match,
+  // puts THIS session into `staff`. No email, no account, no uuid
+  // copied out of a dashboard: the code is the whole credential.
+  //
+  // 'missing' is its own answer because it is a setup mistake, not a
+  // wrong code, and telling somebody their code is wrong when the
+  // function was never deployed sends them to rotate a code that was
+  // fine.
+  async claimStaff(code){
+    const { data, error } = await sb.rpc('claim_staff', { code });
+    if (error){
+      const m = (error.message || '') + ' ' + (error.code || '');
+      lastClaim = /PGRST202|could not find|does not exist/i.test(m) ? 'missing' : 'no';
+    } else {
+      lastClaim = data ? 'ok' : 'no';
+    }
+    return lastClaim;
+  },
+
+  // A database with no claim_staff() in it cannot be talked round by
+  // typing the code again, and the board was about to tell somebody
+  // who had JUST typed it to type it. This is how it tells the two
+  // apart.
+  async claimState(){ return lastClaim; },
 
   async isStaff(){
     const { data, error } = await sb.from('staff').select('user_id').limit(1);
