@@ -195,13 +195,20 @@ export function totals(lines, byId, rules, coupon, offers){
 // `failed` survives because it is not a stage, it is the delivery
 // that did not happen, and a board where that order sits in
 // `accepted` forever is a board nobody trusts by day three.
-export const ORDER_NEXT = {
-  placed:    ['accepted', 'cancelled'],
-  accepted:  ['delivered', 'failed', 'cancelled'],
-  delivered: [],
-  failed:    ['delivered', 'cancelled'],  // tried again, or written off
-  cancelled: [],
-};
+export const ORDER_STATES =
+  ['placed', 'accepted', 'delivered', 'failed', 'cancelled'];
+
+// ANY STATUS, ANY TIME -- the owner's call, and he is right. The
+// table used to walk a chain, so marking tomorrow's order delivered
+// today was refused, and so was correcting a tap made a minute ago.
+// A machine telling a shopkeeper he has not done the thing he just
+// did is worse than any order it was protecting.
+//
+// What it still refuses is a move to the status already set, which
+// is the one genuinely empty action -- a button that looks like it
+// worked. The STAGES are unchanged; what is gone is the policing.
+export const ORDER_NEXT = Object.fromEntries(
+  ORDER_STATES.map((s) => [s, ORDER_STATES.filter((x) => x !== s)]));
 
 // Three things actually happen to a delivery window: it stops taking
 // orders, the orders go out, the orders arrive. There used to be a
@@ -211,12 +218,12 @@ export const ORDER_NEXT = {
 // The window moves in step with the orders on it, which is the
 // point of doing all of them at once: close and accept the lot,
 // then mark the lot delivered.
-export const RUN_NEXT = {
-  open:      ['cutoff', 'cancelled'],
-  cutoff:    ['done', 'cancelled'],
-  done:      [],
-  cancelled: [],
-};
+export const RUN_STATES = ['open', 'cutoff', 'done', 'cancelled'];
+
+// Same rule as the orders, for the same reason: a window the
+// shopkeeper wants closed is closed, whatever the clock thinks.
+export const RUN_NEXT = Object.fromEntries(
+  RUN_STATES.map((s) => [s, RUN_STATES.filter((x) => x !== s)]));
 
 // The steps a CUSTOMER is shown, in order. Deliberately not the keys
 // of ORDER_NEXT: `failed` and `cancelled` are endings, not stages,
@@ -234,6 +241,13 @@ export function istClock(iso){
   const p = parts(TP, d);
   return p.hour + ':' + p.minute;
 }
+
+// A window whose hour has passed. `to` is the end of the promised
+// window, compared as date-AND-minute like everything else here:
+// yesterday's 8 PM is earlier than today's 11 AM, and a bare clock
+// comparison says the opposite.
+export const runEnded = (run, nowDate, nowMins) =>
+  run.date < nowDate || (run.date === nowDate && mins(run.to) <= nowMins);
 
 export const canAdvance   = (from, to) => (ORDER_NEXT[from] || []).includes(to);
 export const canAdvanceRun = (from, to) => (RUN_NEXT[from] || []).includes(to);

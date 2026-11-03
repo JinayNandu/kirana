@@ -808,7 +808,27 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
 }
 
 /* --- shopkeeper board ------------------------------------------------ */
+/* The card and its two bulk buttons. The card is a <button>, so the
+   actions cannot live inside it -- a button in a button is not
+   markup a browser will honour. */
+.rcwrap{margin-bottom:var(--s3)}
+.rcact{display:flex; gap:var(--s2); margin-top:var(--s2)}
+.rcact .btn{flex:1; min-height:40px; padding:0 var(--s2); font-size:12.5px}
+/* A window whose hour has gone with work still on it. The only red
+   on this screen, so it cannot be mistaken for anything else. */
+.runcard.late{border-color:var(--bad)}
+
 .runcard{display:block; width:100%; text-align:left; margin-bottom:var(--s2)}
+.rcwrap .runcard{margin-bottom:0}
+/* Every status, one tap each, the current one filled. */
+.statusrow{display:flex; flex-wrap:wrap; gap:var(--s2); margin:var(--s2) 0 var(--s4)}
+.statusrow .btn{
+  flex:1 1 auto; min-width:94px; min-height:42px;
+  padding:0 var(--s3); font-size:13px;
+}
+.statusrow .btn.on{
+  background:var(--leaf); color:var(--on-leaf); border-color:var(--leaf);
+}
 /* No .dim. Tomorrow's windows used to be drawn at 60% and read as
    switched off, which they never were -- those cards have always
    opened. Only a window the shopkeeper has actually turned OFF is

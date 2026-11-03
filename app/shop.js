@@ -21,7 +21,7 @@ import { ready, runs, orders, catalog, live, session, shared } from './store.js'
 import { forget } from './lock.js';
 import {
   rupees, packLabel, istDate, istMins, addDays,
-  runState, windowOf, ORDER_TONE, RUN_TONE,
+  runState, windowOf, runEnded, ORDER_STATES, ORDER_TONE, RUN_TONE,
 } from './domain.js';
 import { pname } from './customer.js';
 
@@ -106,10 +106,19 @@ registerScreen('board', async () => {
                  : empty      ? ['', c.rsNone]
                  : [RUN_TONE[st] || '', rsName(st)];
       const todo = r.enabled && n.orders ? work(n) : '';
-      return '<button type="button" class="card runcard'
-        + (r.enabled ? '' : ' off') + '" data-run="' + esc(r.id) + '">'
+      // Been and gone, with something still on it. Red, because this
+      // is the one thing on this screen the shop has to see without
+      // looking for it.
+      const open = n.orders - (n.byStatus.delivered || 0)
+        - (n.byStatus.cancelled || 0);
+      const late = r.enabled && open > 0 && runEnded(r, today, now);
+      return '<div class="rcwrap">'
+        + '<button type="button" class="card runcard'
+        + (r.enabled ? '' : ' off') + (late ? ' late' : '')
+        + '" data-run="' + esc(r.id) + '">'
         + '<span class="rc1"><b>' + esc(windowOf(r)) + '</b>'
-        +   '<span class="pill ' + esc(pill[0]) + '">' + esc(pill[1]) + '</span></span>'
+        +   '<span class="pill ' + esc(late ? 'bad' : pill[0]) + '">'
+        +     esc(late ? c.rsLate : pill[1]) + '</span></span>'
         + '<span class="rc2">' + esc(lbl(r)) + '</span>'
         + (n.orders
             ? '<span class="rc3">'
@@ -119,7 +128,21 @@ registerScreen('board', async () => {
               + '</span>'
               + (todo ? '<span class="rc4">' + esc(todo) + icon('chev') + '</span>' : '')
             : '')
-        + '</button>';
+        + '</button>'
+        // BOTH moves, always, on any window that has anything to move
+        // -- including tomorrow's. The shopkeeper knows whether a
+        // thing has been delivered better than a state machine does.
+        // Empty windows get no buttons, which is what keeps six cards
+        // from becoming twelve.
+        + (n.orders
+            ? '<div class="rcact">'
+              + '<button type="button" class="btn ghost" data-runset="cutoff"'
+              +   ' data-runid="' + esc(r.id) + '">' + esc(c.bulkAccept) + '</button>'
+              + '<button type="button" class="btn ghost" data-runset="done"'
+              +   ' data-runid="' + esc(r.id) + '">' + esc(c.bulkDone) + '</button>'
+              + '</div>'
+            : '')
+        + '</div>';
     };
 
     // What the shop opens this screen to find out, in the order it
@@ -174,6 +197,12 @@ registerScreen('board', async () => {
       // link with the gate unpassed, and asks for the code -- which
       // is the one thing that can make this session the shop.
       if (e.target.closest('#recode')){ forget(); location.reload(); return; }
+      const act = e.target.closest('[data-runset]');
+      if (act){
+        bulk(act.dataset.runid, act.dataset.runset)
+          .catch((err) => toast(String(err.message)));
+        return;
+      }
       const btn = e.target.closest('[data-run]');
       if (!btn) return;
       S.runId = btn.dataset.run;
@@ -202,11 +231,6 @@ registerScreen('run', async () => {
 
     // One action at a time, named for what it does next rather than
     // for the state it moves into.
-    // The window's two moments, the same two the orders have.
-    const action = {
-      open:   ['cutoff', c.closeRun,  'spice'],
-      cutoff: ['done',   c.finishRun, ''],
-    }[st];
 
     mount(box, h1(f(c.runTitle, { s: lbl(r) }))
       + '<p class="sub"><span class="pill ' + esc(RUN_TONE[st] || '') + '">' + esc(rsName(st))
@@ -224,8 +248,11 @@ registerScreen('run', async () => {
       + '<button type="button" class="btn ghost" id="loadl">' + icon('truck')
         + esc(c.openLoadList) + '</button>'
 
-      + (action ? '<button type="button" class="btn ' + esc(action[2]) + '" id="adv">'
-          + esc(action[1]) + '</button>' : '')
+      // Both, always. Same rule as the board.
+      + '<button type="button" class="btn spice" data-runset="cutoff"'
+      +   ' data-runid="' + esc(r.id) + '">' + esc(c.closeRun) + '</button>'
+      + '<button type="button" class="btn" data-runset="done"'
+      +   ' data-runid="' + esc(r.id) + '">' + esc(c.finishRun) + '</button>'
 
       + '<h2>' + esc(c.ordersTitle) + '</h2>'
       + (list.length ? '<ul class="plist flat">' + list.map((o) =>
@@ -254,33 +281,14 @@ registerScreen('run', async () => {
 
     $('loadl').onclick = () => show('load');
 
-    const adv = $('adv');
-    if (adv) adv.onclick = async () => {
-      try {
-        // DO ALL OF THEM, the same move the single-order button makes.
-        // That is the whole reason this button exists: a window of
-        // twelve orders is twelve identical taps otherwise.
-        if (action[0] === 'cutoff'){
-          // Numbered in the order they came in. There is no route to
-          // sort by -- whoever delivers decides his own.
-          await orders.sequence(r.id, list.map((o) => o.id));
-          for (const o of list){
-            if (o.status === 'placed') await orders.advance(o.id, 'accepted');
-          }
-        }
-        if (action[0] === 'done'){
-          for (const o of list){
-            if (o.status === 'accepted' || o.status === 'failed'){
-              await orders.advance(o.id, 'delivered');
-              await settle(o, orders, 'delivered');
-            }
-          }
-        }
-        await runs.setStatus(r.id, action[0]);
-      } catch (err){ toast(String(err.message)); }
-    };
 
     box.onclick = (e) => {
+      const act = e.target.closest('[data-runset]');
+      if (act){
+        bulk(act.dataset.runid, act.dataset.runset)
+          .catch((err) => toast(String(err.message)));
+        return;
+      }
       const li = e.target.closest('[data-order]');
       if (!li) return;
       S.orderId = li.dataset.order;
@@ -297,6 +305,33 @@ registerScreen('run', async () => {
 // doorstep, so one tap closes both. Only ever ON the way to
 // delivered, and never a way to UN-pay: the separate toggle above
 // is there for the customer who did not, in the end, pay.
+// Every order in a window, moved the way one order moves. Shared by
+// the board and the run screen so the two cannot drift: the whole
+// point of the button is that a window of twelve orders is twelve
+// identical taps otherwise.
+async function bulk(runId, to){
+  const list = await runs.ordersOf(runId);
+  if (to === 'cutoff'){
+    // Numbered in the order they came in. There is no route to sort
+    // by -- whoever delivers decides his own.
+    await orders.sequence(runId, list.map((o) => o.id));
+    for (const o of list){
+      if (o.status === 'placed') await orders.advance(o.id, 'accepted');
+    }
+  }
+  if (to === 'done'){
+    // A declined order is not an undelivered one, and nothing should
+    // quietly deliver it.
+    for (const o of list){
+      if (o.status !== 'delivered' && o.status !== 'cancelled'){
+        await orders.advance(o.id, 'delivered');
+        await settle(o, orders, 'delivered');
+      }
+    }
+  }
+  await runs.setStatus(runId, to);
+}
+
 async function settle(o, orders, to){
   if (to !== 'delivered' || o.paid) return;
   await orders.setPaid(o.id, true, o.payMethod === 'cod' ? 'cash' : 'upi');
@@ -315,16 +350,6 @@ registerScreen('pick', async () => {
     const o = await orders.byId(S.orderId);
     if (!o){ show('run', false); return; }
     const ll = o.customer.ll;
-
-    // The one step this order can take next, named for the doing of it.
-    // ONE button per stage. There were four, plus a shortcut, plus a
-    // paid toggle -- five things on a screen whose whole job is to
-    // be held in one hand at a shelf.
-    const next = {
-      placed:   ['accepted',  c.markAccepted,  'sky'],
-      accepted: ['delivered', o.paid ? c.markDelivered : c.markDeliveredPaid, ''],
-      failed:   ['delivered', o.paid ? c.markDelivered : c.markDeliveredPaid, ''],
-    }[o.status];
 
     mount(box, h1(f(c.pickTitle, { s: o.code }))
       + '<div class="card">'
@@ -366,23 +391,18 @@ registerScreen('pick', async () => {
           ? '<button type="button" class="btn ghost" id="paid">'
             + esc(o.paid ? c.markUnpaid : c.markPaid) + '</button>'
           : '')
-      // One button for the next step, and -- once it is packed -- a
-      // second for the end of the story, because the shopkeeper who
-      // walks it round the corner himself never passes through "out
-      // for delivery" and should not have to tap his way there.
-      + (next
-          ? '<button type="button" class="btn ' + esc(next[2]) + '" id="oadv">'
-            + esc(next[1]) + '</button>'
-          : '')
-      // Only while it is PACKED. Once it is out, the button above is
-      // already "Mark delivered" and a second one saying the same
-      // thing is just a choice between identical doors.
-      // Nobody home. Not a stage -- the delivery that did not happen,
-      // and the one real exception a doorstep produces.
-      + (o.status === 'accepted'
-          ? '<button type="button" class="btn ghost" id="dlv">'
-            + esc(c.markFailed) + '</button>'
-          : '')
+      // EVERY status, always, with the current one marked. The screen
+      // used to offer the one move the table allowed next, which
+      // meant a tap made by mistake could not be taken back and
+      // tomorrow's order could not be marked delivered today. The
+      // shopkeeper knows which of these is true better than a state
+      // machine does; his job here is to say so in one tap.
+      + '<h2>' + esc(c.setStatus) + '</h2>'
+      + '<div class="statusrow">'
+      + ORDER_STATES.map((s) =>
+          '<button type="button" class="btn ghost' + (o.status === s ? ' on' : '')
+          + '" data-set="' + esc(s) + '">' + esc(stName(s)) + '</button>').join('')
+      + '</div>'
       + (o.status === 'delivered'
           ? '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
             + esc(stName(o.status)) + '</span></p>'
@@ -393,19 +413,16 @@ registerScreen('pick', async () => {
       try { await orders.setPaid(o.id, !o.paid, 'upi'); }
       catch (err){ toast(String(err.message)); }
     };
-    const b = $('oadv');
-    if (b) b.onclick = async () => {
+    box.onclick = async (e) => {
+      const sb = e.target.closest('[data-set]');
+      if (!sb) return;
+      const to = sb.dataset.set;
+      if (to === o.status) return;       // the one genuinely empty tap
       try {
-        await orders.advance(o.id, next[0]);
-        await settle(o, orders, next[0]);
-        show('run', false);
-      }
-      catch (err){ toast(String(err.message)); }
-    };
-    const d = $('dlv');
-    if (d) d.onclick = async () => {
-      try {
-        await orders.advance(o.id, 'failed');
+        await orders.advance(o.id, to);
+        // Only ever ON the way to delivered -- settle() checks, and it
+        // is checked here too because this row can set any status.
+        await settle(o, orders, to);
         show('run', false);
       } catch (err){ toast(String(err.message)); }
     };
