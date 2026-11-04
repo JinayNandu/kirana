@@ -97,8 +97,10 @@ arrived. So it records what it actually knows — *the customer says
 they have paid* — and tells them to **show the payment screenshot to
 the delivery partner.**
 
-On his board the money stays in **"to collect"**, and the order wears
-a **"Says paid"** flag. Nothing is settled until somebody looks.
+On his board the money stays in **"to collect"**, the order wears a
+**"Paid by UPI · to be verified"** flag, and an amber line under the
+day's total says how much of it is claimed: *"₹386 paid by UPI, to be
+verified on delivery"*. Nothing is settled until somebody looks.
 
 Say this out loud, because it is the opposite of what he expects
 software to do: **the app will never tell him he has been paid when
@@ -115,18 +117,28 @@ through it in his own words:
   screen he will actually hold while walking his own shelves. If the
   customer tapped "I have paid", it says here: *"Customer says they
   paid by UPI. Ask to see the screenshot."*
-- **Accept and schedule for delivery.** One tap, and it matters: it
+- **Accepted and delivery scheduled.** One tap, and it matters: it
   tells the customer a person has seen the order and it is being
   filled. Before, they heard nothing back until it was already out.
-- **Delivered and payment received.** The second and last tap. It
-  closes both halves at once, because at a doorstep handing the bag
-  over and being paid for it are one moment.
+- **Delivered and payment received / verified.** The second and last
+  tap. It closes both halves at once, because at a doorstep handing
+  the bag over and being paid for it are one moment. For a UPI order
+  this is the moment somebody looks at the screenshot -- until then
+  the order reads *Paid by UPI, to be verified on delivery*, never
+  just "paid".
+- **Mark unpaid | Verified**, side by side on a delivered order, the
+  current one lit. Delivering lights Verified by itself. If the
+  screenshot turns out to be nothing, **Mark unpaid** puts the money
+  back into "to collect" and takes the customer's claim off the
+  order, so it stops saying "paid by UPI".
 - **Two taps, and that is the whole lifecycle.** Say so. There were
   five until he said it was confusing, and he was right -- packing
   and loading are things he does between those two moments, not
   things the app needs him to report.
-- **Every status is there, all the time** -- Placed, Accepted,
-  Delivered, Nobody home, Cancelled -- and any of them can be set at
+- **Every status is there, all the time** -- Placed (where every new
+  order starts, already lit), Accepted and delivery scheduled,
+  Delivered and payment received / verified, Nobody home, Cancelled
+  -- and any of them can be set at
   any moment. Tomorrow's order can be marked delivered today, and a
   tap made by mistake can be taken straight back. **Cancelled is how
   he declines an order**; it needed no button of its own.
@@ -201,8 +213,9 @@ The app is a prop. The answers are the product.
 7. **Which products should "buy 2 get 1" sit on?** Six snack packs is
    a guess.
 8. **When a customer says they paid and they have not** — what does he
-   want the delivery person to do? Right now the app can only record
-   the claim and leave the money owed.
+   want the delivery person to do? Right now the app records the
+   claim, keeps the money owed, and lets him tap **Mark unpaid** once
+   he has looked -- but it cannot chase anybody.
 
 Write the answers down in the room. Most of them are one number in
 one file.

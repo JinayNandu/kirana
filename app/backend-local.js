@@ -26,6 +26,7 @@
 import {
   istDate, festivalOn, istMins, addDays, deriveRun, runState, isBookable,
   totals as calcTotals, freeUnits, matchCoupon, canAdvance, canAdvanceRun,
+  payState,
 } from './domain.js';
 
 // ---------------------------------------------------------------------
@@ -493,16 +494,24 @@ export const runs = {
     const list = await runs.ordersOf(runId);
     const byStatus = {};
     let items = 0, cash = 0, paidTotal = 0, paidCount = 0;
+    let saidTotal = 0, saidCount = 0;
     for (const o of list){
       byStatus[o.status] = (byStatus[o.status] || 0) + 1;
       for (const l of o.lines) items += l.qty;
-      // What the driver still has to collect is what has NOT been
-      // paid, whatever the delivery status -- UPI can land before the
-      // tempo leaves or the morning after.
-      if (o.paid){ paidTotal += o.grand; paidCount++; }
+      // What the shop still has to collect is what nobody has
+      // VERIFIED, whatever the delivery status -- UPI can land before
+      // the order leaves or the morning after. A customer's "I have
+      // paid" is a claim, so it stays in `cash`; saidTotal is how
+      // much of that the customer says is already paid.
+      const ps = payState(o);
+      if (ps === 'verified'){ paidTotal += o.grand; paidCount++; }
       else cash += o.grand;
+      if (ps === 'said'){ saidTotal += o.grand; saidCount++; }
     }
-    return { orders: list.length, items, cash, paidTotal, paidCount, byStatus };
+    return {
+      orders: list.length, items, cash, paidTotal, paidCount,
+      saidTotal, saidCount, byStatus,
+    };
   },
 };
 

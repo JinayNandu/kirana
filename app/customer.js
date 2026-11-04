@@ -22,7 +22,7 @@ import {
   rupees, packLabel, fmtTime, mins, fmtDay, istDate, istMins,
   minsToCutoff, minsToStart, fmtSoon, fmtAbout, windowOf, ORDER_TONE,
   freeUnits, ORDER_TRAIL, istClock, canEditOrder, matchCoupon,
-  totals as calcTotals,
+  totals as calcTotals, payState,
 } from './domain.js';
 
 const S = { catId: null, q: '', runId: null, orderId: null, coupErr: false,
@@ -1086,8 +1086,13 @@ registerScreen('track', async () => {
     mount(box, h1(f(c.trackTitle, { s: o.code }))
       + '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
         + esc(c['st' + o.status[0].toUpperCase() + o.status.slice(1)] || o.status) + '</span>'
-        + ' <span class="pill ' + (o.paid ? 'leaf' : '') + '">'
-        + esc(o.paid ? c.payDone : c.payUnpaid) + '</span></p>'
+        // Said-paid is neither of the other two. "Not paid yet" over a
+        // QR the customer has just paid is the app contradicting
+        // itself in the same breath as "Payment noted".
+        + ' <span class="pill ' + (payState(o) === 'verified' ? 'leaf'
+            : payState(o) === 'said' ? 'spice' : '') + '">'
+        + esc(payState(o) === 'verified' ? c.payDone
+            : payState(o) === 'said' ? c.pillSaidPaid : c.payUnpaid) + '</span></p>'
 
       + '<div class="card">'
       +   '<p class="trow"><span>' + esc(c.arriveBetween.replace('{s}', '').trim()) + '</span>'
@@ -1245,7 +1250,8 @@ registerScreen('orders', async () => {
       '<li class="orow" data-order="' + esc(o.id) + '">'
       + '<span class="obody"><b class="mono">' + esc(o.code) + '</b>'
       + '<span class="hint">' + esc(o.lines.length + ' · ' + rupees(o.grand)
-          + (o.paid ? ' · ' + c.payDone : '')) + '</span></span>'
+          + (payState(o) === 'verified' ? ' · ' + c.payDone
+            : payState(o) === 'said' ? ' · ' + c.pillSaidPaid : '')) + '</span></span>'
       + '<span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
       + esc(c['st' + o.status[0].toUpperCase() + o.status.slice(1)] || o.status) + '</span>'
       + icon('chev') + '</li>').join('') + '</ul>');

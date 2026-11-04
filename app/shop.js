@@ -22,6 +22,7 @@ import { forget } from './lock.js';
 import {
   rupees, packLabel, istDate, istMins, addDays,
   runState, windowOf, runEnded, ORDER_STATES, ORDER_TONE, RUN_TONE,
+  payState, payVia,
 } from './domain.js';
 import { pname } from './customer.js';
 
@@ -30,6 +31,23 @@ const S = { runId: null, orderId: null };
 const lbl = (r) => t()[r.label] || r.label;
 const stName = (s) => t()['st' + s[0].toUpperCase() + s.slice(1)] || s;
 const rsName = (s) => t()['rs' + s[0].toUpperCase() + s.slice(1)] || s;
+
+// The status ROW has room for a sentence and a pill does not, so its
+// buttons carry their own longer labels (sb*) and fall back to the
+// pill's word where there is none. The same split the customer's
+// trail makes: tr* against st*.
+const sbName = (s) => t()['sb' + s[0].toUpperCase() + s.slice(1)] || stName(s);
+
+// Money that has been paid, in the shop's words. UPI is "verified"
+// because somebody looked at a screenshot; cash needs no such word.
+//
+// UPI is named only where the customer was actually on the UPI path.
+// An order whose customer never chose a way to pay still gets
+// settled -- as 'upi', which is what paid_via has always defaulted
+// to -- but the app has no business telling the shop it was UPI
+// when it does not know.
+const onUpi = (o) => o.payMethod === 'upi' || o.payMethod === 'upi_said';
+const paidTag = (o, c) => (onUpi(o) ? c.payUpiOk : c.payDone);
 
 // One line a driver can read, in the order he needs it.
 export function addressOf(o){
@@ -148,12 +166,13 @@ registerScreen('board', async () => {
     // What the shop opens this screen to find out, in the order it
     // wants to know it: the money first, then the work.
     const sum = { orders: 0, items: 0, cash: 0, paid: 0, paidCount: 0,
-                  accept: 0, out: 0 };
+                  said: 0, saidCount: 0, accept: 0, out: 0 };
     for (const r of list){
       if (!r.enabled) continue;
       const n = await runs.counts(r.id);
       sum.orders += n.orders; sum.items += n.items;
       sum.cash += n.cash; sum.paid += n.paidTotal; sum.paidCount += n.paidCount;
+      sum.said += n.saidTotal; sum.saidCount += n.saidCount;
       sum.accept += (n.byStatus.placed || 0);
       sum.out  += (n.byStatus.accepted || 0);
     }
@@ -166,8 +185,15 @@ registerScreen('board', async () => {
         +   esc(f(sum.orders === 1 ? c.oneOrder : c.nOrders, { n: sum.orders }))
         +   ' · ' + esc(f(c.nItemsShort, { n: sum.items })) + '</span>'
         +   (sum.paidCount
-              ? '<span class="hint">' + esc(f(c.bPaid, { s: rupees(sum.paid) })) + '</span>'
+              ? '<span class="hint">' + esc(f(c.paidAlready, { s: rupees(sum.paid) })) + '</span>'
               : '') + '</p>'
+        // Money customers say they have paid by UPI, which nobody has
+        // looked at yet. It stays inside "to collect" above and is
+        // named here, in amber like every other not-yet-true thing.
+        + (sum.saidCount
+            ? '<p class="trow saidline"><span>'
+              + esc(f(c.bSaid, { s: rupees(sum.said) })) + '</span></p>'
+            : '')
         + (sum.accept || sum.out
             ? '<p class="tdo">'
               + (sum.accept ? '<span class="pill spice">'
@@ -243,6 +269,10 @@ registerScreen('run', async () => {
       +   '<p class="trow"><span>' + esc(f(c.nItemsShort, { n: n.items })) + '</span>'
       +     '<span class="hint">' + esc(n.paidCount
             ? f(c.paidAlready, { s: rupees(n.paidTotal) }) : c.freeAlways) + '</span></p>'
+      +   (n.saidCount
+            ? '<p class="trow saidline"><span>'
+              + esc(f(c.bSaid, { s: rupees(n.saidTotal) })) + '</span></p>'
+            : '')
       + '</div>'
 
       + '<button type="button" class="btn ghost" id="loadl">' + icon('truck')
@@ -265,12 +295,13 @@ registerScreen('run', async () => {
           + (o.seq ? '<span class="seqn mono">' + esc(String(o.seq)) + '</span>' : '')
           + '<span class="obody">'
           +   '<span class="oline1"><b class="mono">' + esc(o.code) + '</b>'
-          +     '<span class="omoney mono' + (o.paid ? ' paid' : '') + '">'
+          +     '<span class="omoney mono' + (payState(o) === 'verified' ? ' paid' : '') + '">'
           +       esc(rupees(o.grand)) + '</span></span>'
           +   '<span class="hint">' + esc(o.customer.name + ' · ' + addressOf(o)) + '</span>'
           +   '<span class="opills">'
-          +     (o.paid ? '<span class="pill leaf">' + esc(c.payDone) + '</span>'
-                : o.payMethod === 'upi_said'
+          +     (payState(o) === 'verified'
+                  ? '<span class="pill leaf">' + esc(paidTag(o, c)) + '</span>'
+                : payState(o) === 'said'
                   ? '<span class="pill spice">' + esc(c.pillSaidPaid) + '</span>' : '')
           +     '<span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
           +       esc(stName(o.status)) + '</span>'
@@ -333,8 +364,8 @@ async function bulk(runId, to){
 }
 
 async function settle(o, orders, to){
-  if (to !== 'delivered' || o.paid) return;
-  await orders.setPaid(o.id, true, o.payMethod === 'cod' ? 'cash' : 'upi');
+  if (to !== 'delivered' || payState(o) === 'verified') return;
+  await orders.setPaid(o.id, true, payVia(o));
 }
 
 // ---------------------------------------------------------------------
@@ -350,6 +381,7 @@ registerScreen('pick', async () => {
     const o = await orders.byId(S.orderId);
     if (!o){ show('run', false); return; }
     const ll = o.customer.ll;
+    const ps = payState(o);
 
     mount(box, h1(f(c.pickTitle, { s: o.code }))
       + '<div class="card">'
@@ -375,21 +407,31 @@ registerScreen('pick', async () => {
           + '<span class="mono">' + esc(rupees(l.lineTotal)) + '</span></li>').join('')
       + '</ul>'
       + '<div class="card totals">'
-      +   '<p class="trow"><span><b>' + esc(o.paid ? c.payDone : c.toPay) + '</b></span>'
+      +   '<p class="trow"><span><b>' + esc(ps === 'verified' ? paidTag(o, c)
+            : ps === 'said' ? c.payUpiSaid : c.toPay) + '</b></span>'
       +     '<span class="mono"><b>' + esc(rupees(o.grand)) + '</b></span></p></div>'
       // The customer has said they paid. The money is still owed as
       // far as this app is concerned, and the only way to settle
       // that is to look at their screen.
-      + (!o.paid && o.payMethod === 'upi_said'
+      + (ps === 'said'
           ? '<p class="saidpaid">' + esc(c.sSaidPaid) + '</p>' : '')
       // ONLY AFTER DELIVERY, as a correction. Paying is part of
       // stage three now, so a separate "mark paid" standing beside
       // "Accept" was a third thing to think about at the one moment
       // there is nothing to think about. Once delivered it has a
       // job again: the customer who, in the end, did not pay.
+      // Two buttons and the current one filled, like the status row
+      // below. Delivering sets Verified by itself (settle), so on a
+      // delivered order it arrives already lit; "Mark unpaid" is
+      // how the shop says it looked and they had not paid.
       + (o.status === 'delivered'
-          ? '<button type="button" class="btn ghost" id="paid">'
-            + esc(o.paid ? c.markUnpaid : c.markPaid) + '</button>'
+          ? '<div class="payrow">'
+            + '<button type="button" class="btn ghost' + (ps === 'owed' ? ' on' : '')
+            +   '" data-pay="owed">' + esc(c.markUnpaid) + '</button>'
+            + '<button type="button" class="btn ghost' + (ps === 'verified' ? ' on' : '')
+            +   '" data-pay="verified">'
+            +   esc(onUpi(o) ? c.pbVerified : c.pbReceived) + '</button>'
+            + '</div>'
           : '')
       // EVERY status, always, with the current one marked. The screen
       // used to offer the one move the table allowed next, which
@@ -401,19 +443,31 @@ registerScreen('pick', async () => {
       + '<div class="statusrow">'
       + ORDER_STATES.map((s) =>
           '<button type="button" class="btn ghost' + (o.status === s ? ' on' : '')
-          + '" data-set="' + esc(s) + '">' + esc(stName(s)) + '</button>').join('')
+          + '" data-set="' + esc(s) + '">' + esc(sbName(s)) + '</button>').join('')
       + '</div>'
       + (o.status === 'delivered'
           ? '<p class="sub"><span class="pill ' + esc(ORDER_TONE[o.status] || '') + '">'
             + esc(stName(o.status)) + '</span></p>'
           : ''));
 
-    const pb = $('paid');
-    if (pb) pb.onclick = async () => {
-      try { await orders.setPaid(o.id, !o.paid, 'upi'); }
-      catch (err){ toast(String(err.message)); }
-    };
     box.onclick = async (e) => {
+      // "Mark unpaid" is also the shop saying "I looked, and they had
+      // not paid", so it takes the customer's claim off the order.
+      // Left on, it would put "paid by UPI, to be verified" straight
+      // back on an order the shop has just called unpaid.
+      const pb = e.target.closest('[data-pay]');
+      if (pb){
+        const want = pb.dataset.pay;
+        if (want === ps) return;           // the one genuinely empty tap
+        try {
+          if (want === 'verified') await orders.setPaid(o.id, true, payVia(o));
+          else {
+            await orders.setPaid(o.id, false);
+            if (o.payMethod === 'upi_said') await orders.setPayMethod(o.id, 'upi');
+          }
+        } catch (err){ toast(String(err.message)); }
+        return;
+      }
       const sb = e.target.closest('[data-set]');
       if (!sb) return;
       const to = sb.dataset.set;

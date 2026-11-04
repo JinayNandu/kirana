@@ -74,7 +74,7 @@ app/
   index.html        one document: all CSS, 17 <section id="s-*">, role switch
   app.js            entry -- the only module that knows both roles
   ui.js             $, esc, show/goBack/teardown, per-role NAV, paint, boot
-  i18n.js           T = {en, hi, gu, mr}, 284 keys each
+  i18n.js           T = {en, hi, gu, mr}, 294 keys each
   domain.js         PURE -- IST clock, window derivation, status tables, money
   store.js          the facade; ONE import line is the Supabase swap
   backend-local.js  localStorage + cross-tab storage events
@@ -395,17 +395,25 @@ five taps, and a shopkeeper holding the bag had to tell the app what
 he could already see. The list is what to put in the bag, not a form
 to fill in. The ticks went, then the packed button itself.
 
-One button per stage now: *Accept and schedule for delivery*, then
-*Delivered and payment received*. `failed` is a ghost beside the
-second.
+The stages are a row of buttons now, every status always drawn and
+the current one filled -- see "Any status, any time". Their labels
+are whole sentences, in the owner's words: *Accepted and delivery
+scheduled*, *Delivered and payment received / verified*. They are
+`sb*` keys and fall back to the pill's `st*` word where there is
+none -- the same split the customer's trail makes with `tr*`, for the
+same reason: a pill has room for one word and a button has room for
+the sentence.
 
-⚠️ **The paid toggle is drawn only once an order is DELIVERED.**
-Paying is part of the last stage, so a separate "Mark paid" standing
-next to "Accept" was a third decision at the one moment there is
-nothing to decide. After delivery it has a job again, and only one:
-the customer who in the end did not pay. `settle()` only ever marks
-paid ON the move to delivered -- it once ran after every advance, so
-accepting an order marked it paid.
+⚠️ **The payment buttons are drawn only once an order is
+DELIVERED** -- *Mark unpaid* and *Verified* side by side, the current
+one filled (*Received* instead of Verified on an order that was never
+on the UPI path). Paying is part of the last stage, so a separate
+"Mark paid" standing next to "Accept" was a third decision at the one
+moment there is nothing to decide. After delivery they have a job
+again: the customer who in the end did not pay. `settle()` only ever
+marks paid ON the move to delivered -- it once ran after every
+advance, so accepting an order marked it paid -- and because it does,
+a delivered order arrives with Verified already lit.
 
 ### The board answers "how much, and what do I pack"
 
@@ -888,8 +896,8 @@ makes, not a fact the app observed.
 ⚠️ **So the customer's "I have paid" is recorded as a CLAIM and
 not as payment.** It writes `pay_method = 'upi_said'` and leaves
 `paid` alone, so the money stays in the shop's "to collect" and the
-order wears a "Says paid" flag until somebody has looked at the
-screenshot. It used to set `paid = true`, which dropped the figure
+order wears a "Paid by UPI · to be verified" flag until somebody has
+looked at the screenshot. It used to set `paid = true`, which dropped the figure
 the shop collects on the customer's word alone -- of every error
 available here, the one that costs the shop actual money.
 
@@ -901,7 +909,7 @@ their own order.
 Only the SHOP marks `paid`: from the picking list, or in the one tap
 that closes a delivery, since at a doorstep handing the bag over and
 being paid for it are one moment. That tap is **"Delivered and
-payment received"**, and `settle()` in shop.js runs it ONLY on the
+payment received / verified"**, and `settle()` in shop.js runs it ONLY on the
 move to `delivered` -- it once ran after every advance, so accepting
 an order marked it paid. The shop's own UPI app stays the source of
 truth.
@@ -930,6 +938,51 @@ The QR is **black on white in both themes**, via `--qr-ink` and
 themed to the page loses the contrast a scanner needs, and declaring
 that as a non-varying token is the honest way to say "not themed"
 rather than hardcoding white and arguing with `tokens.pl`.
+
+### Three states for money, and one function that names them
+
+`payState()` in domain.js is the only thing that decides what an
+order's money is. The board, the window screen, the order rows, the
+picking list, the customer's track screen and both backends'
+`counts()` all ask it, rather than each reading `paid` and
+`pay_method` for itself and slowly disagreeing.
+
+| | means | the shop sees |
+|---|---|---|
+| `owed` | nothing paid, nothing claimed | *To pay* |
+| `said` | the customer says they paid by UPI; nobody has looked | *Paid by UPI, to be verified on delivery*, in amber |
+| `verified` | the shop has seen the money, or been handed it | *Paid by UPI · verified*, or *Paid* for cash |
+
+**"Paid" is never said about money nobody has checked.** The owner
+asked for exactly this: a QR payment reads *paid by UPI, to be
+verified*, never *already paid*, until somebody at the door has looked
+at the screenshot. A `said` order stays inside "to collect", and the
+board and the window screen add an amber line naming how much of that
+is claimed (`saidTotal` in `counts()`).
+
+⚠️ **One older shape is folded into `said` on purpose: `paid = true`
+with no `paid_via`.** Only the shop's `setPaid()` writes `paid_via`.
+The customer's own `mark_paid()` -- how "I have paid" worked before it
+became a claim -- writes `paid` and `pay_method` and nothing else.
+Rows like that are in the live database from before the change, and
+reading them as verified would put money nobody has looked at under
+"already paid". No migration: the rule reads the row as it is.
+
+**Mark unpaid also withdraws the claim.** It sets `paid` false AND
+moves `pay_method` from `upi_said` back to `upi`. Left alone, the
+claim would put *paid by UPI, to be verified* straight back on an
+order the shop has just called unpaid -- and the customer's own
+screen offers the QR again, which is right: the shop looked and the
+money was not there.
+
+**UPI is named only where the customer was on the UPI path**
+(`pay_method` `upi` or `upi_said`). An order whose customer never
+chose a way to pay is still settled as `paid_via = 'upi'`, which is
+what it has always defaulted to, but it reads *Paid* and its button
+reads *Received*: the app does not know it was UPI and does not say
+so. `payVia()` is the one rule for what gets WRITTEN -- cash for cash
+on delivery, UPI otherwise -- so the delivered tap and the Verified
+button cannot record different answers.
 
 ### Why not a real gateway
 
@@ -1345,7 +1398,7 @@ with eyes, not by scoring.
 
 The order is the shop's, not the alphabet's: Borivali West speaks all
 three, and whoever sits last on the row is the one who has to look
-hardest. 284 keys each, and `i18n.pl` fails if any block is missing
+hardest. 294 keys each, and `i18n.pl` fails if any block is missing
 one.
 
 **Everything is translated** — the shop's name and address, eleven
@@ -1571,6 +1624,7 @@ Everything else is checked in a browser, which this machine has.
   possible.
 - **`paid` is a note, not an observation.** Nothing in this app can
   confirm a UPI payment. The shopkeeper's own UPI app is the source of
-  truth and the "mark paid" buttons are how that gets recorded here.
+  truth, and the delivered tap and the *Verified* button are how that
+  gets recorded here.
 - **The three windows and the 25-order cap are guesses**, not
   measurements. Both are one number each in `runplan.json`.

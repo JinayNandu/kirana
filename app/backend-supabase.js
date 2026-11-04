@@ -44,6 +44,7 @@ import { SUPABASE } from './config.js';
 import {
   istDate, istMins, addDays, deriveRun, runState, isBookable,
   canAdvance, canAdvanceRun, matchCoupon, totals as calcTotals, freeUnits,
+  payState,
 } from './domain.js';
 import * as local from './backend-local.js';
 
@@ -488,13 +489,23 @@ export const runs = {
   async counts(runId){
     const list = await runs.ordersOf(runId);
     let items = 0, cash = 0, paidTotal = 0, paidCount = 0;
+    let saidTotal = 0, saidCount = 0;
     const byStatus = {};
     for (const o of list){
       for (const l of o.lines) items += l.qty;
       byStatus[o.status] = (byStatus[o.status] || 0) + 1;
-      if (o.paid){ paidTotal += o.grand; paidCount += 1; } else { cash += o.grand; }
+      // Same rule as the local backend, and for the same reason: a
+      // customer's "I have paid" is a claim, so it stays in `cash`
+      // until the shop has verified it.
+      const ps = payState(o);
+      if (ps === 'verified'){ paidTotal += o.grand; paidCount += 1; }
+      else cash += o.grand;
+      if (ps === 'said'){ saidTotal += o.grand; saidCount += 1; }
     }
-    return { orders: list.length, items, cash, paidTotal, paidCount, byStatus };
+    return {
+      orders: list.length, items, cash, paidTotal, paidCount,
+      saidTotal, saidCount, byStatus,
+    };
   },
 };
 

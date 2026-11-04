@@ -21,6 +21,7 @@
 
 import { esc, $, toast } from './ui.js';
 import { t } from './i18n.js';
+import { payState } from './domain.js';
 
 const QR_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
 let qrLoading = null;
@@ -57,7 +58,7 @@ export function payBlock(upi, order, c, opts){
   const o = opts || {};
   const can = !!(upi && upi.vpa);
 
-  if (order.paid){
+  if (payState(order) === 'verified'){
     return '<div class="card paybox ispaid">'
       + '<p><b>' + esc(c.payDone) + '</b></p>'
       + '<p class="hint">' + esc(c.payDoneSub) + '</p></div>';
@@ -75,7 +76,7 @@ export function payBlock(upi, order, c, opts){
   // customer already has and it cannot touch `paid`, so the claim
   // persists across a reload without widening what a customer may
   // do to their own order.
-  if (order.payMethod === 'upi_said'){
+  if (payState(order) === 'said'){
     return '<div class="card paybox issaid">'
       + '<p><b>' + esc(c.paySaidHead) + '</b></p>'
       + '<p class="proof">' + esc(c.paySaidSub) + '</p>'

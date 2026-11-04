@@ -264,6 +264,37 @@ export const canEditOrder = (run, nowDate, nowMins) =>
 export const canAdvance   = (from, to) => (ORDER_NEXT[from] || []).includes(to);
 export const canAdvanceRun = (from, to) => (RUN_NEXT[from] || []).includes(to);
 
+// ---------------------------------------------------------------------
+//  How an order's MONEY stands -- one function, read by every screen
+//  and by both backends' counts(), so the board, the order list, the
+//  picking screen and the customer's own phone cannot disagree.
+//
+//    'verified'  the shop has seen the money, or been handed it.
+//    'said'      the customer says they paid by UPI. Nobody has looked.
+//    'owed'      nothing paid and nothing claimed.
+//
+//  `paid` has always meant the SHOP's word. The customer's claim is
+//  pay_method = 'upi_said' and leaves `paid` alone.
+//
+//  One older shape is folded into 'said' on purpose: paid = true with
+//  NO paid_via. Only the shop's setPaid() writes paid_via -- the
+//  customer's own mark_paid(), which is how "I have paid" worked
+//  before it became a claim, writes paid and pay_method and nothing
+//  else. Such a row is a customer's say-so that predates the claim,
+//  and reading it as verified would count money nobody has looked at.
+// ---------------------------------------------------------------------
+export const PAY_STATES = ['owed', 'said', 'verified'];
+export function payState(o){
+  if (o.paid && o.paidVia) return 'verified';
+  if (o.paid || o.payMethod === 'upi_said') return 'said';
+  return 'owed';
+}
+
+// How the money came in, for the record: cash if they chose cash on
+// delivery, UPI otherwise. One rule, so the delivered tap and the
+// Verified button cannot write different answers.
+export const payVia = (o) => (o.payMethod === 'cod' ? 'cash' : 'upi');
+
 export const ORDER_TONE = {
   placed: '', accepted: 'sky',
   delivered: 'leaf', failed: 'bad', cancelled: 'bad',
