@@ -23,7 +23,7 @@ Two roles in one page, switched from the header:
 | Role | What it is for |
 |---|---|
 | **Shop** | the customer storefront — browse, basket, coupon, pick a window, place the order, pay |
-| **Store** | the counter — orders by window, picking lists, **what to load**, mark paid and delivered. **Behind a six-digit code**, so a customer who taps it does not land in the shop's paperwork |
+| **Store** | the counter — orders by window, picking lists, **what to load**, mark paid and delivered, **change prices and add products**. **Behind a six-digit code**, so a customer who taps it does not land in the shop's paperwork |
 
 There was a third, **Tempo**, for the driver — a stop list, cash to
 collect, mark delivered. It is gone on the owner's call, along with the
@@ -74,13 +74,14 @@ app/
   index.html        one document: all CSS, 17 <section id="s-*">, role switch
   app.js            entry -- the only module that knows both roles
   ui.js             $, esc, show/goBack/teardown, per-role NAV, paint, boot
-  i18n.js           T = {en, hi, gu, mr}, 294 keys each
+  i18n.js           T = {en, hi, gu, mr}, 326 keys each
   domain.js         PURE -- IST clock, window derivation, status tables, money
   store.js          the facade; ONE import line is the Supabase swap
   backend-local.js  localStorage + cross-tab storage events
   backend-supabase.js  the same four rules over Postgres + Realtime
   account.js        the sign-in overlay, the pill, the checkout offer
   customer.js shop.js settings.js
+  products.js       the Store's Products tab -- every product, add, edit
   lock.js           PURE -- the code that opens the Store view
   pay.js            UPI link + QR. Takes no money -- see below.
   seed.js           demo orders, on a device that has never been used
@@ -97,6 +98,7 @@ db/
   schema.sql        tables, row-level security, the SECURITY DEFINER
                     functions a customer is allowed to call
   store-code.sql    shop_secret + claim_staff(). Run once, by hand.
+  products.sql      product_edits + the photo bucket. Run once, by hand.
 tools/
   serve.pl          static server, both loopback families
   pricelist.pl      prints the catalogue as an editable price list
@@ -749,6 +751,64 @@ offered them, and stays null when they did not. The Store screens
 already handled both.
 
 
+## The shop edits its own catalogue
+
+The Store view has a **Products** tab: every product in shelf order, a
+search that keeps the keyboard, **Add a product**, and one form for
+both -- photo, name, brand, size, aisle, price, MRP, in stock, take
+off sale, and the name in the other three languages, folded away.
+
+**catalog.json is still the starting catalogue, and nothing here
+writes to it.** A page cannot write a file. What the shop changes is
+stored as an EDIT keyed by product id -- `product_edits` in Supabase,
+`kirana.products` in local storage -- and the catalogue every screen
+reads is the file with the edits laid over it (`withEdits()` in
+backend-local.js). The same derived-then-overlaid shape as the
+delivery windows: most products never get a row.
+
+- **Only what differs from the file is stored.** `makeEdit()` compares
+  field by field, so a price changed in the app leaves the name, size
+  and aisle to catalog.json. An edit that ends up matching the file is
+  DELETED: putting a product back the way it was is how an edit is
+  taken back.
+- ⚠️ **An edit wins over the file.** `setprice.pl` does nothing to a
+  product the shop has already re-priced in the app. The app is where
+  prices change now; the Perl round trip sets the starting values.
+- **`makeEdit()` is shared by both backends**, so the checks are one
+  set: whole rupees, a price above the MRP raises the MRP (setprice.pl's
+  rule), a unit `packLabel()` has a word for (`PACK_UNITS`), an aisle
+  that exists, and **the pure-veg words data.pl refuses**. A name typed
+  at the counter is the one road onto the shelf the Perl check never
+  sees.
+- **Taking a product off sale hides it; nothing is deleted.** It leaves
+  every list a customer sees but stays in `byId`, so an old order or a
+  basket still finds its name, and it is forced out of stock so every
+  rule that already skips an empty shelf skips it too. `wasStock` keeps
+  what the shelf held, for when it goes back.
+- **The edits are read ONCE per page load**, before the first paint,
+  with a four-second limit. Once, because prices moving under a
+  customer mid-basket would show one total in the cart and charge
+  another -- the bug `{pid, qty}` exists to prevent. A change made on
+  the counter reaches a customer at their next load. Past four seconds
+  the shop opens on catalog.json rather than a blank screen.
+- **Photos are shrunk on the phone** to 800px, a JPEG of about 100 KB,
+  then go to the public `product-photos` bucket under a new name every
+  time, so no cache goes on showing the old one. Tiles now draw `p.src`
+  instead of building `./img/<id>.jpg` themselves, and a category's
+  picture is `heroSrc`. In local mode a photo is a data URL in local
+  storage: fine for trying it, nothing more.
+- **A new product's id is minted by the backend** (`p-x...`, facade
+  rule 3). It takes its aisle's commonest glyph, no tags (search finds
+  it by name and brand) and no pairings (the basket strip falls back
+  to the aisle's rule).
+
+⚠️ **`db/products.sql` has to be run once in Supabase.** Until it is,
+customers see catalog.json exactly as before, and the Products screen
+says the setup step is missing rather than saving into nothing.
+Everyone may read `product_edits` -- the first read goes out before
+the app has a session, so `anon` is granted too -- and only
+`is_staff()` may write a row or upload a photo.
+
 ## Everything sells at MRP, and a coupon is the only discount
 
 `price` equals `mrp` on every row, because that is how the shop
@@ -1398,7 +1458,7 @@ with eyes, not by scoring.
 
 The order is the shop's, not the alphabet's: Borivali West speaks all
 three, and whoever sits last on the row is the one who has to look
-hardest. 294 keys each, and `i18n.pl` fails if any block is missing
+hardest. 326 keys each, and `i18n.pl` fails if any block is missing
 one.
 
 **Everything is translated** — the shop's name and address, eleven
@@ -1596,7 +1656,10 @@ Everything else is checked in a browser, which this machine has.
 - **Prices are illustrative, not scraped.** Realistic 2026 Mumbai MRPs,
   but a Borivali shopper will spot a wrong atta price instantly.
 
-  Correcting them is a round trip, not a code change:
+  The shop can now correct them itself, one at a time, in the Store
+  view's Products tab -- see "The shop edits its own catalogue".
+  Setting the STARTING values in bulk is a round trip, not a code
+  change:
 
   ```bash
   perl tools/pricelist.pl > prices.txt   # hand this to the shopkeeper

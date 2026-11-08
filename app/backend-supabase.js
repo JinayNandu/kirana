@@ -50,9 +50,10 @@ import * as local from './backend-local.js';
 
 // Static data, the cart and the on-device defaults are backend-local's
 // job in both worlds.
-export const { ready, catalog, cart, profile } = local;
+export const { ready, cart, profile } = local;
 
-const DATA = local.ready();
+// No `const DATA = local.ready()`: the catalogue is rebuilt when the
+// shop edits it, and a promise captured here would never see that.
 const clone = (v) => (v == null ? v : JSON.parse(JSON.stringify(v)));
 
 export const sb = createClient(SUPABASE.url, SUPABASE.key, {
@@ -66,6 +67,98 @@ export const sb = createClient(SUPABASE.url, SUPABASE.key, {
 });
 
 const oops = (error) => { if (error) throw new Error(error.message || String(error)); };
+
+// ---------------------------------------------------------------------
+//  The catalogue's edits come from product_edits, not this browser.
+//
+//  Read ONCE per page load and handed to the local backend before
+//  anything reads the catalogue. Once, because a customer whose prices
+//  moved mid-basket would see one total in the cart and pay another --
+//  the bug the {pid, qty} cart line exists to prevent. A price changed
+//  on the counter reaches a customer at their next load; the shop's
+//  own phone sees its change at once.
+//
+//  Four seconds at most, because this read holds up the whole shop.
+//  Past that it opens on catalog.json -- a stale price beats a blank
+//  screen -- and says so in the console.
+// ---------------------------------------------------------------------
+const EDIT_COLS = ['added', 'name', 'brand', 'cat', 'pack', 'price', 'mrp',
+                   'stock', 'hidden', 'photo', 'tile'];
+let edits = {};
+let editsAre = 'loading';                 // then 'ok' | 'missing' | 'error'
+
+async function loadEdits(){
+  const late = new Promise((res) => setTimeout(() => res({ late: true }), 4000));
+  const r = await Promise.race([
+    sb.from('product_edits').select('id,' + EDIT_COLS.join(',')), late]);
+  if (r.late){
+    editsAre = 'error';
+    console.warn('product edits: no answer in 4s, showing catalog.json');
+    return edits;
+  }
+  if (r.error){
+    const m = (r.error.message || '') + ' ' + (r.error.code || '');
+    // PGRST205 is "no such table": db/products.sql has not been run.
+    editsAre = /PGRST205|42P01|schema cache|does not exist/i.test(m) ? 'missing' : 'error';
+    if (editsAre === 'error') console.warn('product edits', m);
+    return edits;
+  }
+  edits = Object.fromEntries(r.data.map((row) =>
+    [row.id, Object.fromEntries(EDIT_COLS.map((k) => [k, row[k]]))]));
+  editsAre = 'ok';
+  return edits;
+}
+local.useEdits(loadEdits());
+
+// A refusal the shopkeeper can act on, rather than Postgres's wording.
+function editError(error){
+  const m = (error.message || '') + ' ' + (error.code || '');
+  if (/PGRST205|schema cache|does not exist|Bucket not found/i.test(m)) return new Error('NO_TABLE');
+  if (/row-level security|violates|permission denied|Unauthorized|403/i.test(m)) return new Error('NOT_STAFF');
+  return new Error(error.message || String(error));
+}
+
+// Every read is the local backend's, over the database's edits. Only
+// the writes are different.
+export const catalog = {
+  ...local.catalog,
+
+  async editsState(){ return editsAre; },
+
+  // The Store's Products screen asks again on the way in, so the shop
+  // sees the database as it is now, not as it was at this page's load.
+  async refresh(){
+    await local.useEdits(loadEdits());
+    fire('catalog');
+  },
+
+  async save(pid, fields, photo){
+    const id = pid || local.mintProductId();
+    const edit = await local.makeEdit(pid, fields, edits[id]);
+    if (photo){
+      // A new name every time: a phone or a CDN that has the old
+      // photo cached under the same URL would go on showing it.
+      const path = id + '/' + Date.now().toString(36) + '.jpg';
+      const up = await sb.storage.from('product-photos').upload(path, photo,
+        { contentType: photo.type || 'image/jpeg', cacheControl: '31536000', upsert: false });
+      if (up.error) throw editError(up.error);
+      edit.photo = sb.storage.from('product-photos').getPublicUrl(path).data.publicUrl;
+    }
+    if (local.emptyEdit(edit)){
+      const { error } = await sb.from('product_edits').delete().eq('id', id);
+      if (error) throw editError(error);
+      delete edits[id];
+    } else {
+      const { error } = await sb.from('product_edits')
+        .upsert({ id, ...edit, updated_at: new Date().toISOString() });
+      if (error) throw editError(error);
+      edits[id] = edit;
+    }
+    await local.useEdits(Promise.resolve({ ...edits }));
+    fire('catalog');
+    return clone((await local.ready()).byId[id] || null);
+  },
+};
 
 // "That email is already registered" is the one auth error this app
 // treats as an ordinary answer rather than a failure. The code reads
@@ -420,7 +513,7 @@ async function runOverlay(){
 
 export const runs = {
   async forDate(date){
-    const d = await DATA;
+    const d = await local.ready();
     const stored = await runOverlay();
     return d.slots.map((s) =>
       ({ ...deriveRun(date, s), ...(stored['run-' + date + '-' + s.id] || {}) }));
@@ -512,7 +605,7 @@ export const runs = {
 // What to load: every product summed across every order on the run.
 // The one piece of arithmetic in this app a human cannot check by eye.
 async function localLoad(list){
-  const d = await DATA;
+  const d = await local.ready();
   const sum = new Map();
   for (const o of list){
     if (o.status === 'cancelled') continue;
@@ -554,7 +647,7 @@ export const orders = {
   // Newest first, each product once. A history, not a score: the
   // most recent thing is the most likely thing.
   async againItems(limit){
-    const d = await DATA;
+    const d = await local.ready();
     const inCart = new Set((await local.cart.lines()).map((l) => l.pid));
     const seen = new Set();
     const out = [];
@@ -574,7 +667,7 @@ export const orders = {
   // can sit on the address screen across it, and a generic failure at
   // this moment loses the order.
   async place(draft){
-    const d = await DATA;
+    const d = await local.ready();
     const run = await runs.byId(draft.runId);
     if (!run) throw new Error('NO_SUCH_RUN');
     if (!run.enabled) throw new Error('RUN_CLOSED');
@@ -655,7 +748,7 @@ export const orders = {
   // trusts the ones place() sends -- see db/order-edit.sql for what
   // the server DOES guarantee, which is ownership and status.
   async edit(id, lines){
-    const d = await DATA;
+    const d = await local.ready();
     const o = await orders.byId(id);
     if (!o) throw new Error('NO_SUCH_ORDER');
     const b2g1 = new Set((d.offers && d.offers.b2g1) || []);

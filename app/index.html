@@ -1024,14 +1024,35 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
   font-size:13px; line-height:1.5;
 }
 .paybox.issaid .proof{font-weight:600; color:var(--ink)}
-/* The two payment buttons side by side, the current one filled -- the
-   same look as the status row beneath them. */
-.payrow{display:flex; gap:var(--s2); margin:var(--s3) 0 var(--s4)}
-.payrow .btn{
+/* Two buttons side by side, the current one filled -- the same look
+   as the status row. Paid or not on a delivered order; in stock or
+   not on the Store's product form. */
+.pair{display:flex; gap:var(--s2); margin:var(--s3) 0 var(--s4)}
+.pair .btn{
   flex:1 1 0; width:auto; min-width:0; min-height:42px;
   padding:var(--s2) var(--s3); font-size:13px; line-height:1.3;
 }
-.payrow .btn.on{background:var(--leaf); color:var(--on-leaf); border-color:var(--leaf)}
+.pair .btn.on{background:var(--leaf); color:var(--on-leaf); border-color:var(--leaf)}
+
+/* --- the Store's products ---------------------------------------- */
+.prodrow{cursor:pointer}
+.prodrow:active{background:var(--sunk)}
+.pprice{display:flex; align-items:center; gap:var(--s1); font-weight:600}
+.pprice svg{width:16px; height:16px; color:var(--ink-dim)}
+.pcat h2{margin:var(--s5) 0 0}
+.pnote{margin:0 0 var(--s3)}
+.pephoto{display:flex; align-items:center; gap:var(--s3); margin:var(--s3) 0 var(--s2)}
+.pephoto .btn{width:auto; flex:1}
+/* The photo the shop is about to save, at a size where it can be
+   judged -- a 64px tile hides a blurred or badly cropped shot. */
+.ptile.pbig{width:120px; height:120px; flex:none}
+.ptile.pbig svg{width:40px; height:40px}
+.perow{display:flex; gap:var(--s2); align-items:flex-end}
+.perow > *{flex:1; min-width:0}
+.perow > .fset{margin-bottom:0}
+.pelangs summary{cursor:pointer; font-size:14px; font-weight:600;
+  color:var(--leaf-ink); padding:var(--s2) 0}
+.pehide{margin-top:var(--s3)}
 /* Money customers say they have paid, which nobody has looked at yet
    -- on the board and the window screen. Amber for the same reason. */
 .saidline{color:var(--spice-ink); font-size:13px; margin:var(--s1) 0 0}
@@ -1128,6 +1149,8 @@ button.festbox{display:block; width:100%; text-align:left; border:0; font:inheri
   <section id="s-run"    hidden></section>
   <section id="s-pick"   hidden></section>
   <section id="s-load"   hidden></section>
+  <section id="s-prods"  hidden></section>
+  <section id="s-pedit"  hidden></section>
 
   <!-- ============ SHARED ============ -->
   <section id="s-set"    hidden></section>

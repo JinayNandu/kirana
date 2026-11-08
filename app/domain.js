@@ -106,6 +106,11 @@ export function rupees(n){
   return (neg ? '-₹' : '₹') + out;
 }
 
+// The units a pack size may be given in -- packLabel() has a word for
+// each, in every language, and a unit it has no word for would print
+// raw. The Store's product form offers exactly these.
+export const PACK_UNITS = ['g', 'kg', 'ml', 'l', 'pc', 'pkt', 'dozen'];
+
 export function packLabel(pack, t){
   if (!pack) return '';
   const u = { g: t.unitG, kg: t.unitKg, ml: t.unitMl, l: t.unitL,

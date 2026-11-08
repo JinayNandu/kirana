@@ -56,7 +56,7 @@ function monogram(p){
 // instead of leaving a hole -- no onerror handler, no class to toggle,
 // nothing to get out of step. `p.img` comes from the data layer, so a
 // product with no photograph never requests one.
-const ptile = (p) =>
+export const ptile = (p) =>
   '<span class="ptile">' + icon(p.tile)
   + '<span class="pmono">' + esc(monogram(p)) + '</span>'
   + (p.img
@@ -75,7 +75,9 @@ const ptile = (p) =>
       // photograph's white backdrop before; on the browsing grid that
       // backdrop is gone, and "AA" reappeared in the corner of the
       // Aashirvaad packet it was only ever standing in for.
-      ? '<img class="pshot" src="./img/' + esc(p.id) + '.jpg" alt=""'
+      // p.src, not a path built from the id: a photo the shop took on
+      // its own phone lives in Supabase Storage, not in ./img/.
+      ? '<img class="pshot" src="' + esc(p.src) + '" alt=""'
         + ' decoding="async"'
         + ' onload="this.classList.add(\'on\');this.parentNode.classList.add(\'shot\')"'
         + ' onerror="this.remove()">'
@@ -416,8 +418,8 @@ registerScreen('shop', async () => {
         // hero has no picture simply keeps the drawing.
         '<button type="button" class="ccard" data-cat="' + esc(cat.id) + '">'
         + '<span class="ctile">' + icon(cat.tile)
-        +   (cat.hero
-              ? '<img class="cshot" src="./img/' + esc(cat.hero) + '.jpg" alt=""'
+        +   (cat.heroSrc
+              ? '<img class="cshot" src="' + esc(cat.heroSrc) + '" alt=""'
                 + ' decoding="async"'
                 + ' onload="this.classList.add(\'on\');this.parentNode.classList.add(\'shot\')"'
                 + ' onerror="this.remove()">'

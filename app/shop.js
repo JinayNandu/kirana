@@ -425,7 +425,7 @@ registerScreen('pick', async () => {
       // delivered order it arrives already lit; "Mark unpaid" is
       // how the shop says it looked and they had not paid.
       + (o.status === 'delivered'
-          ? '<div class="payrow">'
+          ? '<div class="pair">'
             + '<button type="button" class="btn ghost' + (ps === 'owed' ? ' on' : '')
             +   '" data-pay="owed">' + esc(c.markUnpaid) + '</button>'
             + '<button type="button" class="btn ghost' + (ps === 'verified' ? ' on' : '')

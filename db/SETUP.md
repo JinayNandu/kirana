@@ -55,10 +55,10 @@ Safe to run twice. It makes five tables — `staff`, `addresses`,
 `orders`, `order_lines`, `runs` — and the rules deciding who may read
 what. Expect *"Success. No rows returned."*
 
-The catalogue is deliberately **not** in there. The 115 products,
-prices, categories and delivery windows stay in `app/data/*.json` in
-git, edited with `tools/setprice.pl` and checked by `tools/data.pl`.
-They are the same for everybody and need no database.
+The catalogue itself is not in there: the products, categories and
+delivery windows stay in `app/data/*.json` in git, checked by
+`tools/data.pl`. What the shop CHANGES from the app -- a price, a
+photo, a new product -- goes in `product_edits`, which is step 8.
 
 ## 3. Three auth switches — 2 min
 
@@ -227,6 +227,23 @@ rules hand out other people's orders to staff and to nobody else.
 tapping Store on a phone; it runs in a browser the customer owns and
 can never be more than that. This row is the one the server enforces.
 Both are worth having and they do different jobs.
+
+---
+
+## 8. Let the shop edit its products — 1 min
+
+[SQL Editor](https://supabase.com/dashboard/project/_/sql/new) →
+paste all of
+[`db/products.sql`](https://github.com/JinayNandu/kirana/blob/main/db/products.sql)
+→ **Run**. Safe to run twice.
+
+It makes `product_edits` -- the prices, photos and new products the
+shop saves from the Store view's **Products** tab -- and a public
+`product-photos` bucket for the photos. Everyone can read both; only
+a session that has typed the Store code can write.
+
+Until it has run, the shop shows catalog.json exactly as before and
+the Products tab says this step is missing.
 
 ---
 

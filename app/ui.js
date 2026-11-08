@@ -30,7 +30,7 @@ export const mount = (el, html) => { if (el) el.innerHTML = html; };
 export const SCREENS = [
   'shop', 'cat', 'find', 'cart', 'slot', 'addr', 'aedit', 'done', 'track',
   'oedit', 'orders',
-  'board', 'run', 'pick', 'load',
+  'board', 'run', 'pick', 'load', 'prods', 'pedit',
   'set',
 ];
 
@@ -223,6 +223,7 @@ const TABS = {
   ],
   shop: [
     { s: 'board', i: 'truck', k: 'tabRuns' },
+    { s: 'prods', i: 'tag',   k: 'tabProducts' },
     { s: 'set',   i: 'globe', k: 'setTitle' },
   ],
 };

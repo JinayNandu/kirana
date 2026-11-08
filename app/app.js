@@ -14,6 +14,7 @@ import { prime } from './lock.js';
 import { start as startAccount } from './account.js';
 import './customer.js';
 import './shop.js';
+import './products.js';
 import './settings.js';
 import { seedIfEmpty } from './seed.js';
 

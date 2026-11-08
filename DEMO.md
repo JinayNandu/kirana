@@ -28,6 +28,9 @@ Then:
    else's name.
 2. Check it loads and the Diwali band is showing.
 3. Open the Store link, type the code, confirm the board opens.
+4. Tap **Products**. If it says a setup step is missing, run
+   `db/products.sql` in Supabase -> SQL Editor first. Until then he
+   cannot change a single price.
 
 ⚠️ **Clear data FIRST, then open the Store link.** Clearing wipes all
 of this phone's local storage, the Store unlock among it. Do it the
@@ -151,6 +154,11 @@ through it in his own words:
   what it means.
 - **What to load** — every product across every order in that window,
   summed. Ask him whether that is how he would want it grouped.
+- **Products** -- the middle tab. Find a product, change its price,
+  save: every customer sees the new price the next time they open the
+  shop. **Add a product** takes its photo straight from his phone's
+  camera. Let him change one price himself; it is the thing he will
+  do most, and it used to be a file and a command.
 
 ## 4. Show him the customer's side of that — 2 minutes
 
@@ -190,10 +198,10 @@ Say them yourself. Every one of them makes the rest more believable.
 
 | | |
 |---|---|
-| **Prices are made up** | Realistic Mumbai MRPs, not his. He must correct them — it is one file, and there is a tool that prints a price list for him to mark up. |
+| **Prices are made up** | Realistic Mumbai MRPs, not his. He can correct them himself in the Store view's **Products** tab — or in bulk: there is a tool that prints a price list for him to mark up. |
 | **The UPI id takes no money** | `demo.not.real@example` cannot resolve. The QR, the amount and the order code are all real; only the payee is not. His real id is a one-line change. |
 | **The Marathi, Hindi and Gujarati have never been read by a speaker** | **Ask him to read them.** Switch to मराठी in front of him. This is the single most valuable thing he can give you in twenty minutes and it costs him nothing. |
-| **The photographs are not his stock** | They are openly-licensed pack shots. 106 of 117 products have one; the rest are drawn. His own shelf, photographed on a phone against a sheet of white paper, would beat all of them. |
+| **The photographs are not his stock** | They are openly-licensed pack shots. 106 of 117 products have one; the rest are drawn. His own shelf, photographed on a phone against a sheet of white paper, would beat all of them, and he can now add them himself: **Products**, the product, **Take or choose a photo**. |
 | **Customer sign-in is not proven** | The pill at the bottom right offers it, and the six-digit email has never been tested end to end. **Do not demo it.** It is only for a customer who wants their past orders on a second phone — nothing about the shop's side depends on it. |
 
 ---
@@ -227,7 +235,8 @@ one file.
 In rough order of what it buys you:
 
 1. **His price corrections** — `perl tools/pricelist.pl > prices.txt`,
-   hand him the file, read it back with `setprice.pl`.
+   hand him the file, read it back with `setprice.pl`. For a handful
+   he can now just do it himself in the Products tab.
 
 2. **Change the Store code. This one is not optional, and it is now
    more urgent than it was.**
@@ -269,4 +278,5 @@ In rough order of what it buys you:
 
 3. **His real UPI id** in `shop.json`, and `upi.demo` to false.
 
-4. **Photographs of his own stock**, if he is willing.
+4. **Photographs of his own stock**, if he is willing. He can take
+   them himself now, from the Products tab.

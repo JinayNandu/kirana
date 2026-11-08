@@ -26,7 +26,7 @@
 import {
   istDate, festivalOn, istMins, addDays, deriveRun, runState, isBookable,
   totals as calcTotals, freeUnits, matchCoupon, canAdvance, canAdvanceRun,
-  payState,
+  payState, PACK_UNITS,
 } from './domain.js';
 
 // ---------------------------------------------------------------------
@@ -46,7 +46,7 @@ const grab = (file) => fetch('./data/' + file).then((r) => {
 // catches and shrugs where the others throw.
 const grabMaybe = (file) => grab(file).catch(() => null);
 
-const DATA = Promise.all([
+const BASE = Promise.all([
   grab('catalog.json'), grab('categories.json'),
   grab('runplan.json'), grab('shop.json'), grab('pairs.json'),
   grabMaybe('images.json'),
@@ -96,7 +96,89 @@ const DATA = Promise.all([
   };
 });
 
+// ---------------------------------------------------------------------
+//  The shop's own edits, laid over the JSON.
+//
+//  catalog.json is the starting catalogue, and a page cannot write to
+//  a file. What the shop changes from the Store view -- a price, a
+//  photo, out of stock, taken off sale -- and every product it adds
+//  live as EDITS keyed by product id, and the catalogue every screen
+//  reads is BASE with those laid over it. The same derived-then-
+//  overlaid shape as the delivery windows: most products never get an
+//  edit, so most of the catalogue is the file it always was.
+//
+//  Where the edits come from is the backend's business: this
+//  browser's storage here, the product_edits table in Supabase, handed
+//  in through useEdits() before anything reads the catalogue.
+// ---------------------------------------------------------------------
+const EDIT_FIELDS = ['brand', 'cat', 'pack', 'price', 'mrp', 'stock', 'tile'];
+
+function applyEdit(p, ed){
+  p.src = p.img ? './img/' + p.id + '.jpg' : null;
+  if (!ed) return p;
+  for (const k of EDIT_FIELDS) if (ed[k] != null) p[k] = clone(ed[k]);
+  // Merged, not replaced: a name changed in English keeps the Hindi
+  // it had unless the Hindi was changed too.
+  if (ed.name) p.name = { ...p.name, ...ed.name };
+  if (ed.photo){ p.img = true; p.src = ed.photo; }
+  // Taken off sale. Out of stock as well, so every rule that already
+  // skips an empty shelf -- suggestions, the festival rail, buy it
+  // again -- skips this too without learning a new word.
+  // wasStock keeps what the shelf held, so putting it back on sale
+  // from the Store form does not also have to guess that.
+  if (ed.hidden){ p.hidden = true; p.wasStock = p.stock; p.stock = 0; }
+  p.edited = true;
+  return p;
+}
+
+// A product the shop added. It has to be a whole product or it is
+// not drawn at all: a tile with no price is worse than no tile.
+function addedProduct(id, ed){
+  if (!ed.name || !ed.name.en || !ed.cat || !ed.pack || !ed.price) return null;
+  const p = {
+    id, brand: '', cat: ed.cat, name: { en: ed.name.en }, pack: clone(ed.pack),
+    price: ed.price, mrp: ed.mrp || ed.price, stock: 0, tags: [],
+    tile: 'packet', img: false, added: true,
+  };
+  return applyEdit(p, ed);
+}
+
+function withEdits(b, edits){
+  const e = edits || {};
+  const byId = {};
+  const products = [];
+  // byId keeps a hidden product, so an old order or a basket still
+  // finds its name; `products`, which every list is drawn from, does not.
+  const put = (p) => { byId[p.id] = p; if (!p.hidden) products.push(p); };
+  for (const p0 of b.products) put(applyEdit(clone(p0), e[p0.id]));
+  for (const id of Object.keys(e)){
+    if (byId[id] || !e[id] || !e[id].added) continue;
+    const p = addedProduct(id, e[id]);
+    if (p) put(p);
+  }
+  // A category wears one of its products as its picture. Chosen again
+  // here, because an edit can hide the hero or give it a new photo.
+  const categories = b.categories.map((c0) => {
+    const c = { ...c0 };
+    let hero = c.hero ? byId[c.hero] : null;
+    if (!hero || hero.hidden || !hero.img){
+      hero = products.find((p) => p.cat === c.id && p.img) || null;
+    }
+    c.hero = hero ? hero.id : null;
+    c.heroSrc = hero ? hero.src : null;
+    return c;
+  });
+  return { ...b, products, byId, categories };
+}
+
+let DATA;
 export const ready = () => DATA;
+
+// The Supabase backend's way in: ITS edits, not this browser's.
+export function useEdits(source){
+  DATA = Promise.all([BASE, source]).then(([b, e]) => withEdits(b, e));
+  return DATA;
+}
 
 // ---------------------------------------------------------------------
 //  Storage
@@ -105,10 +187,14 @@ const K = {
   cart: 'kirana.cart', orders: 'kirana.orders',
   runs: 'kirana.runs', profile: 'kirana.profile', seq: 'kirana.seq',
   coupon: 'kirana.coupon', places: 'kirana.places',
+  products: 'kirana.products',
 };
 const REV = { cart: 'kirana.rev.cart', orders: 'kirana.rev.orders', runs: 'kirana.rev.runs' };
 
 const clone = (v) => (v == null ? v : JSON.parse(JSON.stringify(v)));
+
+// This browser's own edits, until a backend hands in others.
+DATA = BASE.then((b) => withEdits(b, read(K.products, {})));
 
 function read(key, fallback){
   try {
@@ -289,6 +375,42 @@ export const catalog = {
     return clone(out);
   },
 
+  // ---- the Store's side ----
+
+  // Everything, hidden products included, in shelf order: the Store's
+  // Products screen. Customers never ask for this.
+  async storeList(){
+    const d = await DATA;
+    const at = new Map(d.categories.map((c, i) => [c.id, i]));
+    const pos = (p) => (at.has(p.cat) ? at.get(p.cat) : 99);
+    return clone(Object.values(d.byId).sort((a, b) => pos(a) - pos(b)
+      || (a.brand || '').localeCompare(b.brand || '')
+      || a.name.en.localeCompare(b.name.en)));
+  },
+
+  // The Supabase backend can find its table missing. Storage here
+  // cannot, so this always answers yes.
+  async editsState(){ return 'ok'; },
+
+  async refresh(){
+    DATA = BASE.then((b) => withEdits(b, read(K.products, {})));
+    await DATA;
+    emit('catalog');
+  },
+
+  // Facade rule 3: a new product's id is minted HERE, never by the
+  // screen. A photo arrives as a Blob the screen has already shrunk.
+  async save(pid, fields, photo){
+    const id = pid || mintProductId();
+    const all = read(K.products, {});
+    const edit = await makeEdit(pid, fields, all[id]);
+    if (photo) edit.photo = await asDataUrl(photo);
+    if (emptyEdit(edit)) delete all[id]; else all[id] = edit;
+    if (!write(K.products, all)) throw new Error('STORAGE_FULL');
+    await catalog.refresh();
+    return clone((await DATA).byId[id] || null);
+  },
+
   async setStock(pid, n){
     const d = await DATA;
     if (d.byId[pid]) d.byId[pid].stock = Math.max(0, n | 0);
@@ -297,7 +419,76 @@ export const catalog = {
 };
 
 // ---------------------------------------------------------------------
-//  cart
+//  makeEdit -- what the Store form sent, turned into what is stored.
+//  ONE function for both backends, so the checks cannot drift apart.
+//  It throws a code; the screen turns the code into a sentence.
+// ---------------------------------------------------------------------
+const IN_STOCK = 20;
+// The words data.pl refuses in catalog.json. The shop is pure veg and
+// says so on every screen, and a name typed at the counter is the one
+// road onto the shelf that the Perl check never sees.
+const NOT_VEG = /\b(eggs?|chicken|mutton|fish|prawns?|bacon|meat)\b|अंड|चिकन|मांस|ઈંડ|ચિકન|માંસ/i;
+const LANG_KEYS = ['en', 'hi', 'gu', 'mr'];
+const names = (n) => Object.fromEntries(LANG_KEYS.map((l) => [l, (n && n[l]) || '']));
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+function tileFor(b, cat){
+  const n = {};
+  for (const p of b.products) if (p.cat === cat) n[p.tile] = (n[p.tile] || 0) + 1;
+  return Object.keys(n).sort((x, y) => n[y] - n[x])[0] || 'packet';
+}
+
+export async function makeEdit(pid, f, prev){
+  const b = await BASE;
+  const base = pid ? b.byId[pid] || null : null;
+  if (pid && !base && !(prev && prev.added)) throw new Error('NO_SUCH_PRODUCT');
+  const name = names({});
+  for (const l of LANG_KEYS) name[l] = String((f.name && f.name[l]) || '').trim().slice(0, 80);
+  if (!name.en) throw new Error('NAME');
+  if (Object.values(name).some((x) => NOT_VEG.test(x))) throw new Error('NOT_VEG');
+  const n = Number(f.packN);
+  if (!(n > 0 && n <= 100000) || !PACK_UNITS.includes(f.packU)) throw new Error('SIZE');
+  if (!b.categories.some((c) => c.id === f.cat)) throw new Error('CAT');
+  const price = Number(f.price);
+  if (!Number.isInteger(price) || price < 1 || price > 100000) throw new Error('PRICE');
+  let mrp = (f.mrp === '' || f.mrp == null) ? price : Number(f.mrp);
+  if (!Number.isInteger(mrp) || mrp < 1 || mrp > 100000) throw new Error('MRP');
+  // setprice.pl's rule: a price above the MRP raises the MRP to match.
+  if (mrp < price) mrp = price;
+  // Against the FILE, field by field. Only what differs is stored, so
+  // a later correction to catalog.json still reaches every field the
+  // shop never touched.
+  const keep = (k, v) => (base && same(base[k] == null ? '' : base[k], v) ? null : v);
+  return {
+    added: !base,
+    name: base && same(names(base.name), name) ? null : name,
+    brand: keep('brand', String(f.brand || '').trim().slice(0, 40)),
+    cat: keep('cat', f.cat),
+    pack: keep('pack', { n, u: f.packU }),
+    price: keep('price', price),
+    mrp: keep('mrp', mrp),
+    stock: f.inStock ? (base && base.stock > 0 ? null : IN_STOCK) : 0,
+    hidden: !!f.hidden,
+    photo: (prev && prev.photo) || null,
+    tile: base ? null : ((prev && prev.tile) || tileFor(b, f.cat)),
+  };
+}
+
+// An edit that changes nothing is deleted rather than stored: putting
+// every field back the way the file has it IS taking the edit back.
+export const emptyEdit = (e) => !e.added && !e.hidden && !e.photo
+  && ['name', 'brand', 'cat', 'pack', 'price', 'mrp', 'stock'].every((k) => e[k] == null);
+
+export const mintProductId = () =>
+  'p-x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+const asDataUrl = (blob) => new Promise((res, rej) => {
+  const r = new FileReader();
+  r.onload = () => res(r.result);
+  r.onerror = () => rej(new Error('PHOTO'));
+  r.readAsDataURL(blob);
+});
+
 //
 //  A line is {pid, qty} and NOTHING else -- in particular no price. A
 //  cart that stores a price disagrees with itself the moment the
