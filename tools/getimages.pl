@@ -31,7 +31,10 @@ use strict;
 use warnings;
 use JSON::PP;
 
-my $root = 'C:/Users/Nandu jinay/Projects/kirana/';
+# The repo root, found from where this script lives -- a path typed in
+# here only ever worked on one laptop.
+use FindBin;
+my $root = "$FindBin::Bin/../";
 my $IMG  = $root . 'app/img/';
 mkdir $IMG unless -d $IMG;
 

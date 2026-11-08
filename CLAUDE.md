@@ -35,8 +35,8 @@ the Store view; a driver with a phone can open that same view.
 
 ## Stack and constraints
 
-- **No Node, no npm. Python is blocked by group policy.** Perl 5.42.2 at
-  `C:/Users/Nandu jinay/AppData/Local/Programs/Git/usr/bin/perl.exe`.
+- **No Node, no npm. Python is blocked by group policy.** Perl 5.42.2 is
+  Git for Windows' own (`usr/bin/perl.exe` in its install folder).
 - Therefore **zero build step** — vanilla HTML/CSS/ES modules, no
   bundler, no `package.json`, no test runner.
 - ES modules refuse to run over `file://`, so local work needs a server:

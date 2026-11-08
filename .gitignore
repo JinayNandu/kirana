@@ -6,3 +6,7 @@ prices.txt
 app/secrets.js
 
 *.log
+
+# Local dev-server settings: absolute paths on one machine, so they
+# stay on it. The Projects folder's own launch.json is the one in use.
+.claude/launch.json
